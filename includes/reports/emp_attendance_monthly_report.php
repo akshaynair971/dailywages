@@ -4,7 +4,7 @@
 
  include_once('connection.php');
 
- $invoice_settings=$db->get_row("SELECT * FROM general_setting WHERE inst_id='".$_SESSION['ad_id']."' AND user_type='".$_SESSION['user_type']."'");
+ $invoice_settings=$db->get_row("SELECT * FROM general_setting WHERE inst_id='".$_SESSION['ad_id']."'");
 
 ?>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
@@ -32,67 +32,52 @@ $db->query('SET collation_connection=utf8_unicode_ci');
 
  // $invoice_settings= $db->get_row("SELECT * FROM general_setting WHERE ");
 
- 
- 
-  extract($_GET);
- 
-  $sa_date = $stud_attend_date;
-
-  $r = $db->get_results("SELECT * FROM student_admission WHERE admi_class='$class_id' AND admi_board='$board_id' AND admi_section='$sec_id' AND admi_acad_yr='$ay_id'");
-  // $r=$db->get_results("SELECT * FROM student_admission WHERE admi_class='$bid' "); 
-  // print_r($r);
-
- //$db->debug();
-  $getdatearray=explode("-",$sa_date);
-  $nod=cal_days_in_month(CAL_GREGORIAN,$getdatearray[1],$getdatearray[0]);
-   
-
 ?>
 <style type="text/css">
-   .page {
-    
-      /*padding-top: 0.60cm;*/
-      padding-right: 0.75cm;
-      padding-bottom: 0.75cm;
-      padding-left: 0.75cm;   
-      /*width: 21cm;*/
-      min-height: 29.7cm;     
-      margin: 1cm auto;
-      border: 1px #D3D3D3 solid;
-      border-radius: 5px;
-      background: white;
-      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-      font-family: Times New Roman;
-    }
-    .cap{
-        text-transform:uppercase;
-    }
-    
-    
-    @page {
-        /*size: A4;*/
-        margin: 10px;
+ .page {
+  
+    /*padding-top: 0.60cm;*/
+    padding-right: 0.75cm;
+    padding-bottom: 0.75cm;
+    padding-left: 0.75cm;   
+    /*width: 21cm;*/
+    min-height: 29.7cm;     
+    margin: 1cm auto;
+    border: 1px #D3D3D3 solid;
+    border-radius: 5px;
+    background: white;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    font-family: Times New Roman;
+  }
+  .cap{
+      text-transform:uppercase;
+  }
+  
+  
+  @page {
+      /*size: A4;*/
+      margin: 10px;
 
 
-    }
-   /* @page rotated { size : landscape }
-   @media print{@page {size: landscape}}*/
+  }
+ /* @page rotated { size : landscape }
+ @media print{@page {size: landscape}}*/
 
-    @media print {
-        .page {
-            margin: 0;
-            border: initial;
-            border-radius: initial;
-            width: initial;
-            min-height: initial;
-            box-shadow: initial;
-            background: initial;
-            page-break-after: always;
-        }
-        .prnt{
-          display: none;
-        }
-    }
+  @media print {
+      .page {
+          margin: 0;
+          border: initial;
+          border-radius: initial;
+          width: initial;
+          min-height: initial;
+          box-shadow: initial;
+          background: initial;
+          page-break-after: always;
+      }
+      .prnt{
+        display: none;
+      }
+  }
  .watermark {
     position: fixed;
     opacity: 0.10;
@@ -162,18 +147,34 @@ $db->query('SET collation_connection=utf8_unicode_ci');
     </style>
     <br>
 <div id="page-wrapper ">
-  <button style="float:left; position: fixed; z-index: 999;" class="btn prnt" onclick="qouteprint();"><i class="fa fa-print"></i> Print</button>
-
+  <button style="float:left; position: fixed; z-index: 999;" class="btn prnt" onclick="printDiv('page');"><i class="fa fa-print"></i> Print</button>
+  <a  href="#" style="float:left; left: 100px; position: fixed; z-index: 999;" class=" btn btn-primary prnt">Generate CSV</a>
   <!-- <button style="float:left; margin-top: 40px;  position: fixed; z-index: 999;" class="btn prnt" onclick="window.location.href='index.php?folder=students&file=add_student_attendance'";><i class="fa fa-close"></i> Close</button> -->
 
-  <div class="container-fluid ">
-  <!-- /.row -->
-    <div class="row page">
+  
+    <div class="container page" id="page">
+      <?php 
+          extract($_GET);
+         
+          $sa_date = $attd;
+
+          if(isset($_SESSION['DEM_EMP_ID']) && $_SESSION['user_type']=="2"){
+            $r = $db->get_results("SELECT * FROM dw_employee_master WHERE DEM_EMP_ID='".$_SESSION['DEM_EMP_ID']."'");    
+          }else{
+            $r = $db->get_results("SELECT * FROM dw_employee_master");
+          }
+          // $r=$db->get_results("SELECT * FROM student_admission WHERE admi_class='$bid' "); 
+          // print_r($r);
+
+         //$db->debug();
+          $getdatearray=explode("-",$sa_date);
+          $nod=cal_days_in_month(CAL_GREGORIAN,$getdatearray[1],$getdatearray[0]);
+           
+         ?>
       <!-- <div  class="watermark"><img style="height:300px;" src="images/aasawa.jpg"></div> -->
       
         <form action="" method="POST">
-         <!--  <center><h3><b><u>QOUTATION</u></b></h3></center> -->
-          <div class="row" >
+        
             <div class="table-repsonsive">           
               <!-- Qoutation Print Page Header -->
                     <table class="table-repsonsive " style="width: 100%;">
@@ -183,28 +184,19 @@ $db->query('SET collation_connection=utf8_unicode_ci');
                           <img class="img-responsive" src="images/logo/<?php echo $invoice_settings->ins_logo; ?>" style=" margin-left: 3px; height: 94px; width: 137px;">
                         </td>
                         <td colspan="3">                          
-                          <center><h1 style="color:#9c4d55 !important ; font-weight:900; font-size: 32px;"><?php if(isset($invoice_settings)){ echo $invoice_settings->ins_name; }?></h1><span ><?php if(isset($invoice_settings)){ echo $invoice_settings->ins_address; }?></span></center>
+                          <center><h1 style="color:#9c4d55 !important ; font-weight:900; font-size: 32px;"><?php if(isset($invoice_settings)){ echo $invoice_settings->ins_name; }?></h1>
+                          </center>
                            
                         </td>   
-                      </tr>
-                     
-                      <tr>                        
-                        <td colspan="3">
-                           <center><span ><b>Mob No. :-</b> <?php if(isset($invoice_settings)){ echo $invoice_settings->ins_mob; }?> </span></center><br>
-                        </td>
-                      </tr>
+                      </tr>                    
+                      
                     </table>
 
                       <table class="table-repsonsive " style="width: 100%;">
                        <tr>
-                       <td colspan="1"  style="width:170px;" ><b>Class :</b> <?php 
-                        $getclass = $db->get_row("SELECT * FROM course WHERE class_id='$class_id'");
-                        $getsec = $db->get_row("SELECT * FROM section WHERE sec_id='$sec_id'");
-                        echo $getclass->class_name." ( Sec-".$getsec->sec_name." )";
-                        ?>  
-                      </td>                        
-                        <td>
-                          <center><b>Monthly Attendance</b></center>
+                                            
+                        <td colspan="1">
+                          <center><b>Employee Monthly Attendance</b></center>
                         </td>
                         <td style="text-align: right;">
                           <b><?php echo date('F-Y',strtotime($sa_date)); ?></b>
@@ -241,23 +233,22 @@ $db->query('SET collation_connection=utf8_unicode_ci');
                           $i=1;
                           foreach($r as $rw)
                           {  
-                            // print_r($rw);
-                            $getbatstat= $db->get_row("SELECT * FROM student_registration WHERE sr_id='$rw->regi_id'");
+                            
                           ?>
-                              <tr>
-                                <td style="border:1px solid black !important;"><?php echo $i;  $i++;?></td>
-                                <td style="border:1px solid black !important;"><span style="<?php if($rw->cust_status=='4'){ echo 'text-decoration: underline;'; } ?>"><?php echo $getbatstat->stud_name; ?></span></td>
+                            <tr>
+                              <td style="border:1px solid black !important;"><?php echo $i;  $i++;?></td>
+                              <td style="border:1px solid black !important;">
+                                <span><?php echo strtoupper($rw->DEM_EMP_NAME_PREFIX." ".$rw->DEM_EMP_FIRST_NAME." ".$rw->DEM_EMP_MIDDLE_NAME." ".$rw->DEM_EMP_LAST_NAME); ?></span>
+                              </td>
 
                                 <?php 
                                 $atcnt=0;
                                 for($dc=1;$dc<=$nod;$dc++){
                                   $newdate= date('Y-m-d',strtotime($getdatearray[0]."-".$getdatearray[1]."-".$dc));
 
-                                  $attstatus = $db->get_results("SELECT * FROM student_attendence WHERE class_id='$class_id' AND board_id='$board_id' AND sec_id='$sec_id' AND ay_id='$ay_id' AND stud_att_date='$newdate' ");
+                                  $attstatus = $db->get_results("SELECT * FROM dw_emp_attendance WHERE DEM_EMPLOYEE_ID='$rw->DEM_EMP_ID' AND DEA_ATTD_DATE='$newdate'");
                                   // $db->debug();
 
-                                  $getstudentatt= $db->get_row("SELECT * FROM student_attendence WHERE stud_id='$getbatstat->sr_id' AND class_id='$class_id' AND board_id='$board_id' AND sec_id='$sec_id' AND ay_id='$ay_id' AND stud_att_date='$newdate'");
-                                  // $db->debug();
                                 ?>                          
                                   <td style="text-align:center; border:1px solid black !important;" >
                                     
@@ -291,15 +282,15 @@ $db->query('SET collation_connection=utf8_unicode_ci');
                       </tbody>
                     </table>
             </div>
-          </div>
+          
         </form>        
       </div>
-    </div>
+   
   <!-- /.row -->
   <!-- /.container-fluid -->
   </div>
 <!-- /#page-wrapper -->
-</div>
+
 <!-- /#wrapper -->
 <!-- jQuery -->
 <!--<script src="js/jquery.js"></script>-->
@@ -309,12 +300,7 @@ $db->query('SET collation_connection=utf8_unicode_ci');
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 <!-- <script src="plugins/jQueryUI/jquery-ui.js"></script> -->
-<script type="text/javascript">
-// function chk_delete(delreviewid){  
-//   var r = confirm("Confirm to delete selected record?");
-//   if (r == true) { location.href="home-page-banner.php?delid="+delreviewid; }
-// }
-</script>
+
 
 <script>
   $( function() {
@@ -335,7 +321,14 @@ $db->query('SET collation_connection=utf8_unicode_ci');
     } );
     </script>
     <script>
-  function qouteprint(){ 
-  window.print();
+function printDiv(divName) {
+     var printContents = document.getElementById(divName).innerHTML;
+     var originalContents = document.body.innerHTML;
+
+     document.body.innerHTML = printContents;
+
+     window.print();
+
+     document.body.innerHTML = originalContents;
 }
 </script>

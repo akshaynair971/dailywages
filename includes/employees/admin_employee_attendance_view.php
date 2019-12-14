@@ -18,7 +18,7 @@
           ?>
           <div class="row">
             <div colspan="{$colSpan}" align="center" id="date_heading" >
-              <font color="#3C8DBC" size="4px;">  <b>Employee Attendance </b></font>
+              <font color="#3C8DBC" size="4px;">  <b>Employee Attendance & Payroll Details</b></font>
               <span style="color: red; font-size: 18px; font-weight: 700;"></span>
             </div>  
           </div>  
@@ -27,7 +27,7 @@
         <div class="box-body">
           <form method="POST" enctype="multipart/form-data">            
             <div class="form-group col-md-12" >
-              <label >Search User For Attendance: </label>
+              <label >Search User For Attendance or Payroll Details </label>
               <input type="text" name="searchemp_for_attd" id="searchemp_for_attd" class="form-control" placeholder="Enter Employee ID, Employee Name or Employee Mobile number to Search...!" oninput="search_emp_for_attd();" >              
             </div>
 

@@ -174,10 +174,10 @@ $user_edit = $db->get_row("SELECT * FROM dw_employee_master as a LEFT JOIN dw_us
                 <input type="text" class="form-control" id='DPM_OTHER_ALLOWANCE' name='DPM_OTHER_ALLOWANCE' placeholder="Enter Other Allowance" value="<?php if(isset($user_edit)){ echo $user_edit->DPM_OTHER_ALLOWANCE; } ?>" readonly> 
               </div>
 
-              <div class="form-group col-md-3">
+              <!-- <div class="form-group col-md-3">
                 <label for="DPM_SPECIAL_ALLOWANCE">Special Allowance  </label>
                 <input type="text" class="form-control" id='DPM_SPECIAL_ALLOWANCE' name='DPM_SPECIAL_ALLOWANCE' placeholder="Enter Special Allowance" value="<?php if(isset($user_edit)){ echo $user_edit->DPM_SPECIAL_ALLOWANCE; } ?>" readonly> 
-              </div>
+              </div> -->
 
               <div class="form-group col-md-3">
                 <label for="DPM_GROSS_WAGES_PAYABLE">Gross Wages Payable  </label>
@@ -207,6 +207,11 @@ $user_edit = $db->get_row("SELECT * FROM dw_employee_master as a LEFT JOIN dw_us
               <div class="form-group col-md-3">
                 <label for="DPM_ESIC_EMPLOYER">Employer ESIC </label>
                 <input type="text" class="form-control" id='DPM_ESIC_EMPLOYER' name='DPM_ESIC_EMPLOYER' placeholder="Enter Employer ESIC" value="<?php if(isset($user_edit)){ echo $user_edit->DPM_ESIC_EMPLOYER; } ?>" readonly> 
+              </div>
+
+              <div class="form-group col-md-3">
+                <label for="DPM_CALCULATED_AMOUNT">Calculated Amount Payable</label>
+                <input type="text" class="form-control" id='DPM_CALCULATED_AMOUNT' name='DPM_CALCULATED_AMOUNT' placeholder="Calculated Amount" value="<?php if(isset($user_edit)){ echo $user_edit->DPM_CALCULATED_AMOUNT; } ?>"  onkeypress="return isNumberKey(event)" readonly> 
               </div>
 
               

@@ -1,13 +1,5 @@
 <?php
-if($_GET['DPT_ID']!=''){
-  extract($_GET);
-$user_edit = $db->get_row("SELECT * FROM dw_payment_tracker WHERE DPT_ID='$DPT_ID'");
-}
 
-$payroll_details = $db->get_row("SELECT * FROM dw_payroll_master WHERE DEM_EMP_ID='".$_SESSION['DEM_EMP_ID']."'");
-
-$totaldeduction= $payroll_details->DPM_PROFESSIONAL_TAX + $payroll_details->DPM_PF_EMPLOYEE + $payroll_details->DPM_PF_EMPLOYER + $payroll_details->DPM_ESIC_EMPLOYEE + $payroll_details->DPM_ESIC_EMPLOYER; 
-// $db->debug();
 ?>
 <!-- Main content -->
 <section class="content">
@@ -26,13 +18,28 @@ $totaldeduction= $payroll_details->DPM_PROFESSIONAL_TAX + $payroll_details->DPM_
             }
             // prnt($payroll_details);
           ?>
-          <h3>Payment Tracker</h3>
+          <h3>Payroll Tracker</h3>
           <div class="box-tools">
-            <!-- <a href="?folder=employees&file=employee_list" class="btn btn-default btn-round">Go Back</a> -->
+            <a href="?folder=employees&file=payment_tracker_view&DEM_EMP_ID=<?php echo $_GET['DEM_EMP_ID']; ?>" class="btn btn-default btn-round"><i class="fa fa-share"></i> Back</a>
+            
           </div>
         </div>
             <!-- /.box-header -->
         <div class="box-body">
+          <?php 
+          if($_GET['DEM_EMP_ID']){
+            if($_GET['DPT_ID']!=''){
+              extract($_GET);
+            $user_edit = $db->get_row("SELECT * FROM dw_payment_tracker WHERE DPT_ID='$DPT_ID'");
+            }
+
+            $payroll_details = $db->get_row("SELECT * FROM dw_payroll_master WHERE DEM_EMP_ID='".$_GET['DEM_EMP_ID']."'");
+
+            $totaldeduction= $payroll_details->DPM_PROFESSIONAL_TAX + $payroll_details->DPM_PF_EMPLOYEE + $payroll_details->DPM_PF_EMPLOYER + $payroll_details->DPM_ESIC_EMPLOYEE + $payroll_details->DPM_ESIC_EMPLOYER; 
+            // $db->debug();
+            $getuserdetails = $db->get_row("SELECT * FROM dw_employee_master WHERE  DEM_EMP_ID='".$_GET['DEM_EMP_ID']."' ");   
+           ?>
+           <h4 style="color: green;font-size: 18px;"><?php echo strtoupper($getuserdetails->DEM_EMP_FIRST_NAME." ".$getuserdetails->DEM_EMP_MIDDLE_NAME." ".$getuserdetails->DEM_EMP_LAST_NAME); ?> ( <?php echo $getuserdetails->DEM_EMP_ID; ?> )</h4>
           <form method="POST" action="" enctype="multipart/form-data">
             <div class="col-md-12 col-sm-12 col-xs-12">   
               
@@ -40,7 +47,7 @@ $totaldeduction= $payroll_details->DPM_PROFESSIONAL_TAX + $payroll_details->DPM_
                 <label for="DPT_PAYMENT_DATE">Payment Date <span style="color: #e22b0e;">*</span></label>
                 <input type="hidden" class="pay_month_year" id='pay_month_year'  name='pay_month_year' value="<?php if(isset($_GET['paymonth'])){ echo $_GET['paymonth']; } ?>" required >  
                 <input type="text" class="form-control DPT_PAYMENT_DATE" id='datepicker1'  name='DPT_PAYMENT_DATE' placeholder="Enter Payment Date" value="<?php if(isset($user_edit)){ echo $user_edit->DPT_PAYMENT_DATE; } ?>" required autocomplete="off" >  
-                <input type="hidden" name="DEM_EMP_ID"  id="DEM_EMP_ID" value="<?php echo $_SESSION['DEM_EMP_ID']; ?>">
+                <input type="hidden" name="DEM_EMP_ID"  id="DEM_EMP_ID" value="<?php echo $_GET['DEM_EMP_ID']; ?>">
               </div>
               
 
@@ -66,8 +73,8 @@ $totaldeduction= $payroll_details->DPM_PROFESSIONAL_TAX + $payroll_details->DPM_
               </div>
 
               <div class="form-group col-md-3">
-                <label for="DPT_INVOICE_NO">Invoice / Bill No.<span style="color: #e22b0e;">*</span></label>
-                <input type="text" class="form-control" id='DPT_INVOICE_NO'  name='DPT_INVOICE_NO' placeholder="Enter Payment Invoice / Bill No." value="<?php if(isset($user_edit)){ echo $user_edit->DPT_INVOICE_NO; } ?>" required >  
+                <label for="DPT_INVOICE_NO">Payment Referance<span style="color: #e22b0e;">*</span></label>
+                <input type="text" class="form-control" id='DPT_INVOICE_NO'  name='DPT_INVOICE_NO' placeholder="Enter Payment Referance" value="<?php if(isset($user_edit)){ echo $user_edit->DPT_INVOICE_NO; } ?>" required >  
               </div>
 
               <div class="form-group col-md-12">   
@@ -82,6 +89,13 @@ $totaldeduction= $payroll_details->DPM_PROFESSIONAL_TAX + $payroll_details->DPM_
 
             </div>
           </form>
+          <?php 
+          }
+          else
+          {
+            echo "<h4 style='color:red;'>Unable to get Employee details..! </h4>";
+          }
+           ?>
         </div>
           <!-- /.box-body -->
       </div>

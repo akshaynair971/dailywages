@@ -17,14 +17,25 @@
           ?>
           <div class="row">
             <div colspan="{$colSpan}" align="center" id="date_heading" >
-              <font color="#3C8DBC" size="4px;">	<b>Payment Tracker </b></font>
+              <font color="#3C8DBC" size="4px;">	<b>Payroll Details </b></font>
               <span style="color: red; font-size: 18px; font-weight: 700;"></span>
               <br>
               <span class="msg"></span>
             </div>
           </div>
           <div class="box-tools">
+            <?php 
+            if($_SESSION['user_type']=="1"){ ?>
+            <a href="?folder=employees&file=admin_employee_attendance_view" class="btn btn-default btn-round"><i class="fa fa-share"></i> Back</a>
+          <?php 
+          } ?>
+            
+            <?php 
+              if($_GET['DEM_EMP_ID']){
+            ?>
             <input type="button" name="save_lock_attd" id="save_lock_attd" class="btn btn-primary" value="Save & Lock Payment Details" onclick="save_lock_payd();">
+            <?php 
+            } ?>
           </div>  	
         </div>
 
@@ -36,11 +47,25 @@
               <input type="hidden" name="DEM_EMP_ID"  id="DEM_EMP_ID" value="<?php echo $_SESSION['DEM_EMP_ID']; ?>">
             </div>            
             <div class="form-group col-md-12 table-responsive">
-              <table class="table table-bordered table-responsive">
+              <?php 
+              if($_GET['DEM_EMP_ID']){
+
+                $getuserdetails = $db->get_row("SELECT * FROM dw_employee_master WHERE  DEM_EMP_ID='".$_GET['DEM_EMP_ID']."' ");   
+
+               ?>
+               <h4 style="color: green;font-size: 18px;">Payroll Track of <?php echo strtoupper($getuserdetails->DEM_EMP_FIRST_NAME." ".$getuserdetails->DEM_EMP_MIDDLE_NAME." ".$getuserdetails->DEM_EMP_LAST_NAME); ?> ( <?php echo $getuserdetails->DEM_EMP_ID; ?> )</h4>
+             
+              <table class="table table-bordered table-striped table-responsive">
                 <thead>
                   <tr>
                     <th>MONTH & YEAR</th>
                     <th>Pay Status</th>
+                    <th>Payment Date</th>
+                    <th>Total Days Worked</th>
+                    <th>Total GW Hours</th>
+                    <th>Total Deduction</th>
+                    <th>Net Wages Paid</th>
+                    <th>Payment Refereance</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -49,16 +74,25 @@
                   $dyear = date("Y");
                   for($cnt=1;$cnt<=12; $cnt++){
                     $dyearmon = date('Y-m',strtotime($dyear."-".$cnt));
-                    $getpaydet = $db->get_row("SELECT * FROM dw_payment_tracker WHERE DPT_PAYMENT_YEAR='$dyear' AND DPT_PAYMENT_MONTH='$cnt'");
+                      
+                      $getpaydet = $db->get_row("SELECT * FROM dw_payment_tracker WHERE DPT_PAYMENT_YEAR='$dyear' AND DPT_PAYMENT_MONTH='$cnt' AND DEM_EMP_ID='$getuserdetails->DEM_EMP_ID'");
+                    
+                    
 
                   ?>
                     <tr>
                       <td><?php echo date('F - Y',strtotime($dyearmon)); ?></td>
                       <td><?php if($getpaydet){ echo "PAID"; }else{ echo "--"; } ?></td>
+                      <td><?php if($getpaydet->DPT_PAYMENT_DATE){ echo $getpaydet->DPT_PAYMENT_DATE; }else{ echo "--"; } ?></td>
+                      <td><?php if($getpaydet->DPT_TOTAL_DAYS_WORKED){ echo $getpaydet->DPT_TOTAL_DAYS_WORKED; }else{ echo "--"; } ?></td>
+                      <td><?php if($getpaydet->DPT_TOTAL_GW_HRS){ echo $getpaydet->DPT_TOTAL_GW_HRS; }else{ echo "--"; } ?></td>
+                      <td><?php if($getpaydet->TOTAL_DEDUCTION){ echo $getpaydet->TOTAL_DEDUCTION; }else{ echo "--"; } ?></td>
+                      <td><?php if($getpaydet->DPT_NET_WAGES_PAID){ echo $getpaydet->DPT_NET_WAGES_PAID; }else{ echo "--"; } ?></td>
+                      <td><?php if($getpaydet->DPT_INVOICE_NO){ echo $getpaydet->DPT_INVOICE_NO; }else{ echo "--"; } ?></td>
                       <td>
-                        <?php if($getpaydet->DPT_STATUS!='0'){
+                        <?php if($getpaydet->DPT_STATUS!='0' || $_SESSION['user_type']=="1"){
                           ?>
-                          <a class="btn btn-primary" href="?folder=employees&file=payment_tracker_add&paymonth=<?php echo $dyearmon; ?><?php if($getpaydet){ ?>&DPT_ID=<?php echo $getpaydet->DPT_ID; } ?>">ADD / UPDATE PAYMENT</a>
+                          <a class="btn btn-primary" href="?folder=employees&file=payment_tracker_add&DEM_EMP_ID=<?php echo $getuserdetails->DEM_EMP_ID; ?>&paymonth=<?php echo $dyearmon; ?><?php if($getpaydet){ ?>&DPT_ID=<?php echo $getpaydet->DPT_ID; } ?>">ADD / UPDATE</a>
                           <?php 
                           }
                            ?>
@@ -69,6 +103,10 @@
                   ?>
                 </tbody>
               </table>
+              <?php 
+              }else{
+                echo "<h4 style='color:red;'>Unable to get Employee details..! </h4>";
+              } ?>
             </div>
             
           </form><br>

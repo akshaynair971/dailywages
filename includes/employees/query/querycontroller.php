@@ -7,6 +7,7 @@ if (isset($_POST['save_user']))
 {  
   extract($_POST);
   $profile = $_FILES['profile']['name'];   
+  $sign = $_FILES['sign']['name'];   
 
   if (isset($_GET['edit_user']) && $_GET['edit_user']!='')
   {
@@ -17,7 +18,7 @@ if (isset($_POST['save_user']))
 
     $user_update_cred = $db->query("UPDATE dw_user_login SET DUL_USER_NAME='$DUL_USER_NAME', DUL_USER_PASSWORD='$DUL_USER_PASSWORD',DUL_USER_ROLE='$DUL_USER_ROLE',DUL_LAST_UPDATED_BY='".$_SESSION['ad_id']."' WHERE DEM_EMP_ID ='".$DEM_EMP_ID."'");
 
-    $update_payrole = $db->query("UPDATE dw_payroll_master SET DPM_LAST_UPDATED_BY='".$_SESSION['ad_id']."', DPM_RATE='$DPM_RATE',DPM_BASIC_SALARY='$DPM_BASIC_SALARY',DPM_HRA='$DPM_HRA',DPM_OTHER_ALLOWANCE='$DPM_OTHER_ALLOWANCE',DPM_SPECIAL_ALLOWANCE='$DPM_SPECIAL_ALLOWANCE',DPM_GROSS_WAGES_PAYABLE='$DPM_GROSS_WAGES_PAYABLE',DPM_PROFESSIONAL_TAX='$DPM_PROFESSIONAL_TAX',DPM_PF_EMPLOYEE='$DPM_PF_EMPLOYEE',DPM_PF_EMPLOYER='$DPM_PF_EMPLOYER',DPM_ESIC_EMPLOYEE='$DPM_ESIC_EMPLOYEE',DPM_ESIC_EMPLOYER='$DPM_ESIC_EMPLOYER',DPM_CALCULATED_AMOUNT='$DPM_CALCULATED_AMOUNT' WHERE DEM_EMP_ID ='".$DEM_EMP_ID."'");
+    $update_payrole = $db->query("UPDATE dw_payroll_master SET DPM_LAST_UPDATED_BY='".$_SESSION['ad_id']."', DPM_RATE='$DPM_RATE',DPM_BASIC_SALARY='$DPM_BASIC_SALARY',DPM_VALID_FROM='$DPM_VALID_FROM',DPM_VALID_TO='$DPM_VALID_TO',DPM_HRA='$DPM_HRA',DPM_OTHER_ALLOWANCE='$DPM_OTHER_ALLOWANCE',DPM_SPECIAL_ALLOWANCE='$DPM_SPECIAL_ALLOWANCE',DPM_GROSS_WAGES_PAYABLE='$DPM_GROSS_WAGES_PAYABLE',DPM_PROFESSIONAL_TAX='$DPM_PROFESSIONAL_TAX',DPM_PF_EMPLOYEE='$DPM_PF_EMPLOYEE',DPM_PF_EMPLOYER='$DPM_PF_EMPLOYER',DPM_ESIC_EMPLOYEE='$DPM_ESIC_EMPLOYEE',DPM_ESIC_EMPLOYER='$DPM_ESIC_EMPLOYER',DPM_CALCULATED_AMOUNT='$DPM_CALCULATED_AMOUNT' WHERE DEM_EMP_ID ='".$DEM_EMP_ID."'");
 
     if($user_update)
     {
@@ -44,7 +45,7 @@ if (isset($_POST['save_user']))
 
       $insert_user = $db->query("INSERT INTO dw_user_login VALUES('','$DUL_USER_NAME','$DUL_USER_PASSWORD','$DUL_USER_ROLE','$DEM_EMP_ID',NOW(),'".$_SESSION['ad_id']."','','".$_SESSION['ad_id']."','ACITVE')");
 
-      $insert_payrole = $db->query("INSERT INTO dw_payroll_master VALUES('',NOW(),'".$_SESSION['ad_id']."','','".$_SESSION['ad_id']."','$DPM_RATE','$DPM_BASIC_SALARY','$DPM_HRA','$DPM_OTHER_ALLOWANCE','$DPM_SPECIAL_ALLOWANCE','$DPM_GROSS_WAGES_PAYABLE','$DPM_PROFESSIONAL_TAX','$DPM_PF_EMPLOYEE','$DPM_PF_EMPLOYER','$DPM_ESIC_EMPLOYEE','$DPM_ESIC_EMPLOYER','$DPM_CALCULATED_AMOUNT','$DEM_EMP_ID','$user_id')");
+      $insert_payrole = $db->query("INSERT INTO dw_payroll_master VALUES('',NOW(),'".$_SESSION['ad_id']."','','".$_SESSION['ad_id']."','$DPM_RATE','$DPM_BASIC_SALARY','$DPM_VALID_FROM','$DPM_VALID_TO','$DPM_HRA','$DPM_OTHER_ALLOWANCE','$DPM_SPECIAL_ALLOWANCE','$DPM_GROSS_WAGES_PAYABLE','$DPM_PROFESSIONAL_TAX','$DPM_PF_EMPLOYEE','$DPM_PF_EMPLOYER','$DPM_ESIC_EMPLOYEE','$DPM_ESIC_EMPLOYER','$DPM_CALCULATED_AMOUNT','$DEM_EMP_ID','$user_id')");
 
       global  $succ;
       $succ= "New Employee Added Successfully...!";
@@ -244,13 +245,14 @@ if(isset($_POST['PAYMENT_SUBMIT']))
     if($update1)
     {
       global  $succ;
-      $succ= "Payment Details Updated Successfully..!";
+      echo "<script> alert('Payment Details Updated Successfully..!');</script>";
+      echo "<script> window.location='index.php?folder=employees&file=payment_tracker_view&DEM_EMP_ID=".$DEM_EMP_ID."';</script>";
       header("Refresh:1.0; url=index.php?folder=employees&file=payment_tracker_view");
     } 
 
   }
   else{
-    $insert1=$db->query("INSERT INTO dw_payment_tracker (DPT_CREATION_DATE,DPT_CREATED_BY,DPT_LAST_UPDATED_DATE,DPT_LAST_UPDATED_BY,DPT_PAYMENT_DATE,DPT_PAYMENT_MONTH,DPT_PAYMENT_YEAR,DPT_TOTAL_DAYS_WORKED,DPT_TOTAL_GW_HRS,TOTAL_DEDUCTION,DPT_NET_WAGES_PAID,DPT_INVOICE_NO,DPT_STATUS,DEM_EMP_ID) VALUES (NOW(),'".$_SESSION['ad_id']."',NOW(),'".$_SESSION['ad_id']."','$DPT_PAYMENT_DATE','$attdarray[1]','$attdarray[0]','$DPT_TOTAL_DAYS_WORKED','$DPT_TOTAL_GW_HRS','$TOTAL_DEDUCTION','$DPT_NET_WAGES_PAID','$DPT_INVOICE_NO','1','".$_SESSION['DEM_EMP_ID']."')");
+    $insert1=$db->query("INSERT INTO dw_payment_tracker (DPT_CREATION_DATE,DPT_CREATED_BY,DPT_LAST_UPDATED_DATE,DPT_LAST_UPDATED_BY,DPT_PAYMENT_DATE,DPT_PAYMENT_MONTH,DPT_PAYMENT_YEAR,DPT_TOTAL_DAYS_WORKED,DPT_TOTAL_GW_HRS,TOTAL_DEDUCTION,DPT_NET_WAGES_PAID,DPT_INVOICE_NO,DPT_STATUS,DEM_EMP_ID) VALUES (NOW(),'".$_SESSION['ad_id']."',NOW(),'".$_SESSION['ad_id']."','$DPT_PAYMENT_DATE','$attdarray[1]','$attdarray[0]','$DPT_TOTAL_DAYS_WORKED','$DPT_TOTAL_GW_HRS','$TOTAL_DEDUCTION','$DPT_NET_WAGES_PAID','$DPT_INVOICE_NO','1','".$DEM_EMP_ID."')");
     // $db->debug();
     if($insert1)
     {

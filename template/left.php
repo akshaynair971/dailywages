@@ -52,19 +52,22 @@
         </a>
         <ul class="treeview-menu">      
           <li><a href="?folder=employees&file=employee_list"><i class="fa fa-hand-o-right"></i> Employees List </a></li>
-          <li><a href="?folder=employees&file=admin_employee_attendance_view"><i class="fa fa-hand-o-right"></i>  Employees Attendance</a></li>     
+          <li><a href="?folder=employees&file=admin_employee_attendance_view"><i class="fa fa-hand-o-right"></i>  Employees Attendance & <br> Payment</a></li>     
+          <!-- <li><a href="?folder=employees&file=admin_employee_paytrack_view"><i class="fa fa-hand-o-right"></i>  Employees Payment Tracker</a></li>      -->
         </ul>
       </li> 
-      <li  class="treeview">
+      <li><a href="?folder=reports&file=emp_report_filter_by_date"><i class="fa fa-file"></i> Reports</a></li>
+
+      <!-- <li  class="treeview">
         <a href="#">
           <i class="fa fa-file" aria-hidden="true"></i> <span> Reports</span>
             <span class="pull-right-container"> <i class="fa fa-angle-left pull-right"></i></span>
         </a> 
         <ul class="treeview-menu">              
           <li><a href="?folder=reports&file=emp_report_filter_by_date"><i class="fa fa-hand-o-right"></i> Payment Report</a></li>              
-          <!-- <li><a href="#"><i class="fa fa-hand-o-right"></i> Report 1</a></li> -->              
+                     
         </ul>           
-      </li>
+      </li> -->
     <?php 
     }
      ?>
@@ -90,17 +93,18 @@
         </ul>
       </li>
       <li><a href="?folder=employees&file=employee_attendance_view"><i class="fa fa-hand-o-right"></i> Attendance </a></li>
-      <!-- <li><a href="?folder=employees&file=payment_tracker_view"><i class="fa fa-rupee"></i> Payment Tracker </a></li> -->
-      <li  class="treeview">
+      <li><a href="?folder=employees&file=payment_tracker_view&DEM_EMP_ID=<?php echo $_SESSION['DEM_EMP_ID']; ?>"><i class="fa fa-rupee"></i> Payment Tracker </a></li>
+      <li><a href="?folder=reports&file=emp_report_filter_by_date"><i class="fa fa-file"></i> Reports</a></li>
+      <!-- <li  class="treeview">
         <a href="#">
           <i class="fa fa-file" aria-hidden="true"></i> <span> Reports</span>
             <span class="pull-right-container"> <i class="fa fa-angle-left pull-right"></i></span>
         </a> 
         <ul class="treeview-menu">              
           <li><a href="?folder=reports&file=emp_report_filter_by_date"><i class="fa fa-hand-o-right"></i> Payment Report</a></li>              
-          <!-- <li><a href="#"><i class="fa fa-hand-o-right"></i> Report 1</a></li> -->              
+                       
         </ul>           
-      </li>
+      </li> -->
         
     <?php 
     }

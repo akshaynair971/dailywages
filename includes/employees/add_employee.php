@@ -25,7 +25,7 @@
           ?>
           <h3>Add Employee </h3>
           <div class="box-tools">
-            <a href="?folder=employees&file=employee_list" class="btn btn-default btn-round">Go Back</a>
+            <a href="?folder=employees&file=employee_list" class="btn btn-default btn-round"><i class="fa fa-share"></i> Back</a>
           </div>
         </div>
             <!-- /.box-header -->
@@ -122,14 +122,25 @@
 
               <div class="form-group col-md-6">
                 <label for="exampleInputEmail1">User Profile <span style="color: #e22b0e;">*</span></label>
-                <input type="file" onchange="readURL(this);" class="form-control" id='profile'  name='profile' placeholder="">      
+                <input type="file" onchange="readURL(this);" class="form-control" id='profile'  name='profile' placeholder=""> <br>
+                <label for="exampleInputEmail1">Profile Preview </label>
+                <img src="images/user_profile/<?php if($user_edit->DEM_EMP_ID!=''){ echo $user_edit->DEM_EMP_ID.'.jpg'; } ?>" class="img-rounded" id='profile_preview' onerror="this.src='images/user.jpg'"  name='profile_preview' placeholder="" style="border:2px solid #d2d6de; height: 150px; width: 140px;">       
               </div>
              
-              <div class="form-group col-md-6"> 
-                <label for="exampleInputEmail1">Profile Preview </label>
-                <img src="images/user_profile/<?php if($user_edit->DEM_EMP_ID!=''){ echo $user_edit->DEM_EMP_ID.'.jpg'; } ?>" class="img-rounded" id='profile_preview' onerror="this.src='images/user.jpg'"  name='profile_preview' placeholder="" style="border:2px solid #d2d6de; height: 150px; width: 140px;">   
+              <!-- <div class="form-group col-md-6"> 
+                  
+              </div> -->
+              <div class="form-group col-md-6">
+                <label for="exampleInputEmail1">User Sign <span style="color: #e22b0e;">*</span></label>
+                <input type="file" onchange="readURL(this);" class="form-control" id='sign'  name='sign' placeholder="">  <br>
+                <label for="exampleInputEmail1">Sign Preview </label>
+                <img src="images/user_sign/<?php if($user_edit->DEM_EMP_ID!=''){ echo $user_edit->DEM_EMP_ID.'.jpg'; } ?>" class="img-rounded" id='sign_preview' onerror="this.src='images/sign.jpg'"  name='sign_preview' placeholder="" style="border:2px solid #d2d6de; height: 150px; width: 140px;">    
               </div>
-
+             
+              <!-- <div class="form-group col-md-6"> 
+                   
+              </div>
+ -->
               <div class="form-group col-md-3">
                 <label for="DUL_USER_NAME">Login Username <span style="color: #e22b0e;">*</span></label>
                 <input type="text" class="form-control" id='DUL_USER_NAME' name='DUL_USER_NAME' placeholder="Enter Username" required="" value="<?php if(isset($user_edit)){ echo $user_edit->DUL_USER_NAME; } ?>" autocomplete="off">  
@@ -178,6 +189,16 @@
               <div class="form-group col-md-3">
                 <label for="DPM_RATE">Payrole Rate  </label>
                 <input type="text" class="form-control" id='DPM_RATE' name='DPM_RATE' placeholder="Enter Payrole Rate" value="<?php if(isset($user_edit)){ echo $user_edit->DPM_RATE; } ?>" onkeypress="return isNumberKey(event)" oninput="cal_payment();"> 
+              </div>
+
+              <div class="form-group col-md-3">
+                <label for="DPM_VALID_FROM">Valid From  </label>
+                <input type="text" class="form-control" id='DPM_VALID_FROM' name='DPM_VALID_FROM' placeholder="Enter Valid From Date" value="<?php if(isset($user_edit)){ echo $user_edit->DPM_VALID_FROM; } ?>" autocomplete="off"> 
+              </div>
+
+              <div class="form-group col-md-3">
+                <label for="DPM_VALID_TO">Valid To</label>
+                <input type="text" class="form-control" id='DPM_VALID_TO' name='DPM_VALID_TO' placeholder="Enter Valid To date" value="<?php if(isset($user_edit)){ echo $user_edit->DPM_VALID_TO; } ?>"  autocomplete="off"> 
               </div>
 
               <div class="form-group col-md-3">
@@ -349,7 +370,7 @@
  
 <script>
   $(function() {
-    $( "#DEM_START_DATE,#DEM_END_DATE" ).datepicker({
+    $( "#DEM_START_DATE,#DEM_END_DATE,#DPM_VALID_FROM,#DPM_VALID_TO" ).datepicker({
       dateFormat: 'yy-mm-dd',
       changeMonth: true,
       changeYear: true,

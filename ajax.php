@@ -293,7 +293,7 @@ if(isset($_POST['get_dates_attendance']))
 				            	<option value="PERSONAL LEAVE" <?php if($getattd->DEA_CURRENT_LOCATION=="PERSONAL LEAVE"){ echo "selected"; } ?>>PERSONAL LEAVE</option>
 				            	<option value="CASUAL LEAVE" <?php if($getattd->DEA_CURRENT_LOCATION=="CASUAL LEAVE"){ echo "selected"; } ?>>CASUAL LEAVE</option>
 				            	<option value="SICK LEAVE" <?php if($getattd->DEA_CURRENT_LOCATION=="SICK LEAVE"){ echo "selected"; } ?>>SICK LEAVE</option>
-				            	<option value="WEAKLY OFF" <?php if($getattd->DEA_CURRENT_LOCATION=="WEAKLY OFF"){ echo "selected"; } ?>>WEAKLY OFF</option>
+				            	<option value="WEEKLY OFF" <?php if($getattd->DEA_CURRENT_LOCATION=="WEEKLY OFF"){ echo "selected"; } ?>>WEEKLY OFF</option>
 				        	</select>
 				      	</div>
 				    </td>
@@ -550,7 +550,11 @@ if(isset($_POST['searchemp_for_attd']))
 				<td><?php echo $getempdetrw->DEM_EMP_ID; ?></td>
 				<td><?php echo $getempdetrw->DEM_EMP_FIRST_NAME." ".$getempdetrw->DEM_EMP_MIDDLE_NAME." ".$getempdetrw->DEM_EMP_LAST_NAME; ?></td>
 				<td><?php echo $getempdetrw->DEM_MOBILE_NUMBER; ?></td>
-				<td><a class="btn btn-primary" href="?folder=employees&file=admin_take_employee_attendance&DEM_EMP_ID=<?php echo $getempdetrw->DEM_EMP_ID; ?>">TAKE ATTENDANCE</a></td>
+				<td>
+					<a class="btn btn-primary" href="?folder=employees&file=admin_take_employee_attendance&DEM_EMP_ID=<?php echo $getempdetrw->DEM_EMP_ID; ?>">TAKE ATTENDANCE</a>
+
+					<a class="btn btn-success" href="?folder=employees&file=payment_tracker_view&DEM_EMP_ID=<?php echo $getempdetrw->DEM_EMP_ID; ?>">UPDATE PAYMENT</a>
+				</td>
 			</tr>	
 		<?php
 		}

@@ -79,10 +79,10 @@
                   <!-- <a title="Delete Employee" onclick="return confirm('Are You Sure To Delete This Record..!?')" href="?folder=employees&file=employee_list&delete_user=<?php echo $row->DEM_EMP_ID; ?>" class="btn btn-danger" style="margin: 2px;"><i class="fa fa-trash-o"></i></a> -->
 
                   <?php if ($row->DUL_ACTIVE_FLAG=="ACTIVE") { ?>
-                  <a title="Deactivate Employee" href="?folder=employees&file=employee_list&deactiveemp_id=<?php echo $row->DEM_EMP_ID; ?>" class="btn btn-warning" style="margin: 2px;"><i class="fa fa-eye-slash"></i></a>
+                  <!-- <a title="Deactivate Employee" href="?folder=employees&file=employee_list&deactiveemp_id=<?php echo $row->DEM_EMP_ID; ?>" class="btn btn-warning" style="margin: 2px;"><i class="fa fa-eye-slash"></i></a> -->
                   <?php } else
                   {  ?>
-                  <a title="Activate Employee" href="?folder=employees&file=employee_list&activeemp_id=<?php echo $row->DEM_EMP_ID; ?>" class="btn btn-success" style="margin: 2px;"><i class="fa fa-eye"></i></a>
+                  <!-- <a title="Activate Employee" href="?folder=employees&file=employee_list&activeemp_id=<?php echo $row->DEM_EMP_ID; ?>" class="btn btn-success" style="margin: 2px;"><i class="fa fa-eye"></i></a> -->
                   <?php 
                   }
                   ?>                        
