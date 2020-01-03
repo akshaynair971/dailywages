@@ -134,7 +134,7 @@
                 <label for="exampleInputEmail1">User Sign <span style="color: #e22b0e;">*</span></label>
                 <input type="file" onchange="readURL(this);" class="form-control" id='sign'  name='sign' placeholder="">  <br>
                 <label for="exampleInputEmail1">Sign Preview </label>
-                <img src="images/user_sign/<?php if($user_edit->DEM_EMP_ID!=''){ echo $user_edit->DEM_EMP_ID.'.jpg'; } ?>" class="img-rounded" id='sign_preview' onerror="this.src='images/sign.jpg'"  name='sign_preview' placeholder="" style="border:2px solid #d2d6de; height: 150px; width: 140px;">    
+                <img src="images/user_sign/<?php if($user_edit->DEM_EMP_ID!=''){ echo $user_edit->DEM_EMP_ID.'_SIGN.jpg'; } ?>" class="img-rounded" id='sign_preview' onerror="this.src='images/sign.jpg'"  name='sign_preview' placeholder="" style="border:2px solid #d2d6de; height: 150px; width: 140px;">    
               </div>
              
               <!-- <div class="form-group col-md-6"> 
@@ -192,13 +192,13 @@
               </div>
 
               <div class="form-group col-md-3">
-                <label for="DPM_VALID_FROM">Valid From  </label>
-                <input type="text" class="form-control" id='DPM_VALID_FROM' name='DPM_VALID_FROM' placeholder="Enter Valid From Date" value="<?php if(isset($user_edit)){ echo $user_edit->DPM_VALID_FROM; } ?>" autocomplete="off"> 
+                <label for="DPM_VALID_FROM">Valid From  <span style="color: #e22b0e;">*</span></label>
+                <input type="text" class="form-control" id='DPM_VALID_FROM' name='DPM_VALID_FROM' placeholder="Enter Valid From Date" value="<?php if(isset($user_edit)){ echo $user_edit->DPM_VALID_FROM; } ?>" autocomplete="off" required> 
               </div>
 
               <div class="form-group col-md-3">
-                <label for="DPM_VALID_TO">Valid To</label>
-                <input type="text" class="form-control" id='DPM_VALID_TO' name='DPM_VALID_TO' placeholder="Enter Valid To date" value="<?php if(isset($user_edit)){ echo $user_edit->DPM_VALID_TO; } ?>"  autocomplete="off"> 
+                <label for="DPM_VALID_TO">Valid To <span style="color: #e22b0e;">*</span></label>
+                <input type="text" class="form-control" id='DPM_VALID_TO' name='DPM_VALID_TO' placeholder="Enter Valid To date" value="<?php if(isset($user_edit)){ echo $user_edit->DPM_VALID_TO; } ?>"  autocomplete="off" required> 
               </div>
 
               <div class="form-group col-md-3">
@@ -233,22 +233,22 @@
 
               <div class="form-group col-md-3">
                 <label for="DPM_PF_EMPLOYEE">Employee PF </label>
-                <input type="text" class="form-control" id='DPM_PF_EMPLOYEE' name='DPM_PF_EMPLOYEE' placeholder="Enter Employee PF" value="<?php if(isset($user_edit)){ echo $user_edit->DPM_PF_EMPLOYEE; } ?>" onkeypress="return isNumberKey(event)" oninput="cal_payment();"> 
+                <input type="text" class="form-control" id='DPM_PF_EMPLOYEE' name='DPM_PF_EMPLOYEE' placeholder="Enter Employee PF" value="<?php if(isset($user_edit)){ echo $user_edit->DPM_PF_EMPLOYEE; } ?>" onkeypress="return isNumberKey(event)" oninput="cal_payment();" readonly> 
               </div>
 
               <div class="form-group col-md-3">
                 <label for="DPM_PF_EMPLOYER">Employer PF </label>
-                <input type="text" class="form-control" id='DPM_PF_EMPLOYER' name='DPM_PF_EMPLOYER' placeholder="Enter Employer PF" value="<?php if(isset($user_edit)){ echo $user_edit->DPM_PF_EMPLOYER; } ?>" onkeypress="return isNumberKey(event)" oninput="cal_payment();"> 
+                <input type="text" class="form-control" id='DPM_PF_EMPLOYER' name='DPM_PF_EMPLOYER' placeholder="Enter Employer PF" value="<?php if(isset($user_edit)){ echo $user_edit->DPM_PF_EMPLOYER; } ?>" onkeypress="return isNumberKey(event)" oninput="cal_payment();" readonly> 
               </div>
 
               <div class="form-group col-md-3">
                 <label for="DPM_ESIC_EMPLOYEE">Employee ESIC </label>
-                <input type="text" class="form-control" id='DPM_ESIC_EMPLOYEE' name='DPM_ESIC_EMPLOYEE' placeholder="Enter Employee ESIC" value="<?php if(isset($user_edit)){ echo $user_edit->DPM_ESIC_EMPLOYEE; } ?>"  onkeypress="return isNumberKey(event)" oninput="cal_payment();"> 
+                <input type="text" class="form-control" id='DPM_ESIC_EMPLOYEE' name='DPM_ESIC_EMPLOYEE' placeholder="Enter Employee ESIC" value="<?php if(isset($user_edit)){ echo $user_edit->DPM_ESIC_EMPLOYEE; } ?>"  onkeypress="return isNumberKey(event)" oninput="cal_payment();" readonly> 
               </div>
 
               <div class="form-group col-md-3">
                 <label for="DPM_ESIC_EMPLOYER">Employer ESIC </label>
-                <input type="text" class="form-control" id='DPM_ESIC_EMPLOYER' name='DPM_ESIC_EMPLOYER' placeholder="Enter Employer ESIC" value="<?php if(isset($user_edit)){ echo $user_edit->DPM_ESIC_EMPLOYER; } ?>"  onkeypress="return isNumberKey(event)" oninput="cal_payment();"> 
+                <input type="text" class="form-control" id='DPM_ESIC_EMPLOYER' name='DPM_ESIC_EMPLOYER' placeholder="Enter Employer ESIC" value="<?php if(isset($user_edit)){ echo $user_edit->DPM_ESIC_EMPLOYER; } ?>"  onkeypress="return isNumberKey(event)" oninput="cal_payment();" readonly> 
               </div>
               <div class="form-group col-md-3">
                 <label for="DPM_CALCULATED_AMOUNT">Calculated Amount Payable</label>
@@ -280,6 +280,16 @@
    
   var DPM_RATE= parseFloat($('#DPM_RATE').val()) || 0; 
   var DPM_BASIC_SALARY= parseFloat($('#DPM_BASIC_SALARY').val()) || 0;
+  // alert();
+  // if(DPM_BASIC_SALARY!=0){
+    var calpfs = Math.round((DPM_BASIC_SALARY * 12) / 100);
+    var esicemployee = Math.round((DPM_BASIC_SALARY * 0.75) / 100);
+    var esicemployer = Math.round((DPM_BASIC_SALARY * 3.25) / 100);
+    $('#DPM_PF_EMPLOYEE').val(calpfs);
+    $('#DPM_PF_EMPLOYER').val(calpfs);
+    $('#DPM_ESIC_EMPLOYEE').val(esicemployee);
+    $('#DPM_ESIC_EMPLOYER').val(esicemployer);
+  // }
   var DPM_HRA= parseFloat($('#DPM_HRA').val()) || 0;
   var DPM_OTHER_ALLOWANCE= parseFloat($('#DPM_OTHER_ALLOWANCE').val()) || 0;
   var DPM_SPECIAL_ALLOWANCE= parseFloat($('#DPM_SPECIAL_ALLOWANCE').val()) || 0;

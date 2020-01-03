@@ -27,15 +27,15 @@ if(isset($_GET['select_attd_month']))
       </div>
     </div>
     <div class="box-body table-responsive"> 
-      <table id="example1" class="table table-bordered table-striped example table-responsive" role="grid" aria-describedby="example1_info">
+      <table id="example1" class="table table-bordered table-striped example table-responsive" role="grid" aria-describedby="example1_info" style="border: 1px solid black !important;">
         <thead class="table-border">
         <tr>
-          <th class="text-center">Sr. No.</th>
-          <th class="text-center">EMP. ID.</th>
-          <th class="text-center">EMPLOYEE NAME</th>
-          <th class="text-center">Mobile No.</th>          
-          <th class="text-center">Total Days Worked</th>          
-          <th class="text-center">Action</th>          
+          <th style="border: 1px solid black !important;" class="text-center">Sr. No.</th>
+          <th style="border: 1px solid black !important;" class="text-center">EMP. ID.</th>
+          <th style="border: 1px solid black !important;" class="text-center">EMPLOYEE NAME</th>
+          <th style="border: 1px solid black !important;" class="text-center">Mobile No.</th>          
+          <th style="border: 1px solid black !important;" class="text-center">Total Days Worked</th>          
+          <th style="border: 1px solid black !important;" class="text-center">Action</th>          
         </tr>
         
         </thead>
@@ -53,14 +53,14 @@ if(isset($_GET['select_attd_month']))
             $i++;
          ?>
             <tr>
-              <td class="text-center"><?php echo $i;  ?></td>
-              <td class="text-center"><?php echo $rw->DEM_EMP_ID; ?></td>
-              <td class="text-center"><?php echo strtoupper($rw->DEM_EMP_NAME_PREFIX." ".$rw->DEM_EMP_FIRST_NAME." ".$rw->DEM_EMP_MIDDLE_NAME." ".$rw->DEM_EMP_LAST_NAME); ?></td>
-              <td  class="text-center">
+              <td style="border: 1px solid black !important;" class="text-center"><?php echo $i;  ?></td>
+              <td style="border: 1px solid black !important;" class="text-center"><?php echo $rw->DEM_EMP_ID; ?></td>
+              <td style="border: 1px solid black !important;" class="text-center"><?php echo strtoupper($rw->DEM_EMP_NAME_PREFIX." ".$rw->DEM_EMP_FIRST_NAME." ".$rw->DEM_EMP_MIDDLE_NAME." ".$rw->DEM_EMP_LAST_NAME); ?></td>
+              <td style="border: 1px solid black !important;"  class="text-center">
                   <?php echo $rw->DEM_MOBILE_NUMBER; ?>               
               </td>   
-              <td class="text-center"><?php echo $getempattd; ?></td>   
-              <td>
+              <td style="border: 1px solid black !important;" class="text-center"><?php echo $getempattd; ?></td>   
+              <td style="border: 1px solid black !important;">
                 <a href="?folder=reports&file=emp_attd_detailed_single_month&DEM_EMP_ID=<?php echo $rw->DEM_EMP_ID; ?>&select_attd_month=<?php echo $select_attd_month; ?>" class="btn btn-info"><i class="fa fa-file"></i> Detailed Report</a>
               </td>      
                    

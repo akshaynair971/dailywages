@@ -55,18 +55,18 @@
                ?>
                <h4 style="color: green;font-size: 18px;">Payroll Track of <?php echo strtoupper($getuserdetails->DEM_EMP_FIRST_NAME." ".$getuserdetails->DEM_EMP_MIDDLE_NAME." ".$getuserdetails->DEM_EMP_LAST_NAME); ?> ( <?php echo $getuserdetails->DEM_EMP_ID; ?> )</h4>
              
-              <table class="table table-bordered table-striped table-responsive">
+              <table class="table table-bordered table-striped table-responsive" style="border: 1px solid black !important;">
                 <thead>
                   <tr>
-                    <th>MONTH & YEAR</th>
-                    <th>Pay Status</th>
-                    <th>Payment Date</th>
-                    <th>Total Days Worked</th>
-                    <th>Total GW Hours</th>
-                    <th>Total Deduction</th>
-                    <th>Net Wages Paid</th>
-                    <th>Payment Refereance</th>
-                    <th>Action</th>
+                    <th style="border: 1px solid black !important;">MONTH & YEAR</th>
+                    <th style="border: 1px solid black !important;">Pay Status</th>
+                    <th style="border: 1px solid black !important;">Payment Date</th>
+                    <th style="border: 1px solid black !important;">Total Days Worked</th>
+                    <th style="border: 1px solid black !important;">Total GW Hours</th>
+                    <th style="border: 1px solid black !important;">Total Deduction</th>
+                    <th style="border: 1px solid black !important;">Net Wages Paid</th>
+                    <th style="border: 1px solid black !important;">Payment Refereance</th>
+                    <th style="border: 1px solid black !important;">Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -81,15 +81,15 @@
 
                   ?>
                     <tr>
-                      <td><?php echo date('F - Y',strtotime($dyearmon)); ?></td>
-                      <td><?php if($getpaydet){ echo "PAID"; }else{ echo "--"; } ?></td>
-                      <td><?php if($getpaydet->DPT_PAYMENT_DATE){ echo $getpaydet->DPT_PAYMENT_DATE; }else{ echo "--"; } ?></td>
-                      <td><?php if($getpaydet->DPT_TOTAL_DAYS_WORKED){ echo $getpaydet->DPT_TOTAL_DAYS_WORKED; }else{ echo "--"; } ?></td>
-                      <td><?php if($getpaydet->DPT_TOTAL_GW_HRS){ echo $getpaydet->DPT_TOTAL_GW_HRS; }else{ echo "--"; } ?></td>
-                      <td><?php if($getpaydet->TOTAL_DEDUCTION){ echo $getpaydet->TOTAL_DEDUCTION; }else{ echo "--"; } ?></td>
-                      <td><?php if($getpaydet->DPT_NET_WAGES_PAID){ echo $getpaydet->DPT_NET_WAGES_PAID; }else{ echo "--"; } ?></td>
-                      <td><?php if($getpaydet->DPT_INVOICE_NO){ echo $getpaydet->DPT_INVOICE_NO; }else{ echo "--"; } ?></td>
-                      <td>
+                      <td style="border: 1px solid black !important;"><?php echo date('F - Y',strtotime($dyearmon)); ?></td>
+                      <td style="border: 1px solid black !important;"><?php if($getpaydet){ echo "PAID"; }else{ echo "--"; } ?></td>
+                      <td style="border: 1px solid black !important;"><?php if($getpaydet->DPT_PAYMENT_DATE){ echo $getpaydet->DPT_PAYMENT_DATE; }else{ echo "--"; } ?></td>
+                      <td style="border: 1px solid black !important;"><?php if($getpaydet->DPT_TOTAL_DAYS_WORKED){ echo $getpaydet->DPT_TOTAL_DAYS_WORKED; }else{ echo "--"; } ?></td>
+                      <td style="border: 1px solid black !important;"><?php if($getpaydet->DPT_TOTAL_GW_HRS){ echo $getpaydet->DPT_TOTAL_GW_HRS; }else{ echo "--"; } ?></td>
+                      <td style="border: 1px solid black !important;"><?php if($getpaydet->TOTAL_DEDUCTION){ echo $getpaydet->TOTAL_DEDUCTION; }else{ echo "--"; } ?></td>
+                      <td style="border: 1px solid black !important;"><?php if($getpaydet->DPT_NET_WAGES_PAID){ echo $getpaydet->DPT_NET_WAGES_PAID; }else{ echo "--"; } ?></td>
+                      <td style="border: 1px solid black !important;"><?php if($getpaydet->DPT_INVOICE_NO){ echo $getpaydet->DPT_INVOICE_NO; }else{ echo "--"; } ?></td>
+                      <td style="border: 1px solid black !important;">
                         <?php if($getpaydet->DPT_STATUS!='0' || $_SESSION['user_type']=="1"){
                           ?>
                           <a class="btn btn-primary" href="?folder=employees&file=payment_tracker_add&DEM_EMP_ID=<?php echo $getuserdetails->DEM_EMP_ID; ?>&paymonth=<?php echo $dyearmon; ?><?php if($getpaydet){ ?>&DPT_ID=<?php echo $getpaydet->DPT_ID; } ?>">ADD / UPDATE</a>

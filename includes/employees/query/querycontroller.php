@@ -18,13 +18,88 @@ if (isset($_POST['save_user']))
 
     $user_update_cred = $db->query("UPDATE dw_user_login SET DUL_USER_NAME='$DUL_USER_NAME', DUL_USER_PASSWORD='$DUL_USER_PASSWORD',DUL_USER_ROLE='$DUL_USER_ROLE',DUL_LAST_UPDATED_BY='".$_SESSION['ad_id']."' WHERE DEM_EMP_ID ='".$DEM_EMP_ID."'");
 
+    $getpayroldet = $db->get_row("SELECT * FROM dw_payroll_master WHERE DPM_RATE='$DPM_RATE' AND DPM_BASIC_SALARY='$DPM_BASIC_SALARY' AND DPM_VALID_FROM='$DPM_VALID_FROM' AND DPM_VALID_TO='$DPM_VALID_TO' AND DPM_HRA='$DPM_HRA' AND DPM_OTHER_ALLOWANCE='$DPM_OTHER_ALLOWANCE' AND DPM_SPECIAL_ALLOWANCE='$DPM_SPECIAL_ALLOWANCE' AND DPM_GROSS_WAGES_PAYABLE='$DPM_GROSS_WAGES_PAYABLE' AND DPM_PROFESSIONAL_TAX='$DPM_PROFESSIONAL_TAX' AND DPM_PF_EMPLOYEE='$DPM_PF_EMPLOYEE' AND DPM_PF_EMPLOYER='$DPM_PF_EMPLOYER' AND DPM_ESIC_EMPLOYEE='$DPM_ESIC_EMPLOYEE' AND DPM_ESIC_EMPLOYER='$DPM_ESIC_EMPLOYER' AND DPM_CALCULATED_AMOUNT='$DPM_CALCULATED_AMOUNT' AND DEM_EMP_ID='".$DEM_EMP_ID."'");    
+    
+    if($getpayroldet){
+
+    }else{
+      $insert_payrole_history = $db->query("INSERT INTO dw_payroll_history VALUES('',NOW(),'".$_SESSION['ad_id']."',NOW(),'".$_SESSION['ad_id']."','$DPM_RATE','$DPM_VALID_FROM','$DPM_VALID_TO','$DPM_BASIC_SALARY','$DPM_HRA','$DPM_OTHER_ALLOWANCE','$DPM_SPECIAL_ALLOWANCE','$DPM_GROSS_WAGES_PAYABLE','$DPM_PROFESSIONAL_TAX','$DPM_PF_EMPLOYEE','$DPM_PF_EMPLOYER','$DPM_ESIC_EMPLOYEE','$DPM_ESIC_EMPLOYER','$DPM_CALCULATED_AMOUNT','$DEM_EMP_ID','$user_id')");
+    
+    }
+
     $update_payrole = $db->query("UPDATE dw_payroll_master SET DPM_LAST_UPDATED_BY='".$_SESSION['ad_id']."', DPM_RATE='$DPM_RATE',DPM_BASIC_SALARY='$DPM_BASIC_SALARY',DPM_VALID_FROM='$DPM_VALID_FROM',DPM_VALID_TO='$DPM_VALID_TO',DPM_HRA='$DPM_HRA',DPM_OTHER_ALLOWANCE='$DPM_OTHER_ALLOWANCE',DPM_SPECIAL_ALLOWANCE='$DPM_SPECIAL_ALLOWANCE',DPM_GROSS_WAGES_PAYABLE='$DPM_GROSS_WAGES_PAYABLE',DPM_PROFESSIONAL_TAX='$DPM_PROFESSIONAL_TAX',DPM_PF_EMPLOYEE='$DPM_PF_EMPLOYEE',DPM_PF_EMPLOYER='$DPM_PF_EMPLOYER',DPM_ESIC_EMPLOYEE='$DPM_ESIC_EMPLOYEE',DPM_ESIC_EMPLOYER='$DPM_ESIC_EMPLOYER',DPM_CALCULATED_AMOUNT='$DPM_CALCULATED_AMOUNT' WHERE DEM_EMP_ID ='".$DEM_EMP_ID."'");
+
 
     if($user_update)
     {
+      include_once('./private/class.upload.php');
+      $id = $DEM_EMP_ID;
+      if($profile!='')
+      {
+        // Uploading the profile picture
+        $path = "./images/user_profile/";
+        $user_profile=$id.".jpg";
+        $file="./images/user_profile/".$user_profile;
+        if(file_exists($file))
+        {
+          unlink($file);
+        }
+        $pro = new Upload($_FILES['profile']);
+
+        if ($pro->uploaded) 
+        {
+          $pro->file_new_name_body = $id;      
+          $pro->image_convert = 'jpg';
+          $pro->Process($path);
+          if ($pro->processed)
+          {
+            
+          } 
+          else 
+          {
+            echo 'Error1: ' . $pro->error;
+          }
+        } 
+        else 
+        {
+          echo 'Error1: ' . $pro->error;  
+        }
+      }
+
+      if($sign!='')
+      {
+        // Uploading the profile picture
+        $path = "./images/user_sign/";
+        $user_sign=$id."_SIGN.jpg";
+        $file="./images/user_sign/".$user_sign;
+        if(file_exists($file))
+        {
+          unlink($file);
+        }
+        $pro = new Upload($_FILES['sign']);
+
+        if ($pro->uploaded) 
+        {
+          $pro->file_new_name_body = $id."_SIGN";      
+          $pro->image_convert = 'jpg';
+          $pro->Process($path);
+          if ($pro->processed)
+          {
+            
+          } 
+          else 
+          {
+            echo 'Error1: ' . $pro->error;
+          }
+        } 
+        else 
+        {
+          echo 'Error1: ' . $pro->error;  
+        }
+      }
       global  $succ;
-      $succ= "Employee Details Update Successfully...!";
-      header("Refresh:1.0; url=index.php?folder=employees&file=employee_list");
+      // $succ= "Employee Details Update Successfully...!";
+      // header("Refresh:1.0; url=index.php?folder=employees&file=employee_list");
     }
     else
     {
@@ -43,10 +118,80 @@ if (isset($_POST['save_user']))
       $update_empid = $db->query("UPDATE dw_employee_master SET DEM_EMP_ID='$DEM_EMP_ID' WHERE DEM_ID='$last_id' ");
       $user_id = $db->insert_id;
 
-      $insert_user = $db->query("INSERT INTO dw_user_login VALUES('','$DUL_USER_NAME','$DUL_USER_PASSWORD','$DUL_USER_ROLE','$DEM_EMP_ID',NOW(),'".$_SESSION['ad_id']."','','".$_SESSION['ad_id']."','ACITVE')");
+      $insert_user = $db->query("INSERT INTO dw_user_login VALUES('','$DUL_USER_NAME','$DUL_USER_PASSWORD','$DUL_USER_ROLE','$DEM_EMP_ID',NOW(),'".$_SESSION['ad_id']."',NOW(),'".$_SESSION['ad_id']."','ACITVE')");
 
-      $insert_payrole = $db->query("INSERT INTO dw_payroll_master VALUES('',NOW(),'".$_SESSION['ad_id']."','','".$_SESSION['ad_id']."','$DPM_RATE','$DPM_BASIC_SALARY','$DPM_VALID_FROM','$DPM_VALID_TO','$DPM_HRA','$DPM_OTHER_ALLOWANCE','$DPM_SPECIAL_ALLOWANCE','$DPM_GROSS_WAGES_PAYABLE','$DPM_PROFESSIONAL_TAX','$DPM_PF_EMPLOYEE','$DPM_PF_EMPLOYER','$DPM_ESIC_EMPLOYEE','$DPM_ESIC_EMPLOYER','$DPM_CALCULATED_AMOUNT','$DEM_EMP_ID','$user_id')");
+      $insert_payrole = $db->query("INSERT INTO dw_payroll_master VALUES('',NOW(),'".$_SESSION['ad_id']."',NOW(),'".$_SESSION['ad_id']."','$DPM_RATE','$DPM_VALID_FROM','$DPM_VALID_TO','$DPM_BASIC_SALARY','$DPM_HRA','$DPM_OTHER_ALLOWANCE','$DPM_SPECIAL_ALLOWANCE','$DPM_GROSS_WAGES_PAYABLE','$DPM_PROFESSIONAL_TAX','$DPM_PF_EMPLOYEE','$DPM_PF_EMPLOYER','$DPM_ESIC_EMPLOYEE','$DPM_ESIC_EMPLOYER','$DPM_CALCULATED_AMOUNT','$DEM_EMP_ID','$user_id')");
 
+      $insert_payrole_history = $db->query("INSERT INTO dw_payroll_history VALUES('',NOW(),'".$_SESSION['ad_id']."',NOW(),'".$_SESSION['ad_id']."','$DPM_RATE','$DPM_VALID_FROM','$DPM_VALID_TO','$DPM_BASIC_SALARY','$DPM_HRA','$DPM_OTHER_ALLOWANCE','$DPM_SPECIAL_ALLOWANCE','$DPM_GROSS_WAGES_PAYABLE','$DPM_PROFESSIONAL_TAX','$DPM_PF_EMPLOYEE','$DPM_PF_EMPLOYER','$DPM_ESIC_EMPLOYEE','$DPM_ESIC_EMPLOYER','$DPM_CALCULATED_AMOUNT','$DEM_EMP_ID','$user_id')");
+
+      
+
+
+      include_once('./private/class.upload.php');
+      $id = $DEM_EMP_ID;
+      if($profile!='')
+      {
+        // Uploading the profile picture
+        $path = "./images/user_profile/";
+        $user_profile=$id.".jpg";
+        $file="./images/user_profile/".$user_profile;
+        if(file_exists($file))
+        {
+          unlink($file);
+        }
+        $pro = new Upload($_FILES['profile']);
+
+        if ($pro->uploaded) 
+        {
+          $pro->file_new_name_body = $id;      
+          $pro->image_convert = 'jpg';
+          $pro->Process($path);
+          if ($pro->processed)
+          {
+            
+          } 
+          else 
+          {
+            echo 'Error1: ' . $pro->error;
+          }
+        } 
+        else 
+        {
+          echo 'Error1: ' . $pro->error;  
+        }
+      }
+
+      if($sign!='')
+      {
+        // Uploading the profile picture
+        $path = "./images/user_sign/";
+        $user_sign=$id."_SIGN.jpg";
+        $file="./images/user_sign/".$user_sign;
+        if(file_exists($file))
+        {
+          unlink($file);
+        }
+        $pro = new Upload($_FILES['sign']);
+
+        if ($pro->uploaded) 
+        {
+          $pro->file_new_name_body = $id;      
+          $pro->image_convert = 'jpg';
+          $pro->Process($path);
+          if ($pro->processed)
+          {
+            
+          } 
+          else 
+          {
+            echo 'Error1: ' . $pro->error;
+          }
+        } 
+        else 
+        {
+          echo 'Error1: ' . $pro->error;  
+        }
+      }
       global  $succ;
       $succ= "New Employee Added Successfully...!";
       header("Refresh:1.0; url=index.php?folder=employees&file=employee_list");
@@ -58,39 +203,7 @@ if (isset($_POST['save_user']))
     }
   }
 
-  include_once('./private/class.upload.php');
-  $id = $DEM_EMP_ID;
-  if($profile!='')
-  {
-    // Uploading the profile picture
-    $path = "./images/user_profile/";
-    $user_profile=$id.".jpg";
-    $file="./images/user_profile/".$user_profile;
-    if(file_exists($file))
-    {
-      unlink($file);
-    }
-    $pro = new Upload($_FILES['profile']);
-
-    if ($pro->uploaded) 
-    {
-      $pro->file_new_name_body = $id;      
-      $pro->image_convert = 'jpg';
-      $pro->Process($path);
-      if ($pro->processed)
-      {
-        
-      } 
-      else 
-      {
-        echo 'Error1: ' . $pro->error;
-      }
-    } 
-    else 
-    {
-      echo 'Error1: ' . $pro->error;  
-    }
-  }
+  
 }
 
 
@@ -104,11 +217,17 @@ if (isset($_GET['delete_user']))
     
     if ($delete) 
     {
-      $file="./images/user_profile/".$delete->DEM_EMP_ID;
+      $file="./images/user_profile/".$delete->DEM_EMP_ID.'.jpg';
+      $file1="./images/user_sign/".$delete->DEM_EMP_ID.'_SIGN.jpg';
       if(file_exists($file))
-    {
-      unlink($file);
-    }
+      {
+        unlink($file);
+      }
+
+      if(file_exists($file1))
+      {
+        unlink($file1);
+      }
       global  $succ;
       $succ= "Deleted Successfully...!";
       header("Refresh:1.0; url=index.php?folder=employees&file=employee_list");

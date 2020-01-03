@@ -15,10 +15,12 @@ if(isset($_POST['view_emp_details']))
 		<tr>
 			<td colspan="4">
 				<div class="row">
-					<div class="col-md-2">
+					<div class="col-md-5">
 						<img src="images/user_profile/<?php if($get_emp_details->DEM_EMP_ID!=''){ echo $get_emp_details->DEM_EMP_ID.'.jpg'; } ?>" class="img-rounded" onerror="this.src='images/user.jpg'" style="border:2px solid #d2d6de; height: 100px; width: 80px;">
+						
+						<img src="images/user_sign/<?php if($get_emp_details->DEM_EMP_ID!=''){ echo $get_emp_details->DEM_EMP_ID.'_SIGN.jpg'; } ?>" class="img-rounded" onerror="this.src='images/sign.jpg'" style="border:2px solid #d2d6de; height: 80px; width: 100px;">
 					</div>
-					<div class="col-md-10">			
+					<div class="col-md-7">			
 						<b>Name: <?php echo strtoupper($get_emp_details->DEM_EMP_NAME_PREFIX." ".$get_emp_details->DEM_EMP_FIRST_NAME." ".$get_emp_details->DEM_EMP_MIDDLE_NAME." ".$get_emp_details->DEM_EMP_LAST_NAME); ?></b><br>
 						<b>EMP ID.: <?php echo $get_emp_details->DEM_EMP_ID; ?></b>
 					</div>
@@ -239,16 +241,17 @@ if(isset($_POST['get_dates_attendance']))
 {
 	extract($_POST);
 	?>
-	<table class="table table-responsive table-bordered">
-		<thead>
-			<tr>
-				<th>Attd. Date</th>
-				<th>Attd. Day</th>
-				<th>In Time</th>
-				<th>Out Time</th>
-				<th>Location</th>
-				<th>Remark</th>
-				<th>Sign</th>
+
+	<table class="table table-responsive table-bordered" style="border: 1px solid black !important;">
+		<thead style="border: 1px solid black !important;">
+			<tr style="border: 1px solid black !important;">
+				<th style="width: 12%;border: 1px solid black !important;">Attd. Date</th>
+				<th style="width: 10%;border: 1px solid black !important;">Attd. Day</th>
+				<th style="width: 10% !important;border: 1px solid black !important;">In Time</th>
+				<th style="width: 10% !important;border: 1px solid black !important;">Out Time</th>
+				<th style="border: 1px solid black !important;">Location</th>
+				<th style="border: 1px solid black !important;">Remark</th>
+				<th style="border: 1px solid black !important;">Sign</th>
 			</tr>
 		</thead>
 		<tbody>	
@@ -268,23 +271,23 @@ if(isset($_POST['get_dates_attendance']))
 					}
 				}	
 			?>
-				<tr style="<?php if($getattd->DEA_STATUS=="0"){ echo 'background-color: #122630; color: white;'; } ?><?php if($getattd->DEA_STATUS=="1"){ echo 'background-color: #b45935; color: white;'; } ?>">
+				<tr style="<?php if($getattd->DEA_STATUS=="0"){ echo 'background-color: #122630; color: white;'; } ?><?php if($getattd->DEA_STATUS=="1"){ echo 'background-color: #b45935; color: white;'; } ?>border: 1px solid black !important;">
 					<td style="<?php if($getattd){ echo "background-color: green;"; }else{ echo "background-color: #2a586f;";  } ?>color: white; "> 
 						<center><span style="font-weight: 700;"><?php echo $convdate; ?></span> </center>			
 					</td>
-					<td><span style="<?php if($convday==="Sun"){ echo "color: red;"; } ?>"><?php echo $convday; ?></span></td>
-					<td>
+					<td style="border: 1px solid black !important;"><span style="<?php if($convday==="Sun"){ echo "color: red;"; } ?>"><?php echo $convday; ?></span></td>
+					<td style="border: 1px solid black !important;">
 						<div class="form-group">
-				            <input type="text" name="DEA_IN_TIME[]" id="DEA_dIN_TIME" class="form-control timepicker" value="<?php if($getattd->DEA_IN_TIME!=''){ echo $getattd->DEA_IN_TIME; } ?>" <?php if((isset($getattd->DEA_STATUS)) && ($getattd->DEA_STATUS==0) && ($_SESSION['user_type']!='1')){ echo "disabled"; } ?>>
+				            <input type="text" name="DEA_IN_TIME[]" id="DEA_dIN_TIME" class="form-control timepicker" value="<?php if($getattd->DEA_IN_TIME!=''){ echo $getattd->DEA_IN_TIME; } ?>" <?php if((isset($getattd->DEA_STATUS)) && ($getattd->DEA_STATUS==0) && ($_SESSION['user_type']!='1')){ echo "disabled"; } ?> >
 				      	</div>
 					</td>
-					<td>
+					<td style="border: 1px solid black !important;">
 						<div class="form-group">				        
-				            <input type="text" name="DEA_OUT_TIME[]" id="DEA_OUT_TIME" class="form-control timepicker" value="<?php if($getattd->DEA_OUT_TIME!=''){ echo $getattd->DEA_OUT_TIME; } ?>" <?php if((isset($getattd->DEA_STATUS)) && ($getattd->DEA_STATUS==0) && ($_SESSION['user_type']!='1')){ echo "disabled"; } ?>>
+				            <input type="text" name="DEA_OUT_TIME[]" id="DEA_OUT_TIME" class="form-control timepicker" value="<?php if($getattd->DEA_OUT_TIME!=''){ echo $getattd->DEA_OUT_TIME; } ?>" <?php if((isset($getattd->DEA_STATUS)) && ($getattd->DEA_STATUS==0) && ($_SESSION['user_type']!='1')){ echo "disabled"; } ?> >
 				            
 				      	</div>
 					</td>
-					<td>
+					<td style="border: 1px solid black !important;">
 						<div class="form-group">
 				            <select name="DEA_CURRENT_LOCATION[]" id="DEA_CURRENT_LOCATION" class="form-control" <?php if((isset($getattd->DEA_STATUS)) && ($getattd->DEA_STATUS==0) && ($_SESSION['user_type']!='1')){ echo "disabled"; } ?>>
 				            	<option value="">Select Location</option>
@@ -297,14 +300,14 @@ if(isset($_POST['get_dates_attendance']))
 				        	</select>
 				      	</div>
 				    </td>
-					<td>
+					<td style="border: 1px solid black !important;">
 						<div class="form-group">
 				            <input type="text" name="DEA_REMARK[]" id="DEA_REMARK" class="form-control" value="<?php if($getattd->DEA_REMARK!=''){ echo $getattd->DEA_REMARK; } ?>" <?php if((isset($getattd->DEA_STATUS)) && ($getattd->DEA_STATUS==0) && ($_SESSION['user_type']!='1')){ echo "disabled"; } ?>>
 				      	</div>
 					</td>
-					<td>
+					<td style="border: 1px solid black !important;">
 						<div class="form-group">
-				            <input type="text" name="DEA_SIGN[]" id="DEA_SIGN" class="form-control" value="<?php if($getattd->DEA_SIGN!=''){ echo $getattd->DEA_SIGN; } ?>" <?php if((isset($getattd->DEA_STATUS)) && ($getattd->DEA_STATUS==0) && ($_SESSION['user_type']!='1')){ echo "disabled"; } ?>>
+				            <img style="width:100px;width:70px;" src="images/user_sign/<?php echo $DEM_EMP_ID."_SIGN.jpg"; ?> " onerror="this.src='images/sign.jpg'">
 				            <input type="hidden" name="attd_date[]" id="attd_date" class="form-control" value="<?php echo $convdate; ?>" <?php if((isset($getattd->DEA_STATUS)) && ($getattd->DEA_STATUS==0) && ($_SESSION['user_type']!='1')){ echo "disabled"; } ?>>
 				            <input type="hidden" name="DEA_ID[]" id="DEA_ID" class="form-control" value="<?php echo $getattd->DEA_ID; ?>" <?php if((isset($getattd->DEA_STATUS)) && ($getattd->DEA_STATUS==0) && ($_SESSION['user_type']!='1')){ echo "disabled"; } ?> >
 				      	</div>

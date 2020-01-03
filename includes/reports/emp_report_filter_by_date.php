@@ -17,15 +17,26 @@
   <div class="box box-primary">
     <div class="box-header">
       <h3 class="box-title"><label><i class="fa fa-book"></i> Select Month to Generate Payment Report </label></h3>
+      <div class="box-tools">
+        <br><br>
+        <form method="POST" action="?folder=reports&file=emp_report_single_month">
+          <input type="hidden" name="curr_month_date" value="<?php echo date('Y-m'); ?>">
+          <input type="submit" name="report_sub_sin_cur_mon" value="Current Month (<?php echo date('F Y'); ?>)" class="btn btn-success btn-round">
+        </form>
+        
+      </div>
+    </div>
+    <div class="box-body">
       <form method="POST" action="?folder=reports&file=emp_report_single_month"><br>
         <div class="row">
           <div class="form-group col-md-12"> 
          	  <label>Select Date</label>
-           	<input type="text" name="select_pay_month" id="select_pay_month" class="form-control" placeholder="Select Month" autocomplete="off" >
+           	<input type="text" name="select_pay_month" id="select_pay_month" class="form-control" placeholder="Select Month" autocomplete="off" required>
           </div>
 
-          <div class="col-md-4">
+          <div class="col-md-12">
             <input type="submit" name="report_sub_sin_mon" value="Get Report" class="btn btn-primary btn-round">
+            
           </div>
         </div>
       </form>
@@ -38,16 +49,27 @@
   <div class="box box-primary">
     <div class="box-header">
       <h3 class="box-title"><label><i class="fa fa-book"></i> Select Month to Generate Attendance Report </label></h3>
+      <div class="box-tools">
+        <br><br>
+        <form method="POST" action="?folder=reports&file=emp_report_single_month">
+          <input type="hidden" name="curr_month_attd_date" value="<?php echo date('Y-m'); ?>">
+          <input type="submit" name="rep_attd_sub_sin_cur_mon" value="Current Month (<?php echo date('F Y'); ?>)" class="btn btn-success btn-round">
+        </form>
+        
+      </div>
+    </div>
+    <div class="box-body">
       <form method="POST"><br>
         <div class="row">
           <div class="form-group col-md-12"> 
             <label>Select Date</label>
-            <input type="text" name="select_attd_month" id="select_attd_month" class="form-control" placeholder="Select Month" autocomplete="off">
+            <input type="text" name="select_attd_month" id="select_attd_month" class="form-control" placeholder="Select Month" autocomplete="off" required>
           </div>
 
-          <div class="col-md-4">
+          <div class="col-md-12">
             <input type="hidden" name="att_type" value="single">
             <input type="submit" name="rep_attd_sub_sin_mon" value="Get Attendance Report" class="btn btn-primary btn-round">
+            
           </div>
         </div>
       </form>

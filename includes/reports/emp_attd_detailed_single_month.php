@@ -22,20 +22,21 @@ if(isset($_GET['select_attd_month']))
     <div class="box-header">
       <h3 class="box-title"><b>Attendance Report of Month <?php echo $fulldate; ?></b></h3>
       <div class="box-tools">
+        <a href="index.php?folder=reports&file=emp_attd_single_month_list&DEM_EMP_ID=<?php echo $DEM_EMP_ID; ?>&expxlselect_attd_month=<?php echo $select_attd_month; ?>" class="btn btn-warning btn-round"><i class="fa fa-file"></i> Excel</a>        
         <a href="index.php?folder=reports&file=emp_attd_single_month_list&DEM_EMP_ID=<?php echo $DEM_EMP_ID; ?>&select_attd_month=<?php echo $select_attd_month; ?>" class="btn btn-default btn-round"><i class="fa fa-share"></i> Back</a>        
       </div>
     </div>
     <div class="box-body table-responsive"> 
-      <table id="example" class="table table-bordered table-striped example table-responsive" role="grid" aria-describedby="example1_info">
+      <table id="example" class="table table-bordered table-striped example table-responsive" role="grid" aria-describedby="example1_info" style="border: 1px solid black !important;">
         <thead>
           <tr>
-            <th>Attendance Date</th>
-            <th>Attendance Day</th>
-            <th>In Time</th>
-            <th>Out Time</th>
-            <th>Location</th>
-            <th>Remark</th>
-            <th>Sign</th>
+            <th style="border: 1px solid black !important;">Attendance Date</th>
+            <th style="border: 1px solid black !important;">Attendance Day</th>
+            <th style="border: 1px solid black !important;">In Time</th>
+            <th style="border: 1px solid black !important;">Out Time</th>
+            <th style="border: 1px solid black !important;">Location</th>
+            <th style="border: 1px solid black !important;">Remark</th>
+            <th style="border: 1px solid black !important;">Sign</th>
           </tr>
         </thead>
         <tbody>
@@ -56,19 +57,19 @@ if(isset($_GET['select_attd_month']))
             } 
           ?>
             <tr>
-              <td> 
+              <td style="border: 1px solid black !important;"> 
                 <?php echo $convdate; ?>
               </td>
-              <td><?php echo $convday; ?></td>
-              <td><?php if($getattd->DEA_IN_TIME!=''){ echo $getattd->DEA_IN_TIME; }else{ echo "--"; } ?>
+              <td style="border: 1px solid black !important;"><?php echo $convday; ?></td>
+              <td style="border: 1px solid black !important;"><?php if($getattd->DEA_IN_TIME!=''){ echo $getattd->DEA_IN_TIME; }else{ echo "--"; } ?>
               </td>
-              <td><?php if($getattd->DEA_OUT_TIME!=''){ echo $getattd->DEA_OUT_TIME; }else{ echo "--"; } ?>
+              <td style="border: 1px solid black !important;"><?php if($getattd->DEA_OUT_TIME!=''){ echo $getattd->DEA_OUT_TIME; }else{ echo "--"; } ?>
               </td>
-              <td><?php if($getattd->DEA_CURRENT_LOCATION!=''){ echo $getattd->DEA_CURRENT_LOCATION; }else{ echo "--"; } ?>
+              <td style="border: 1px solid black !important;"><?php if($getattd->DEA_CURRENT_LOCATION!=''){ echo $getattd->DEA_CURRENT_LOCATION; }else{ echo "--"; } ?>
               </td>
-              <td><?php if($getattd->DEA_REMARK!=''){ echo $getattd->DEA_REMARK; }else{ echo "--"; } ?>
+              <td style="border: 1px solid black !important;"><?php if($getattd->DEA_REMARK!=''){ echo $getattd->DEA_REMARK; }else{ echo "--"; } ?>
               </td>
-              <td><?php if($getattd->DEA_SIGN!=''){ echo $getattd->DEA_SIGN; }else{ echo "--"; } ?>
+              <td style="border: 1px solid black !important;"><span style="display: none;"> <?php echo base64_encode("images/user_sign/".$DEM_EMP_ID."_SIGN.jpg"); ?></span><img style="width:100px;width:70px;" src="images/user_sign/<?php echo $DEM_EMP_ID."_SIGN.jpg"; ?> " onerror="this.src='images/sign.jpg'">
               </td>         
             </tr>
           <?php
@@ -91,9 +92,9 @@ $(document).ready(function() {
             'colvis',
             // { extend: 'print', footer: true, title: '<?php if (isset($title)){echo $title->ins_name;}   ?>' ,messageTop: 'Attendance Report of Month <?php echo $fulldate;?>' },
             // { extend: 'copyHtml5', footer: true },
-            { extend: 'excelHtml5', footer: true, title: '<?php if (isset($title)){echo $title->ins_name;}   ?>' ,messageTop: 'Attendance Report of Month <?php echo $fulldate;?>' },
+            // { extend: 'excelHtml5', footer: true, title: '<?php if (isset($title)){echo $title->ins_name;}   ?>' ,messageTop: 'Attendance Report of Month <?php echo $fulldate;?>' },
             // { extend: 'csvHtml5', footer: true },
-            { extend: 'pdfHtml5', footer: true, title: '<?php if (isset($title)){echo $title->ins_name;} ?>' , messageTop: 'Attendance Report of Month <?php echo $fulldate;?>', orientation: 'landscape' }
+            // { extend: 'pdfHtml5', footer: true, title: '<?php if (isset($title)){echo $title->ins_name;} ?>' , messageTop: 'Attendance Report of Month <?php echo $fulldate;?>', orientation: 'landscape' }
         ]
     } );
 

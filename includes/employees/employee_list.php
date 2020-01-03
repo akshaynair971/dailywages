@@ -29,18 +29,18 @@
         </div>
         <!-- /.box-header -->
         <div class="box-body table-responsive">
-          <table id="example1" class="table table-bordered table-striped">
+          <table id="example1" class="table table-bordered table-striped" style="border: 1px solid black !important;">
             <thead>
               <tr>
-                <th class="text-center">Sr.No</th>
-                <th class="text-center">Profile</th> 
-                <th class="text-center">EMP. ID.</th>
-                <th class="text-center">Name</th>
-                <th class="text-center">Mobile No.</th>
-                <th class="text-center">E-Mail</th>
-                <!-- <th class="text-center">Login Detail</th> -->
-                <th class="text-center">Status</th> 
-                <th style="width: 15%;" class="text-center">Action</th>
+                <th style="border: 1px solid black !important;" class="text-center">Sr.No</th>
+                <th style="border: 1px solid black !important;" class="text-center">Profile</th> 
+                <th style="border: 1px solid black !important;" class="text-center">EMP. ID.</th>
+                <th style="border: 1px solid black !important;" class="text-center">Name</th>
+                <th style="border: 1px solid black !important;" class="text-center">Mobile No.</th>
+                <th style="border: 1px solid black !important;" class="text-center">E-Mail</th>
+                <!-- <th style="border: 1px solid black !important;" class="text-center">Login Detail</th> -->
+                <th style="border: 1px solid black !important;" class="text-center">Status</th> 
+                <th style="border: 1px solid black !important;" style="width: 15%;" class="text-center">Action</th>
               </tr>
             </thead> 
             <tbody>
@@ -52,18 +52,18 @@
             ?>
               <tr>
                 <?php $get_role = $db->get_row("SELECT * FROM user_type WHERE usr_id='$row->user_type_id'"); ?>
-                <td><?php echo $emp; ?></td>
-                <td class="text-center"><img class="img-rounded" src="./images/user_profile/<?php echo $row->DEM_EMP_ID.'.jpg'; ?>" onerror="this.src='images/user.jpg'" style="height: 80px;width: 70px;"></td>
+                <td style="border: 1px solid black !important;"><?php echo $emp; ?></td>
+                <td style="border: 1px solid black !important;" class="text-center"><img class="img-rounded" src="./images/user_profile/<?php echo $row->DEM_EMP_ID.'.jpg'; ?>" onerror="this.src='images/user.jpg'" style="height: 80px;width: 70px;"></td>
                 
-                <td><?php echo $row->DEM_EMP_ID; ?></td>
-                <td>
+                <td style="border: 1px solid black !important;"><?php echo $row->DEM_EMP_ID; ?></td>
+                <td style="border: 1px solid black !important;">
                   <?php echo $row->DEM_EMP_NAME_PREFIX." ".$row->DEM_EMP_FIRST_NAME." ".$row->DEM_EMP_MIDDLE_NAME." ".$row->DEM_EMP_LAST_NAME; ?>                      
                 </td>
-                <td>
+                <td style="border: 1px solid black !important;">
                   <?php echo $row->DEM_MOBILE_NUMBER; ?>               
                 </td>                    
-                <td><?php echo $row->DEM_PERSONAL_EMAIL_ID; ?></td>                    
-                <td>
+                <td style="border: 1px solid black !important;"><?php echo $row->DEM_PERSONAL_EMAIL_ID; ?></td>                    
+                <td style="border: 1px solid black !important;">
                   <?php if ($row->DUL_ACTIVE_FLAG=="ACTIVE") { ?>
                   <span style="color:green;">ACTIVE</span>
                   <?php } else
@@ -71,10 +71,12 @@
                   <span style="color:red;">INACTIVE</span>
                   <?php } ?>                      
                 </td>
-                <td  align="center">
+                <td style="border: 1px solid black !important;"  align="center">
                   <button title="View More Details"  data-target="#view-modal"  data-toggle="modal"  id="getUserdemo" data-id="<?php echo $row->DEM_EMP_ID; ?>" class="btn btn-info getUserdemo"><i class="fa fa-search"></i> </button>
 
                   <a title="Edit Employee" href="?folder=employees&file=add_employee&edit_user=<?php echo $row->DEM_EMP_ID; ?>" class="btn btn-primary" style="margin: 2px;"><i class="fa fa-pencil"></i> </a>
+
+                  <a title="View Payroll History" href="?folder=employees&file=view_emp_payroll_history&DEM_EMP_ID=<?php echo $row->DEM_EMP_ID; ?>" class="btn btn-primary" style="margin: 2px;"><i class="fa fa-rupee"></i> </a>
 
                   <!-- <a title="Delete Employee" onclick="return confirm('Are You Sure To Delete This Record..!?')" href="?folder=employees&file=employee_list&delete_user=<?php echo $row->DEM_EMP_ID; ?>" class="btn btn-danger" style="margin: 2px;"><i class="fa fa-trash-o"></i></a> -->
 
@@ -92,7 +94,7 @@
             }
             else { ?>
               <tr>                      
-                <td colspan='8' class="pull-center" style="text-align: center;">
+                <td style="border: 1px solid black !important;text-align: center;" colspan='8' class="pull-center" >
                   <b>No Record Available</b>
                 </td>
               </tr>

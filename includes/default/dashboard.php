@@ -1,19 +1,6 @@
 
 <?php
-  $date = date('Y-m-d');
-
-  $institute = $db->get_var("SELECT COUNT(inst_id) FROM institute");
-
-  $employee = $db->get_var("SELECT COUNT(user_id) FROM user");
-
-  $employee1 = $db->get_var("SELECT COUNT(user_id) FROM user WHERE inst_id='".$_SESSION['ad_id']."'");
-
-  $stud_regi=$db->get_var("SELECT COUNT(sr_id) FROM student_registration");
-
-  $total_service=$db->get_var("SELECT COUNT(prod_id) FROM product_names");
-
-  $total_cource=$db->get_var("SELECT COUNT(class_id) FROM course WHERE inst_id='".$_SESSION['ad_id']."'");
-
+  $date = date('Y-m-d');  
 ?>  
   
 
@@ -45,7 +32,10 @@
         <!-- small box -->
         <div class="small-box " style="background: #2a586f;">
           <div class="inner">
-            <h3><?php if(isset($institute)){ echo $institute; } else { echo '0'; } ?></h3>
+            <?php 
+            $totalusers = $db->get_var("SELECT COUNT(DEM_ID) FROM dw_employee_master");
+             ?>
+            <h3><?php if(isset($totalusers)){ echo $totalusers; } else { echo '0'; } ?></h3>
             <p style="font-weight: 700; font-size: 18px;">Total Users</p>
           </div>
           <div class="icon">
@@ -58,12 +48,16 @@
       <div class="col-lg-3 col-xs-6" style="color: white;">
         <!-- small box -->
         <div class="small-box" style="background: #2a586f;">
+          <?php 
+          $tdate= date("Y-m-d");
+            $todaysattd = $db->get_var("SELECT COUNT(DEA_ID) FROM dw_emp_attendance WHERE DEA_ATTD_DATE='$tdate'");
+             ?>
           <div class="inner">
-            <h3><?php if(isset($employee)){ echo $employee; } else if (isset($employee1)){ echo $employee1; }else{ echo '0'; } ?></h3>
+            <h3><?php if(isset($todaysattd)){ echo $todaysattd; } ?></h3>
             <p style="font-weight: 700; font-size: 18px;"> Todays Attendance </p>
           </div>
           <div class="icon">
-            <i class="ion ion-person-add"></i>
+            <i class="fa fa-report"></i>
           </div>
         </div>
       </div>
@@ -108,8 +102,8 @@
 
     <div class="row">
 
-      <div class="col-lg-3 col-xs-6" style="color: white;">
-        <!-- small box -->
+     <!--  <div class="col-lg-3 col-xs-6" style="color: white;">
+        
         <div class="small-box" style="background: #2a586f;">
           <div class="inner">
             <h3><?php if(isset($institute)){ echo $institute; } else { echo 'Pending'; } ?></h3>
@@ -119,15 +113,19 @@
             <i class="ion ion-person-add"></i>
           </div>
         </div>
-      </div>
+      </div> -->
 
       <!-- ./col -->
       <div class="col-lg-3 col-xs-6" style="color: white;">
         <!-- small box -->
         <div class="small-box" style="background: #2a586f;">
           <div class="inner">
-            <h3><?php if(isset($employee)){ echo $employee; } else if (isset($employee1)){ echo $employee1; }else{ echo '0'; } ?></h3>
-            <p style="font-weight: 700; font-size: 18px;"> Current Month Attendance </p>
+            <?php 
+            $tdate= date("Y-m-d");
+            $todaysattd1 = $db->get_var("SELECT COUNT(DEA_ID) FROM dw_emp_attendance WHERE DEA_ATTD_DATE='$tdate' AND DEM_EMPLOYEE_ID='".$_SESSION['DEM_EMP_ID']."'");
+             ?>
+            <h3><?php if(isset($todaysattd1) && $todaysattd1>0){ echo "Done"; }else{ echo "Pending"; } ?></h3>
+            <p style="font-weight: 700; font-size: 18px;"> Todays Attendance </p>
           </div>
           <div class="icon">
             <i class="ion ion-person-add"></i>

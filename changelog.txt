@@ -1,0 +1,10 @@
+Change Log of Daily Wages 16/12/2019
+`````````````````````````````````````````````````````````````````````
+1. Report Both Attendance & Payroll, Validation on clicking submit button.
+2. Current Month Payroll Report Functionality.
+3. Current Month Attendance Report Functionality.
+4. PF ESIC Calculation check.
+5. Created Valid payroll details for every employee.
+6. Take Attendence UI Improvement
+7. Changed the table UI of entire application.
+8.
