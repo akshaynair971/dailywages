@@ -47,35 +47,32 @@
               <h4 style="color: green;font-size: 18px;">Attendance of <?php echo $getuserdetails->DEM_EMP_FIRST_NAME." ".$getuserdetails->DEM_EMP_MIDDLE_NAME." ".$getuserdetails->DEM_EMP_LAST_NAME; ?> ( <?php echo $getuserdetails->DEM_EMP_ID; ?> )</h4>
               <?php } ?>
             </div>
-            <div class="form-group col-md-6" >
-              <label style="width: 30%; margin-left: 10px;">Select Month : <span style="color: red;">*</span></label>
-              <select class="form-control" name="attd_month" id="attd_month" onchange="get_dates_attendance();">
-                <option value="">Select Month</option>                
-                <option value="01" <?php if(date('m')=="01"){ echo "selected";} ?>>January</option>
-                <option value="02" <?php if(date('m')=="02"){ echo "selected";} ?>>February</option>
-                <option value="03" <?php if(date('m')=="03"){ echo "selected";} ?>>March</option>
-                <option value="04" <?php if(date('m')=="04"){ echo "selected";} ?>>April</option>
-                <option value="05" <?php if(date('m')=="05"){ echo "selected";} ?>>May</option>
-                <option value="06" <?php if(date('m')=="06"){ echo "selected";} ?>>June</option>
-                <option value="07" <?php if(date('m')=="07"){ echo "selected";} ?>>July</option>
-                <option value="08" <?php if(date('m')=="08"){ echo "selected";} ?>>August</option>
-                <option value="09" <?php if(date('m')=="09"){ echo "selected";} ?>>September</option>
-                <option value="10" <?php if(date('m')=="10"){ echo "selected";} ?>>October</option>
-                <option value="11" <?php if(date('m')=="11"){ echo "selected";} ?>>November</option>
-                <option value="12" <?php if(date('m')=="12"){ echo "selected";} ?>>December</option>
-              </select>
-            </div>
-            <div class="form-group col-md-6">
-              <label style="width: 30%; margin-left: 10px;">Select Year : <span style="color: red;">*</span></label>
-              <select class="form-control" name="attd_year" id="attd_year" onchange="get_dates_attendance();">
+            
+            <div class="form-group col-md-3">
+              <label style=" margin-left: 10px;">Select Year : <span style="color: red;">*</span></label>
+              <select class="form-control" name="attd_year" id="attd_year" onchange="get_weeks_in_year();">
                 <option value="">Select Year</option>
-                <?php for($mc=1950;$mc<=2050;$mc++){ ?>
-                <option value="<?php echo $mc; ?>" <?php if(date('Y')==$mc){ echo "selected"; } ?>><?php echo $mc; ?></option>
-                <?php } ?>
+                <?php for($mc=1950;$mc<=2050;$mc++){ 
+
+                ?>
+                <option value="<?php echo $mc; ?>" <?php if(date('Y')==$mc){ echo "selected"; }  ?>><?php echo $mc; ?></option>
+                <?php 
+                if((date('Y')+1)==$mc){ break;  }
+                } ?>
               </select>
               <input type="hidden" name="DEM_EMP_ID"  id="DEM_EMP_ID" value="<?php echo $_SESSION['DEM_EMP_ID']; ?>">
 
             </div>
+
+            <div class="form-group col-md-3" >
+              <label style="margin-left: 10px;">Select Week : <span style="color: red;">*</span></label>
+              <select class="form-control" name="attd_month" id="attd_month" onchange="get_dates_attendance();">
+                <option value="">Select Year First</option>                
+                
+              </select>
+            </div>
+
+            
             <div class="form-group col-md-12 getdate_container" style="margin-top:15px;">
 
             </div>
@@ -146,9 +143,47 @@
     });
     
   }
-$(document).ready(function(){
-    get_dates_attendance();
-});
+  function get_weeks_in_year()
+  {    
+         
+    var attd_year = $('#attd_year').val(); 
+    $.ajax({
+      url: 'get_weeks_in_year.php',
+      type: 'POST',
+      data: {attd_year:attd_year,get_weeks_in_year:1},
+      dataType: 'html'
+    })
+    .done(function(data){
+      // console.log(data);  
+          
+      $('#attd_month').html(data); // load response 
+      
+    });
+    
+  }  
+  function get_weeks_in_year1()
+  {    
+         
+    var attd_year = $('#attd_year').val(); 
+    $.ajax({
+      url: 'get_weeks_in_year.php',
+      type: 'POST',
+      data: {attd_year:attd_year,get_weeks_in_year:1},
+      dataType: 'html'
+    })
+    .done(function(data){
+      // console.log(data);  
+          
+      $('#attd_month').html(data); // load response 
+      get_dates_attendance();
+      
+    });
+    
+  }
+  $(document).ready(function(){
+      get_weeks_in_year1();
+      
+  });
 
 </script>
 

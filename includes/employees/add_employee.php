@@ -98,7 +98,7 @@
               <div class="form-group col-md-3">
                 <label for="DEM_OFFICIAL_EMAIL_ID">Official E-mail </label>
                 <input type="email" class="form-control" id='DEM_OFFICIAL_EMAIL_ID' name='DEM_OFFICIAL_EMAIL_ID' placeholder="Enter Official E-mail ID." value="<?php if(isset($user_edit)){ echo $user_edit->DEM_OFFICIAL_EMAIL_ID; } ?>" > 
-              </div>       
+              </div>   
 
               <div class="form-group col-md-9">
                 <label for="DEM_CURRRENT_ADDRESS">Current Address <span style="color: #e22b0e;">*</span></label>
@@ -132,15 +132,21 @@
               </div> -->
               <div class="form-group col-md-6">
                 <label for="exampleInputEmail1">User Sign <span style="color: #e22b0e;">*</span></label>
-                <input type="file" onchange="readURL(this);" class="form-control" id='sign'  name='sign' placeholder="">  <br>
+                <input type="file" onchange="readURL2(this);" class="form-control" id='sign'  name='sign' placeholder="">  <br>
                 <label for="exampleInputEmail1">Sign Preview </label>
                 <img src="images/user_sign/<?php if($user_edit->DEM_EMP_ID!=''){ echo $user_edit->DEM_EMP_ID.'_SIGN.jpg'; } ?>" class="img-rounded" id='sign_preview' onerror="this.src='images/sign.jpg'"  name='sign_preview' placeholder="" style="border:2px solid #d2d6de; height: 150px; width: 140px;">    
               </div>
-             
-              <!-- <div class="form-group col-md-6"> 
-                   
+
+              <div class="form-group col-md-3">
+                <label for="DEM_ADHAR_ID">Adhar No. <span style="color: #e22b0e;">*</span></label>
+                <input type="text" class="form-control" id='DEM_ADHAR_ID' name='DEM_ADHAR_ID' placeholder="Enter Adhar No." value="<?php if(isset($user_edit)){ echo $user_edit->DEM_ADHAR_ID; } ?>" maxlength="16" onkeypress="return isNumberKey(event)" pattern="^\S{10,}$" required > 
+              </div>      
+
+              <div class="form-group col-md-3">
+                <label for="DEM_PAN_ID">PAN No. <span style="color: #e22b0e;">*</span></label>
+                <input type="text" class="form-control" id='DEM_PAN_ID' name='DEM_PAN_ID' placeholder="Enter PAN No." value="<?php if(isset($user_edit)){ echo $user_edit->DEM_PAN_ID; } ?>" required > 
               </div>
- -->
+
               <div class="form-group col-md-3">
                 <label for="DUL_USER_NAME">Login Username <span style="color: #e22b0e;">*</span></label>
                 <input type="text" class="form-control" id='DUL_USER_NAME' name='DUL_USER_NAME' placeholder="Enter Username" required="" value="<?php if(isset($user_edit)){ echo $user_edit->DUL_USER_NAME; } ?>" autocomplete="off">  
@@ -152,8 +158,8 @@
               </div> 
 
               <div class="form-group col-md-3">
-                <label for="DEM_START_DATE">Start Date <span style="color: #e22b0e;">*</span> </label>
-                <input type="text" class="form-control" id='DEM_START_DATE' name='DEM_START_DATE' placeholder="Enter Start Date" value="<?php if(isset($user_edit)){ echo $user_edit->DEM_START_DATE; } ?>" required autocomplete="false"> 
+                <label for="DEM_START_DATE">Date of Joining <span style="color: #e22b0e;">*</span> </label>
+                <input type="text" class="form-control" id='DEM_START_DATE' name='DEM_START_DATE' placeholder="Enter Date of Joining " value="<?php if(isset($user_edit)){ echo $user_edit->DEM_START_DATE; } ?>" required autocomplete="false"> 
               </div>          
 
               <div class="form-group col-md-3">
@@ -167,8 +173,8 @@
               </div>
 
               <div class="form-group col-md-3" style="display: none;">
-                <label for="DEM_END_DATE">End Date <span style="color: #e22b0e;">*</span> </label>
-                <input type="text" class="form-control" id='DEM_END_DATE' name='DEM_END_DATE' placeholder="Enter End Date" value="<?php if(isset($user_edit)){ echo $user_edit->DEM_END_DATE; } ?>" autocomplete="off"> 
+                <label for="DEM_END_DATE">Date of Relieving <span style="color: #e22b0e;">*</span> </label>
+                <input type="text" class="form-control" id='DEM_END_DATE' name='DEM_END_DATE' placeholder="Enter Date of Relieving" value="<?php if(isset($user_edit)){ echo $user_edit->DEM_END_DATE; } ?>" autocomplete="off"> 
               </div>
 
               <div class="form-group col-md-12">
@@ -323,6 +329,18 @@
 
         reader.onload = function (e) {
             $('#profile_preview')
+                .attr('src', e.target.result);
+        };
+
+        reader.readAsDataURL(input.files[0]);
+    }
+  }
+   function readURL2(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            $('#sign_preview')
                 .attr('src', e.target.result);
         };
 

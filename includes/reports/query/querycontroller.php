@@ -1,4 +1,15 @@
 <?php
+$title =$db->get_row("SELECT * FROM general_setting WHERE gs_id=1");
+
+function getStartAndEndDate($week, $year) {
+  $dto = new DateTime();
+  $dto->setISODate($year, $week);
+  $ret['week_start'] = $dto->format('Y-m-d');
+  $dto->modify('+7 days');
+  $ret['week_end'] = $dto->format('Y-m-d');
+  return $ret;
+}
+
 
 if(isset($_POST['rep_attd_sub_sin_mon']) || isset($_POST['rep_attd_sub_sin_cur_mon']))
 {
@@ -11,29 +22,546 @@ if(isset($_POST['rep_attd_sub_sin_mon']) || isset($_POST['rep_attd_sub_sin_cur_m
   echo "<script>window.location='?folder=reports&file=emp_attd_single_month_list&select_attd_month=".$select_attd_month."';</script>";
 }
 
-// Generate Exceel for Detailed Attendance
+
+// Get Weekly Report 
+
+if(isset($_POST['get_weekly_attd_report']))
+{
+  extract($_POST);
+  // prnt($_POST);
+  echo "<script>window.location='?folder=reports&file=weeklyattd_emp_list&weekly_attd_year=".$weekly_attd_year."&weekly_attd_week=".$weekly_attd_week."';</script>";
+}
+
+// End Get Weekly Report
+
+// Generate PDF for Detailed Weekly Attendance
+
+if(isset($_GET['DEM_EMP_ID']) && isset($_GET['exppdf_weeklyattd']))
+{
+  extract($_GET);
+  
+  include_once('./dompdf/dompdf_config.inc.php');
+
+  $r=$db->get_row("SELECT * FROM dw_employee_master WHERE DEM_EMP_ID='".$DEM_EMP_ID."'"); 
+  $week_array = getStartAndEndDate($weekly_attd_week,$weekly_attd_year);
+  $begin = new DateTime($week_array['week_start']);
+  $end = new DateTime($week_array['week_end']);
+  $daterange = new DatePeriod($begin, new DateInterval('P1D'), $end);
+
+  $html='';
+
+
+  $html .='<style>
+  p,h5
+  {
+    margin:0px;
+    padding:0px;
+  }
+
+  .table strong {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    border-collapse: collapse;
+    width: 100%;  
+  }
+
+  img
+  {
+    height:70px;
+  }
+
+  .table
+  {
+    cell-padding:0px;
+    cell-spacing:0px;
+    border-collapse:collapse;
+    width:100%;
+    border:1px solid #000000;
+    font-size: 12px;
+  }
+
+  .table td,.table th
+  {
+    padding:5px;
+    border:1px solid #000000;
+  }
+
+  p
+  {
+    font-size: 12px;
+  }
+
+  body
+  {
+    font-family:verdana;
+  }
+
+  @page {
+    margin: 0.5cm;
+  }
+
+  .footer{
+    position: absolute;
+  }
+
+  .footer{
+    bottom:0;
+    text-align:center;   
+  }
+  </style>';
+
+  $html.='<meta http-equiv="content-type" content="text/html; charset=UTF-8">';
+  $html.='<div style="border: 1px solid;padding:2%;">
+  <table style="width: 100%;border-bottom:1px solid;">
+  <tr>
+    <td><img src="images/logo/'.$title->inst_id.'.jpg"></td>
+    <td><center><h1 style="color:#9c4d55; font-size:22px; font-weight:900;">'.$title->ins_name.'</h1><center></td>
+    <td>'.date('d/m/Y').'</td>
+  </tr>
+  ';
+  $html.='</table>';
+
+  $html.='<p style="text-align: center; font-size: 12px;margin-top:4px;"> Employee Attendance Report of '.'Week '.$weekly_attd_week.' - '.$weekly_attd_year.'</p>';
+  $html.='<p style="text-align: center; font-size: 12px;margin-top:4px;"> '.strtoupper($r->DEM_EMP_FIRST_NAME.''.$r->DEM_EMP_MIDDLE_NAME.' '.$r->DEM_EMP_LAST_NAME).' ('.$r->DEM_EMP_ID.')</p>';
+  $html.='<hr>';
+  $html.='<br>';
+
+  $html.='<table id="example1" class="table table-bordered table-striped" role="grid">
+  <thead>
+    <tr>
+      <th>Sr. No.</th>
+      <th> Attendance Date</th>
+      <th> Attendance Day</th>
+      <th> In Time</th>
+      <th> Out Time</th>
+      <th> Location</th>
+      <th> Remark</th>      
+    </tr>  
+  </thead>
+  <tbody>';
+   $emp = 0;
+  foreach($daterange as $date1)
+  {
+    $emp++;
+    $convdate = $date1->format("Y-m-d");
+    $convday = date("D",strtotime($convdate));
+
+    $getattd= $db->get_row("SELECT * FROM dw_emp_attendance WHERE DEM_EMPLOYEE_ID='$DEM_EMP_ID' AND DEA_ATTD_DATE='$convdate'");
+    $html.='<tr>';
+    $html.='<td>'.$emp.'</td>'; 
+    $html.='<td>'.date("d-M-Y",strtotime($convdate)).'</td>';
+    $html.='<td>'.$convday.'</td>';
+
+    if($getattd->DEA_IN_TIME!=''){
+      $DEA_IN_TIME = $getattd->DEA_IN_TIME;
+    }elseif($convday=="Sun"){ 
+      $DEA_IN_TIME = "9:00 AM"; 
+    }else{
+      $DEA_IN_TIME ='--';
+    }
+    $html.='<td>'.$DEA_IN_TIME.'</td>';
+
+    $DEA_OUT_TIME = '';
+    // $DEA_OUT_TIME = $getattd->DEA_OUT_TIME!=''?$getattd->DEA_OUT_TIME:'--';
+    if($getattd->DEA_OUT_TIME!=''){ if(date('h:i A',strtotime($getattd->DEA_OUT_TIME))< date('h:i A',strtotime("6:00 PM")) ){ $DEA_OUT_TIME = $getattd->DEA_OUT_TIME; }else{ $DEA_OUT_TIME= "6:00 PM"; } }elseif($convday=="Sun"){ $DEA_OUT_TIME= "6:00 PM"; }else{ $DEA_OUT_TIME = "--"; }
+
+    $html.='<td>'.$DEA_OUT_TIME.'</td>';
+
+    if($getattd->DEA_CURRENT_LOCATION!=''){
+      $DEA_CURRENT_LOCATION = $getattd->DEA_CURRENT_LOCATION;
+    }elseif($convday=="Sun"){ 
+      $DEA_CURRENT_LOCATION = "WEEKLY OFF"; 
+    }else{
+      $DEA_CURRENT_LOCATION ='--';
+    }
+    $html.='<td>'.$DEA_CURRENT_LOCATION.'</td>';
+
+    $DEA_REMARK = $getattd->DEA_REMARK!=''?$getattd->DEA_REMARK:'--';
+    $html.='<td>'.$DEA_REMARK.'</td>';
+    $html.='</tr>';
+  }
+
+  $html.='</tbody>';
+  $html.='</table>';
+  $html.='<br>';
+  $html.='<table id="example1" class="table" style="border:none !important;">';
+  $html.='<tr style="border:none !important;">';
+  $html.='<td colspan="3" style="width:75%;text-align:right;border:none !important;">Signature:</td>';
+  if(file_exists('images/user_sign/'.$DEM_EMP_ID."_SIGN.jpg"))
+  {
+    $html.='<td style="border:none !important;"><img src="images/user_sign/'.$DEM_EMP_ID.'_SIGN.jpg" style="width:100px;height:70px;"></td>';
+  }
+  else
+  {
+    $html.='<td></td>';    
+  }
+  $html.='</tr>';
+  $html.='</table>';
+
+
+  $dompdf = new DOMPDF();  
+  $dompdf->set_paper('a4', 'landscape');  
+  $dompdf->load_html($html);
+  $dompdf->render();
+  $pdf = $dompdf->output();
+
+  $fp = fopen("reports/travel_expense_report.pdf", 'w');
+  fclose($fp);
+  chmod("reports/travel_expense_report.pdf", 0777); 
+  file_put_contents("reports/travel_expense_report.pdf", $pdf);  
+  
+  header('location:download.php?file_url=reports/travel_expense_report.pdf');
+  echo('<script>window.open("'.site_root.'reports/travel_expense_report.pdf", "_blank","",true);</script>');
+
+}
+
+// END Generate PDF for Detailed Weekly Attendance
+
+// Generate Excel for Detailed Weekly Attendance
+
+if(isset($_GET['DEM_EMP_ID']) && isset($_GET['expxl_weeklyattd']))
+{
+  extract($_GET);
+  include_once('PHPExcel.php');
+  $objPHPExcel = new PHPExcel();
+
+  
+  $r=$db->get_row("SELECT * FROM dw_employee_master WHERE DEM_EMP_ID='".$DEM_EMP_ID."'"); 
+
+  $week_array = getStartAndEndDate($weekly_attd_week,$weekly_attd_year);
+  
+            
+  $begin = new DateTime($week_array['week_start']);
+  $end = new DateTime($week_array['week_end']);
+
+  $daterange = new DatePeriod($begin, new DateInterval('P1D'), $end);
+
+
+  $objPHPExcel->setActiveSheetIndex(0);
+  $adjustedColumn = PHPExcel_Cell::stringFromColumnIndex(5);
+
+  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, 1, $title->ins_name); 
+  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, 2, "Employee Attendance Report of "."Week ".$weekly_attd_week." - ".$weekly_attd_year );
+  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, 3, strtoupper($r->DEM_EMP_FIRST_NAME." ".$r->DEM_EMP_MIDDLE_NAME." ".$r->DEM_EMP_LAST_NAME)." (".$r->DEM_EMP_ID.")" ); 
+  $objPHPExcel->getActiveSheet()->mergeCells("A1:".$adjustedColumn."1");
+  $objPHPExcel->getActiveSheet()->mergeCells("A2:".$adjustedColumn."2");
+  $objPHPExcel->getActiveSheet()->mergeCells("A3:".$adjustedColumn."3");
+
+  $rowtitleCount = 4;
+  $coltitleCount = 0;
+  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($coltitleCount, $rowtitleCount, "Attendance Date"); 
+  $coltitleCount++;
+
+  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($coltitleCount, $rowtitleCount, "Attendance Day"); 
+  $coltitleCount++;
+
+  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($coltitleCount, $rowtitleCount, "In Time"); 
+  $coltitleCount++;
+
+  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($coltitleCount, $rowtitleCount, "Out Time"); 
+  $coltitleCount++;
+
+  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($coltitleCount, $rowtitleCount, "Location"); 
+  $coltitleCount++;
+
+  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($coltitleCount, $rowtitleCount, "Remark"); 
+  $coltitleCount++;
+
+  // $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($coltitleCount, $rowtitleCount, "Sign"); 
+  // $coltitleCount++;
+
+  $i=1;
+  $rc=5;  
+
+  foreach($daterange as $date1)
+  {
+    $convdate = $date1->format("Y-m-d");
+    $convday = date("D",strtotime($convdate));
+    $cc=0; 
+    $getattd= $db->get_row("SELECT * FROM dw_emp_attendance WHERE DEM_EMPLOYEE_ID='$DEM_EMP_ID' AND DEA_ATTD_DATE='$convdate'");
+    
+
+    $objPHPExcel->getActiveSheet()->setCellValue("A".$rc,date("d-M-Y",strtotime($convdate)))->getColumnDimension('A')->setAutoSize(true);
+    
+
+    $objPHPExcel->getActiveSheet()->setCellValue("B".$rc,$convday)->getColumnDimension('B')->setAutoSize(true);
+    
+    if($getattd->DEA_IN_TIME!=''){
+      $DEA_IN_TIME = $getattd->DEA_IN_TIME;
+    }elseif($convday=="Sun"){ 
+      $DEA_IN_TIME = "9:00 AM"; 
+    }else{
+      $DEA_IN_TIME ='--';
+    }
+    $objPHPExcel->getActiveSheet()->setCellValue("C".$rc,$DEA_IN_TIME)->getColumnDimension('C')->setAutoSize(true);
+    
+
+    $DEA_OUT_TIME = '';
+    // $DEA_OUT_TIME = $getattd->DEA_OUT_TIME!=''?$getattd->DEA_OUT_TIME:'--';
+    if($getattd->DEA_OUT_TIME!=''){ if(date('h:i A',strtotime($getattd->DEA_OUT_TIME))< date('h:i A',strtotime("6:00 PM")) ){ $DEA_OUT_TIME = $getattd->DEA_OUT_TIME; }else{ $DEA_OUT_TIME= "6:00 PM"; } }elseif($convday=="Sun"){ 
+      $DEA_OUT_TIME = "6:00 PM"; 
+    }else{ $DEA_OUT_TIME = "--"; }
+    $objPHPExcel->getActiveSheet()->setCellValue("D".$rc,$DEA_OUT_TIME)->getColumnDimension('D')->setAutoSize(true);
+    
+
+    if($getattd->DEA_CURRENT_LOCATION!=''){
+      $DEA_CURRENT_LOCATION = $getattd->DEA_CURRENT_LOCATION;
+    }elseif($convday=="Sun"){ 
+      $DEA_CURRENT_LOCATION = "WEEKLY OFF"; 
+    }else{
+      $DEA_CURRENT_LOCATION ='--';
+    }
+    $objPHPExcel->getActiveSheet()->setCellValue("E".$rc,$DEA_CURRENT_LOCATION)->getColumnDimension('E')->setAutoSize(true);
+    
+
+    $DEA_REMARK = $getattd->DEA_REMARK!=''?$getattd->DEA_REMARK:'--';
+    $objPHPExcel->getActiveSheet()->setCellValue("F".$rc,$DEA_REMARK)->getColumnDimension('F')->setAutoSize(true);
+    
+
+    
+    $rc++;
+  }
+  $rc++;
+  $objPHPExcel->getActiveSheet()->setCellValue("B".$rc,"Signature");
+  $adjustedColumn = PHPExcel_Cell::stringFromColumnIndex(2);
+  $objPHPExcel->getActiveSheet()->mergeCells("B".$rc.":".$adjustedColumn.$rc);
+
+  if(file_exists('images/user_sign/'.$DEM_EMP_ID."_SIGN.jpg"))
+  {
+    $objDrawing = new PHPExcel_Worksheet_Drawing();
+    $objDrawing->setPath('images/user_sign/'.$DEM_EMP_ID."_SIGN.jpg");
+    $objDrawing->setCoordinates('D'.$rc);
+    $objDrawing->setWorksheet($objPHPExcel->getActiveSheet());
+    $objDrawing->setWidthAndHeight(70,120);
+    $objDrawing->setResizeProportional(true);
+    $objPHPExcel->getActiveSheet()->getRowDimension($rc)->setRowHeight(30);
+
+  }
+  else
+  {
+    $objPHPExcel->getActiveSheet()->setCellValue('D'.$rc, '');
+  }
+ 
+
+
+  $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
+  chmod("attd_report.xlsx", 0777);
+  $objWriter->save('attd_report.xlsx'); 
+  header('location:download.php?file_url=attd_report.xlsx');
+  echo('<script>window.open("'.site_root.'attd_report.xlsx", "_blank","",true);</script>');
+
+
+  echo "<script>window.location='?folder=reports&file=emp_attd_detailed_weekly_report&DEM_EMP_ID=".$_GET['DEM_EMP_ID']."&weekly_attd_year=".$weekly_attd_year."&weekly_attd_week=".$weekly_attd_week."';</script>";
+}
+// End Generate Excel for Detailed Weekly Attendance
+
+
+// Generate PDF for Detailed Monthly Attendance
+
+if(isset($_GET['DEM_EMP_ID']) && isset($_GET['exppdfselect_attd_month']))
+{
+  extract($_GET);
+  include_once('./dompdf/dompdf_config.inc.php');
+
+  $datearray = explode("-",$exppdfselect_attd_month);
+  $fulldate = date('F-Y',strtotime($exppdfselect_attd_month));
+  $r=$db->get_row("SELECT * FROM dw_employee_master WHERE DEM_EMP_ID='".$DEM_EMP_ID."'"); 
+  $countdays =  cal_days_in_month(CAL_GREGORIAN, $datearray[1], $datearray[0]);
+
+  $html='';
+
+
+  $html .='<style>
+  p,h5
+  {
+    margin:0px;
+    padding:0px;
+  }
+
+  .table strong {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    border-collapse: collapse;
+    width: 100%;  
+  }
+
+  img
+  {
+    height:70px;
+  }
+
+  .table
+  {
+    cell-padding:0px;
+    cell-spacing:0px;
+    border-collapse:collapse;
+    width:100%;
+    border:1px solid #000000;
+    font-size: 12px;
+  }
+
+  .table td,.table th
+  {
+    padding:5px;
+    border:1px solid #000000;
+  }
+
+  p
+  {
+    font-size: 12px;
+  }
+
+  body
+  {
+    font-family:verdana;
+  }
+
+  @page {
+    margin: 0.5cm;
+  }
+
+  .footer{
+    position: absolute;
+  }
+
+  .footer{
+    bottom:0;
+    text-align:center;   
+  }
+  </style>';
+
+  $html.='<meta http-equiv="content-type" content="text/html; charset=UTF-8">';
+  $html.='<div style="border: 1px solid;padding:2%;">
+  <table style="width: 100%;border-bottom:1px solid;">
+  <tr>
+    <td><img src="images/logo/'.$title->inst_id.'.jpg"></td>
+    <td><center><h1 style="color:#9c4d55; font-size:22px; font-weight:900;">'.$title->ins_name.'</h1><center></td>
+    <td>'.date('d/m/Y').'</td>
+  </tr>
+  ';
+  $html.='</table>';
+
+  $html.='<p style="text-align: center; font-size: 12px;margin-top:4px;"> Employee Attendance Report of '.$fulldate.'</p>';
+  $html.='<p style="text-align: center; font-size: 12px;margin-top:4px;"> '.strtoupper($r->DEM_EMP_FIRST_NAME.''.$r->DEM_EMP_MIDDLE_NAME.' '.$r->DEM_EMP_LAST_NAME).' ('.$r->DEM_EMP_ID.')</p>';
+  $html.='<hr>';
+  $html.='<br>';
+
+  $html.='<table id="example1" class="table table-bordered table-striped" role="grid">
+  <thead>
+    <tr>
+      <th>Sr. No.</th>
+      <th> Attendance Date</th>
+      <th> Attendance Day</th>
+      <th> In Time</th>
+      <th> Out Time</th>
+      <th> Location</th>
+      <th> Remark</th>      
+    </tr>  
+  </thead>
+  <tbody>';
+  $emp = 0;
+  for($cntd=1;$cntd<=$countdays;$cntd++)
+  {
+
+    $emp++;   
+    $convdate = date("Y-m-d",strtotime($datearray[0]."-".$datearray[1]."-".$cntd));
+    $convday = date("D",strtotime($datearray[0]."-".$datearray[1]."-".$cntd));
+
+    $getattd= $db->get_row("SELECT * FROM dw_emp_attendance WHERE DEM_EMPLOYEE_ID='$DEM_EMP_ID' AND DEA_ATTD_DATE='$convdate'");
+    $html.='<tr>';
+    $html.='<td>'.$emp.'</td>'; 
+    $html.='<td>'.date("d-M-Y",strtotime($convdate)).'</td>';
+    $html.='<td>'.$convday.'</td>';
+
+    if($getattd->DEA_IN_TIME!=''){
+      $DEA_IN_TIME = $getattd->DEA_IN_TIME;
+    }elseif($convday=="Sun"){ 
+      $DEA_IN_TIME = "9:00 AM"; 
+    }else{
+      $DEA_IN_TIME ='--';
+    }
+    $html.='<td>'.$DEA_IN_TIME.'</td>';
+
+    $DEA_OUT_TIME = '';
+    // $DEA_OUT_TIME = $getattd->DEA_OUT_TIME!=''?$getattd->DEA_OUT_TIME:'--';
+    if($getattd->DEA_OUT_TIME!=''){ if(date('h:i A',strtotime($getattd->DEA_OUT_TIME))< date('h:i A',strtotime("6:00 PM")) ){ $DEA_OUT_TIME = $getattd->DEA_OUT_TIME; }else{ $DEA_OUT_TIME= "6:00 PM"; } }elseif($convday=="Sun"){ 
+      $DEA_OUT_TIME = "6:00 PM"; 
+    }else{ $DEA_OUT_TIME = "--"; }
+
+    $html.='<td>'.$DEA_OUT_TIME.'</td>';
+
+    if($getattd->DEA_CURRENT_LOCATION!=''){
+      $DEA_CURRENT_LOCATION = $getattd->DEA_CURRENT_LOCATION;
+    }elseif($convday=="Sun"){ 
+      $DEA_CURRENT_LOCATION = "WEEKLY OFF"; 
+    }else{
+      $DEA_CURRENT_LOCATION ='--';
+    }
+    $html.='<td>'.$DEA_CURRENT_LOCATION.'</td>';
+
+    $DEA_REMARK = $getattd->DEA_REMARK!=''?$getattd->DEA_REMARK:'--';
+    $html.='<td>'.$DEA_REMARK.'</td>';
+    $html.='</tr>';
+  }
+
+  $html.='</tbody>';
+  $html.='</table>';
+  $html.='<br>';
+  $html.='<table id="example1" class="table" style="border:none !important;">';
+  $html.='<tr style="border:none !important;">';
+  $html.='<td colspan="3" style="width:75%;text-align:right;border:none !important;">Signature:</td>';
+  if(file_exists('images/user_sign/'.$DEM_EMP_ID."_SIGN.jpg"))
+  {
+    $html.='<td style="border:none !important;"><img src="images/user_sign/'.$DEM_EMP_ID.'_SIGN.jpg" style="width:100px;height:70px;"></td>';
+  }
+  else
+  {
+    $html.='<td></td>';    
+  }
+  $html.='</tr>';
+  $html.='</table>';
+
+
+  $dompdf = new DOMPDF();  
+  $dompdf->set_paper('a4', 'landscape');  
+  $dompdf->load_html($html);
+  $dompdf->render();
+  $pdf = $dompdf->output();
+
+  $fp = fopen("reports/travel_expense_report.pdf", 'w');
+  fclose($fp);
+  chmod("reports/travel_expense_report.pdf", 0777); 
+  file_put_contents("reports/travel_expense_report.pdf", $pdf);  
+  
+  header('location:download.php?file_url=reports/travel_expense_report.pdf');
+  echo('<script>window.open("'.site_root.'reports/travel_expense_report.pdf", "_blank","",true);</script>');
+
+
+}
+// Generate PDF for Detailed Monthly Attendance
+
+
+// Generate Excel for Detailed Monthly Attendance
 
 if(isset($_GET['DEM_EMP_ID']) && isset($_GET['expxlselect_attd_month']))
 {
   extract($_GET);
-  // prnt($_GET);
+  
+
   include_once('PHPExcel.php');
   $objPHPExcel = new PHPExcel();
 
   $datearray = explode("-",$expxlselect_attd_month);
   $fulldate = date('F-Y',strtotime($expxlselect_attd_month));
-  if($_SESSION['user_type']=="2"){
-    $r=$db->get_results("SELECT * FROM dw_employee_master WHERE DEM_EMP_ID='".$_GET['DEM_EMP_ID']."'");  
-  }else{
-    $r=$db->get_results("SELECT * FROM dw_employee_master");
-  }
+  $r=$db->get_row("SELECT * FROM dw_employee_master WHERE DEM_EMP_ID='".$DEM_EMP_ID."'"); 
   $countdays =  cal_days_in_month(CAL_GREGORIAN, $datearray[1], $datearray[0]);
 
-  $objPHPExcel->setActiveSheetIndex(0);
-  $adjustedColumn = PHPExcel_Cell::stringFromColumnIndex(6);
 
-  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, 1, "DAILY WAGES"); 
-  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, 2, "Employee Attendance Report"); 
+  $objPHPExcel->setActiveSheetIndex(0);
+  $adjustedColumn = PHPExcel_Cell::stringFromColumnIndex(5);
+
+  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, 1, $title->ins_name); 
+  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, 2, "Employee Attendance Report of ".strtoupper($r->DEM_EMP_FIRST_NAME." ".$r->DEM_EMP_MIDDLE_NAME." ".$r->DEM_EMP_LAST_NAME)." (".$r->DEM_EMP_ID.")" ); 
   $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, 3, $fulldate ); 
   $objPHPExcel->getActiveSheet()->mergeCells("A1:".$adjustedColumn."1");
   $objPHPExcel->getActiveSheet()->mergeCells("A2:".$adjustedColumn."2");
@@ -59,8 +587,8 @@ if(isset($_GET['DEM_EMP_ID']) && isset($_GET['expxlselect_attd_month']))
   $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($coltitleCount, $rowtitleCount, "Remark"); 
   $coltitleCount++;
 
-  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($coltitleCount, $rowtitleCount, "Sign"); 
-  $coltitleCount++;
+  // $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($coltitleCount, $rowtitleCount, "Sign"); 
+  // $coltitleCount++;
 
   $i=1;
   $rc=5;  
@@ -82,21 +610,35 @@ if(isset($_GET['DEM_EMP_ID']) && isset($_GET['expxlselect_attd_month']))
       }
     }
 
-    $objPHPExcel->getActiveSheet()->setCellValue("A".$rc,$convdate)->getColumnDimension('A')->setAutoSize(true);
+    $objPHPExcel->getActiveSheet()->setCellValue("A".$rc,date("d-M-Y",strtotime($convdate)))->getColumnDimension('A')->setAutoSize(true);
     
 
     $objPHPExcel->getActiveSheet()->setCellValue("B".$rc,$convday)->getColumnDimension('B')->setAutoSize(true);
     
-
-    $DEA_IN_TIME = $getattd->DEA_IN_TIME!=''?$getattd->DEA_IN_TIME:'--';
+    if($getattd->DEA_IN_TIME!=''){
+      $DEA_IN_TIME = $getattd->DEA_IN_TIME;
+    }elseif($convday=="Sun"){ 
+      $DEA_IN_TIME = "9:00 AM"; 
+    }else{
+      $DEA_IN_TIME ='--';
+    }
     $objPHPExcel->getActiveSheet()->setCellValue("C".$rc,$DEA_IN_TIME)->getColumnDimension('C')->setAutoSize(true);
     
 
-    $DEA_OUT_TIME = $getattd->DEA_OUT_TIME!=''?$getattd->DEA_OUT_TIME:'--';
+    $DEA_OUT_TIME = '';
+    // $DEA_OUT_TIME = $getattd->DEA_OUT_TIME!=''?$getattd->DEA_OUT_TIME:'--';
+    if($getattd->DEA_OUT_TIME!=''){ if(date('h:i A',strtotime($getattd->DEA_OUT_TIME))< date('h:i A',strtotime("6:00 PM")) ){ $DEA_OUT_TIME = $getattd->DEA_OUT_TIME; }else{ $DEA_OUT_TIME= "6:00 PM"; } }elseif($convday=="Sun"){ 
+      $DEA_OUT_TIME = "6:00 PM"; 
+    }else{ $DEA_OUT_TIME = "--"; }
     $objPHPExcel->getActiveSheet()->setCellValue("D".$rc,$DEA_OUT_TIME)->getColumnDimension('D')->setAutoSize(true);
     
-
-    $DEA_CURRENT_LOCATION = $getattd->DEA_CURRENT_LOCATION!=''?$getattd->DEA_CURRENT_LOCATION:'--';
+    if($getattd->DEA_CURRENT_LOCATION!=''){
+      $DEA_CURRENT_LOCATION = $getattd->DEA_CURRENT_LOCATION;
+    }elseif($convday=="Sun"){ 
+      $DEA_CURRENT_LOCATION = "WEEKLY OFF"; 
+    }else{
+      $DEA_CURRENT_LOCATION ='--';
+    }
     $objPHPExcel->getActiveSheet()->setCellValue("E".$rc,$DEA_CURRENT_LOCATION)->getColumnDimension('E')->setAutoSize(true);
     
 
@@ -104,37 +646,281 @@ if(isset($_GET['DEM_EMP_ID']) && isset($_GET['expxlselect_attd_month']))
     $objPHPExcel->getActiveSheet()->setCellValue("F".$rc,$DEA_REMARK)->getColumnDimension('F')->setAutoSize(true);
     
 
-    if(file_exists('images/user_sign/'.$getattd->DEM_EMPLOYEE_ID."_SIGN.jpg"))
-    {
-      $objDrawing = new PHPExcel_Worksheet_Drawing();
-      $objDrawing->setPath('images/user_sign/'.$getattd->DEM_EMPLOYEE_ID."_SIGN.jpg");
-      $objDrawing->setCoordinates('G'.$rc);
-      $objDrawing->setWorksheet($objPHPExcel->getActiveSheet());
-      $objDrawing->setWidthAndHeight(70,120);
-      $objDrawing->setResizeProportional(true);
-      $objPHPExcel->getActiveSheet()->getRowDimension($rc)->setRowHeight(30);
-
-    }
-    else
-    {
-      $objPHPExcel->getActiveSheet()->setCellValue('G'.$rc, '');
-    }
-
+    
     $rc++;
-  } 
+  }
+  $rc++;
+  $objPHPExcel->getActiveSheet()->setCellValue("B".$rc,"Signature");
+  $adjustedColumn = PHPExcel_Cell::stringFromColumnIndex(2);
+  $objPHPExcel->getActiveSheet()->mergeCells("B".$rc.":".$adjustedColumn.$rc);
+
+  if(file_exists('images/user_sign/'.$DEM_EMP_ID."_SIGN.jpg"))
+  {
+    $objDrawing = new PHPExcel_Worksheet_Drawing();
+    $objDrawing->setPath('images/user_sign/'.$DEM_EMP_ID."_SIGN.jpg");
+    $objDrawing->setCoordinates('D'.$rc);
+    $objDrawing->setWorksheet($objPHPExcel->getActiveSheet());
+    $objDrawing->setWidthAndHeight(70,120);
+    $objDrawing->setResizeProportional(true);
+    $objPHPExcel->getActiveSheet()->getRowDimension($rc)->setRowHeight(30);
+
+  }
+  else
+  {
+    $objPHPExcel->getActiveSheet()->setCellValue('D'.$rc, '');
+  }
+ 
+
 
   $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
-  chmod("dailywagesattd_report.xlsx", 0777);
-  $objWriter->save('dailywagesattd_report.xlsx'); 
-  header('location:download.php?file_url=dailywagesattd_report.xlsx');
-  echo('<script>window.open("'.site_root.'dailywagesattd_report.xlsx", "_blank","",true);</script>');
+  chmod("attd_report.xlsx", 0777);
+  $objWriter->save('attd_report.xlsx'); 
+  header('location:download.php?file_url=attd_report.xlsx');
+  echo('<script>window.open("'.site_root.'attd_report.xlsx", "_blank","",true);</script>');
 
 
   echo "<script>window.location='?folder=reports&file=emp_attd_detailed_single_month&DEM_EMP_ID=".$_GET['DEM_EMP_ID']."&select_attd_month=".$expxlselect_attd_month."';</script>";
 }
+// ENd Generate Excel for Detailed Monthly Attendance
 
 
-// Generate Exceel for Payment Report
+// Generate PDF for Payment Report
+
+if(isset($_GET['exppdfselect_pay_month']))
+{
+  extract($_GET);
+  include_once('./dompdf/dompdf_config.inc.php');
+
+  $datearray = explode("-",$exppdfselect_pay_month);
+  $fulldate = date('F-Y',strtotime($exppdfselect_pay_month));
+  if($_SESSION['user_type']=="2"){
+    $r=$db->get_results("SELECT * FROM dw_employee_master WHERE DEM_EMP_ID='".$_SESSION['DEM_EMP_ID']."'");  
+  }else{
+    $r=$db->get_results("SELECT * FROM dw_employee_master");
+  }
+
+  $html='';
+
+
+  $html .='<style>
+  p,h5
+  {
+    margin:0px;
+    padding:0px;
+  }
+
+  .table strong {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    border-collapse: collapse;
+    width: 100%;  
+  }
+
+  img
+  {
+    height:70px;
+  }
+
+  .table
+  {
+    cell-padding:0px;
+    cell-spacing:0px;
+    border-collapse:collapse;
+    width:100%;
+    border:1px solid #000000;
+    font-size: 12px;
+  }
+
+  .table td,.table th
+  {
+    padding:5px;
+    border:1px solid #000000;
+  }
+
+  p
+  {
+    font-size: 12px;
+  }
+
+  body
+  {
+    font-family:verdana;
+  }
+
+  @page {
+    margin: 0.5cm;
+  }
+
+  .footer{
+    position: absolute;
+  }
+
+  .footer{
+    bottom:0;
+    text-align:center;   
+  }
+  </style>';
+
+  $html.='<meta http-equiv="content-type" content="text/html; charset=UTF-8">';
+  $html.='<div style="border: 1px solid;padding:2%;">
+  <table style="width: 100%;border-bottom:1px solid;">
+  <tr>
+    <td><img src="images/logo/'.$title->inst_id.'.jpg"></td>
+    <td><center><h1 style="color:#9c4d55; font-size:22px; font-weight:900;">'.$title->ins_name.'</h1><center></td>
+    <td>'.date('d/m/Y').'</td>
+  </tr>
+  ';
+  $html.='</table>';
+
+  $html.='<p style="text-align: center; font-size: 12px;margin-top:4px;"> PAYMENT REPORT of '.$fulldate.'</p>';
+  $html.='<p style="text-align: center; font-size: 12px;margin-top:4px;"> FORM II M.W. RULES 1963 Rule 27</p>';
+  $html.='<hr>';
+  $html.='<br>';
+
+  $html.='<table id="example1" class="table table-bordered table-striped" role="grid">
+  <thead>
+    <tr>
+      <th>Sr. No.</th>
+      <th> Employee Name</th>
+      <th> AGE</th>
+      <th> TOTAL DAYS WORKED</th>
+      <th> RATE</th>
+      <th> TOTAL GW HRS.</th>
+      <th> BASIC</th>      
+      <th> HRA</th>      
+      <th> OTHER ALLOWANCES</th>      
+      <th> GROSS WAGES PAYABLE</th>      
+      <th> PROFF. TAX</th>      
+      <th> P.F. 12%</th>      
+      <th> PF 12%</th>      
+      <th> ESIC .75%</th>      
+      <th> ESIC 3.25%</th>      
+      <th> TOTAL DEDUCTION</th>      
+      <th> NET WAGES PAID</th>      
+      <th> PAYMENT REFERANCE</th>      
+    </tr>  
+  </thead>
+  <tbody>';
+  $emp = 0;
+  $basictotal = $hratotal = $otherallowancestotal = $grosswagespayabletotal = $proftaxtotal = $ep_pftotal = $er_pftotal = $ep_esictotal = $er_esictotal = $totaldeductionsum = $netwagespaidsum = $i = 0;
+  foreach($r as $rw){
+    $emp++;
+    $payroll_det=$db->get_row("SELECT * FROM dw_payroll_master WHERE DEM_EMP_ID='$rw->DEM_EMP_ID'");
+    $pay_track=$db->get_row("SELECT * FROM dw_payment_tracker WHERE DEM_EMP_ID='$rw->DEM_EMP_ID' AND DPT_PAYMENT_YEAR='".$datearray[0]."' AND DPT_PAYMENT_MONTH='".$datearray[1]."'");
+
+    $html.='<tr>';
+    $html.='<td>'.$emp.'</td>'; 
+    $html.='<td>'.strtoupper($rw->DEM_EMP_NAME_PREFIX." ".$rw->DEM_EMP_FIRST_NAME." ".$rw->DEM_EMP_MIDDLE_NAME." ".$rw->DEM_EMP_LAST_NAME).'</td>';
+    $html.='<td>'.$rw->DEM_EMP_AGE.'</td>';
+    $html.='<td>'.$pay_track->DPT_TOTAL_DAYS_WORKED.'</td>';
+    $html.='<td>'.$payroll_det->DPM_RATE.'</td>';
+    $html.='<td>'.$pay_track->DPT_TOTAL_GW_HRS.'</td>';
+
+    $html.='<td>'.$payroll_det->DPM_BASIC_SALARY.'</td>';
+    $basictotal+= $payroll_det->DPM_BASIC_SALARY;
+
+    $html.='<td>'.$payroll_det->DPM_HRA.'</td>';
+    $hratotal += $payroll_det->DPM_HRA;
+
+    $html.='<td>'.$payroll_det->DPM_OTHER_ALLOWANCE.'</td>';
+    $otherallowancestotal += $payroll_det->DPM_OTHER_ALLOWANCE;
+
+    $html.='<td>'.$payroll_det->DPM_GROSS_WAGES_PAYABLE.'</td>';
+    $grosswagespayabletotal += $payroll_det->DPM_GROSS_WAGES_PAYABLE;
+
+    $html.='<td>'.$payroll_det->DPM_PROFESSIONAL_TAX.'</td>';
+    $proftaxtotal += $payroll_det->DPM_PROFESSIONAL_TAX;
+
+    $html.='<td>'.$payroll_det->DPM_PF_EMPLOYEE.'</td>';
+    $ep_pftotal += $payroll_det->DPM_PF_EMPLOYEE;
+
+    $html.='<td>'.$payroll_det->DPM_PF_EMPLOYER.'</td>';
+    $er_pftotal += $payroll_det->DPM_PF_EMPLOYER;
+
+    $html.='<td>'.$payroll_det->DPM_ESIC_EMPLOYEE.'</td>';
+    $ep_esictotal += $payroll_det->DPM_ESIC_EMPLOYEE;
+
+    $html.='<td>'.$payroll_det->DPM_ESIC_EMPLOYER.'</td>';
+    $er_esictotal += $payroll_det->DPM_ESIC_EMPLOYER;
+
+    $html.='<td>'.$pay_track->TOTAL_DEDUCTION.'</td>';
+    $totaldeductionsum += $pay_track->TOTAL_DEDUCTION;
+
+    $html.='<td>'.$pay_track->DPT_NET_WAGES_PAID.'</td>';
+    $netwagespaidsum += $pay_track->DPT_NET_WAGES_PAID;
+
+    $html.='<td>'.$pay_track->DPT_INVOICE_NO.'</td>';
+    $html.='</tr>';
+  }
+
+  $html.='</tbody>';
+  $html.='<tfoot>';
+  $html.='<tr>'; 
+  $html.='<th colspan="6" style="text-align:right;">Total</th>';
+  $html.='<th>'.$basictotal.'</th>';
+  $html.='<th>'.$hratotal.'</th>';
+  $html.='<th>'.$otherallowancestotal.'</th>';
+  $html.='<th>'.$grosswagespayabletotal.'</th>';
+  $html.='<th>'.$proftaxtotal.'</th>';
+  $html.='<th>'.$ep_pftotal.'</th>';
+  $html.='<th>'.$er_pftotal.'</th>';
+  $html.='<th>'.$ep_esictotal.'</th>';
+  $html.='<th>'.$er_esictotal.'</th>';
+  $html.='<th>'.$totaldeductionsum.'</th>';
+  $html.='<th>'.$netwagespaidsum.'</th>';
+  $html.='<th></th>';
+  
+  $html.='</tr>';
+  $html.='</tfoot>';
+  $html.='</table>';
+  $html.='<br>';
+
+  $html.='<table id="example1" class="table" style="border:none !important;">';
+  $html.='<tr style="border:none !important;">';
+  $pfchalan=$ep_pftotal + $er_pftotal;
+  $html.='<td style="width:25%;border:none !important;">PF CHALAN AMT:</td>';
+  $html.='<td style="width:25%;text-align:left;border:none !important;">'.$pfchalan.'</td>';
+  $html.='<td rowspan="3" style="width:25%;text-align:right;border:none !important;">Signature:</td>';
+  
+  $html.='<td rowspan="3" style="width:25%;border:none !important;"></td>';    
+  
+  $html.='</tr>';
+
+  $html.='<tr style="border:none !important;">';
+  $esicchalan=$ep_esictotal + $er_esictotal;
+  $html.='<td style="border:none !important;">ESIC CHALAN AMT:</td>';
+  $html.='<td style="text-align:left;border:none !important;">'.$esicchalan.'</td>';
+  
+  $html.='</tr>';  
+  
+  $html.='<tr style="border:none !important;">';
+  $totalchalan= $ep_pftotal + $er_pftotal + $ep_esictotal + $er_esictotal;
+  $html.='<td style="border:none !important;">TOTAL AMT:</td>';
+  $html.='<td style="text-align:left;border:none !important;">'.$totalchalan.'</td>';
+
+  $html.='</tr>';  
+
+  $html.='</table>';
+
+
+  $dompdf = new DOMPDF();  
+  $dompdf->set_paper('a3', 'landscape');  
+  $dompdf->load_html($html);
+  $dompdf->render();
+  $pdf = $dompdf->output();
+
+  $fp = fopen("reports/travel_expense_report.pdf", 'w');
+  fclose($fp);
+  chmod("reports/travel_expense_report.pdf", 0777); 
+  file_put_contents("reports/travel_expense_report.pdf", $pdf);  
+  
+  header('location:download.php?file_url=reports/travel_expense_report.pdf');
+  echo('<script>window.open("'.site_root.'reports/travel_expense_report.pdf", "_blank","",true);</script>');
+
+}
+// Generate PDF for Payment Report
+
+// Generate Excel for Payment Report
 
 if(isset($_GET['expxlselect_pay_month']))
 {
@@ -152,9 +938,9 @@ if(isset($_GET['expxlselect_pay_month']))
   }
 
   $objPHPExcel->setActiveSheetIndex(0);
-  $adjustedColumn = PHPExcel_Cell::stringFromColumnIndex(18);
+  $adjustedColumn = PHPExcel_Cell::stringFromColumnIndex(17);
 
-  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, 1, "DAILY WAGES PAYMENT REPORT"); 
+  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, 1, $title->ins_name." PAYMENT REPORT"); 
   $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, 2, "FORM II M.W. RULES 1963 Rule 27"); 
   $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, 3, $fulldate ); 
   $objPHPExcel->getActiveSheet()->mergeCells("A1:".$adjustedColumn."1");
@@ -217,8 +1003,8 @@ if(isset($_GET['expxlselect_pay_month']))
   $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($coltitleCount, $rowtitleCount, "PAYMENT REFERANCE"); 
   $coltitleCount++;
 
-  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($coltitleCount, $rowtitleCount, "SIGN"); 
-  $coltitleCount++;
+  // $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($coltitleCount, $rowtitleCount, "SIGN"); 
+  // $coltitleCount++;
 
 
   $i=1;
@@ -281,21 +1067,7 @@ if(isset($_GET['expxlselect_pay_month']))
 
     $objPHPExcel->getActiveSheet()->setCellValue("R".$rc,$pay_track->DPT_INVOICE_NO)->getColumnDimension('R')->setAutoSize(true);
     
-    if(file_exists('images/user_sign/'.$payroll_det->DEM_EMP_ID."_SIGN.jpg"))
-    {
-      $objDrawing = new PHPExcel_Worksheet_Drawing();
-      $objDrawing->setPath('images/user_sign/'.$payroll_det->DEM_EMP_ID."_SIGN.jpg");
-      $objDrawing->setCoordinates('S'.$rc);
-      $objDrawing->setWorksheet($objPHPExcel->getActiveSheet());
-      $objDrawing->setWidthAndHeight(70,120);
-      $objDrawing->setResizeProportional(true);
-      $objPHPExcel->getActiveSheet()->getRowDimension($rc)->setRowHeight(30);
-
-    }
-    else
-    {
-      $objPHPExcel->getActiveSheet()->setCellValue('S'.$rc, '');
-    }
+    
 
     $rc++;
   } 
@@ -317,6 +1089,29 @@ if(isset($_GET['expxlselect_pay_month']))
   $objPHPExcel->getActiveSheet()->setCellValue('B'.$rc, "PF CHALAN AMT");
   $objPHPExcel->getActiveSheet()->setCellValue('C'.$rc, "-");
   $objPHPExcel->getActiveSheet()->setCellValue('D'.$rc, $ep_pftotal + $er_pftotal);
+  
+
+  $objPHPExcel->getActiveSheet()->setCellValue("I".$rc,"Signature");
+  $adjustedColumn = PHPExcel_Cell::stringFromColumnIndex(8);
+  $objPHPExcel->getActiveSheet()->mergeCells("I".$rc.":".$adjustedColumn.$rc);
+
+  if(file_exists('images/user_sign/'.$payroll_det->DEM_EMP_ID."_SIGN.jpg"))
+  {
+    $objDrawing = new PHPExcel_Worksheet_Drawing();
+    $objDrawing->setPath('images/user_sign/'.$payroll_det->DEM_EMP_ID."_SIGN.jpg");
+    $objDrawing->setCoordinates('J'.$rc);
+    $objDrawing->setWorksheet($objPHPExcel->getActiveSheet());
+    $objDrawing->setWidthAndHeight(70,120);
+    $objDrawing->setResizeProportional(true);
+    $objPHPExcel->getActiveSheet()->getRowDimension($rc)->setRowHeight(30);
+
+  }
+  else
+  {
+    $objPHPExcel->getActiveSheet()->setCellValue('J'.$rc, '');
+  }
+
+
   $rc ++;
 
   $objPHPExcel->getActiveSheet()->setCellValue('B'.$rc, "ESIC CHALAN AMT");
@@ -330,10 +1125,10 @@ if(isset($_GET['expxlselect_pay_month']))
   $rc ++;
 
   $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
-  chmod("dailywagespay_report.xlsx", 0777);
-  $objWriter->save('dailywagespay_report.xlsx'); 
-  header('location:download.php?file_url=dailywagespay_report.xlsx');
-  echo('<script>window.open("'.site_root.'dailywagespay_report.xlsx", "_blank","",true);</script>');
+  chmod($title->ins_name." pay_report.xlsx", 0777);
+  $objWriter->save($title->ins_name.' pay_report.xlsx'); 
+  header('location:download.php?file_url='.$title->ins_name.' pay_report.xlsx');
+  echo('<script>window.open("'.site_root.$title->ins_name.' pay_report.xlsx", "_blank","",true);</script>');
 
 
 }
@@ -344,6 +1139,7 @@ if(isset($_GET['expxlselect_pay_month']))
 
 if(isset($_GET['gen_attd_xl']))
 {
+  
   extract($_GET);
   // prnt($_GET);  
   $sa_date = $attd;
@@ -360,13 +1156,13 @@ if(isset($_GET['gen_attd_xl']))
   
   $objPHPExcel = new PHPExcel();
   $fulldate = date('F-Y',strtotime($sa_date));
-
+ 
 
   // $objPHPExcel = new PHPExcel();
   $objPHPExcel->setActiveSheetIndex(0);
   $adjustedColumn = PHPExcel_Cell::stringFromColumnIndex($nod+2);
 
-  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, 1, "DAILY WAGES"); 
+  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, 1, $title->ins_name); 
   $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, 2, "Employee Attendance Report"); 
   $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, 3, $fulldate ); 
   $objPHPExcel->getActiveSheet()->mergeCells("A1:".$adjustedColumn."1");
@@ -436,10 +1232,10 @@ if(isset($_GET['gen_attd_xl']))
 
   
   $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
-  chmod("dailywagesattendance.xlsx", 0777);
-  $objWriter->save('dailywagesattendance.xlsx'); 
-  header('location:download.php?file_url=dailywagesattendance.xlsx');
-  echo('<script>window.open("'.site_root.'dailywagesattendance.xlsx", "_blank","",true);</script>');
+  chmod($title->ins_name." attendance.xlsx", 0777);
+  $objWriter->save($title->ins_name.'attendance.xlsx'); 
+  header('location:download.php?file_url='.$title->ins_name.'attendance.xlsx');
+  echo('<script>window.open("'.site_root.$title->ins_name.'attendance.xlsx", "_blank","",true);</script>');
 
   // prnt($select_attd_month1);
 // echo "<script>window.location='emp_attendance_monthly_report.php?attd=".$select_attd_month."';</script>";

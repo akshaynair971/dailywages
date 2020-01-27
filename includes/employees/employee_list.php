@@ -3,6 +3,7 @@
     if($_SESSION['user_type']=='1')
     {
       $r=$db->get_results("SELECT * FROM dw_employee_master as a LEFT JOIN dw_user_login as b ON a.DEM_EMP_ID=b.DEM_EMP_ID ORDER BY DEM_ID DESC");
+
     }
 ?>
 <!-- Main content -->
@@ -64,10 +65,10 @@
                 </td>                    
                 <td style="border: 1px solid black !important;"><?php echo $row->DEM_PERSONAL_EMAIL_ID; ?></td>                    
                 <td style="border: 1px solid black !important;">
-                  <?php if ($row->DUL_ACTIVE_FLAG=="ACTIVE") { ?>
+                  <?php if ($row->DEM_ACTIVE_FLAG=="ACTIVE") { ?>
                   <span style="color:green;">ACTIVE</span>
                   <?php } else
-                  {  ?>
+                  {   ?>
                   <span style="color:red;">INACTIVE</span>
                   <?php } ?>                      
                 </td>

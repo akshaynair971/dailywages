@@ -13,7 +13,7 @@ if (isset($_POST['save_user']))
   {
 
     $DEM_EMP_ID=$_GET['edit_user'];
-    $user_update = $db->query("UPDATE dw_employee_master SET DEM_EMP_NAME_PREFIX='$DEM_EMP_NAME_PREFIX', DEM_EMP_FIRST_NAME='$DEM_EMP_FIRST_NAME',DEM_EMP_MIDDLE_NAME='$DEM_EMP_MIDDLE_NAME',DEM_EMP_LAST_NAME='$DEM_EMP_LAST_NAME',DEM_EMP_GENDER='$DEM_EMP_GENDER', DEM_EMP_DOB ='$DEM_EMP_DOB',DEM_EMP_AGE='$DEM_EMP_AGE',DEM_PERMANENT_ADDRESS='$DEM_PERMANENT_ADDRESS',DEM_PA_PINCODE='$DEM_PA_PINCODE',DEM_CURRRENT_ADDRESS='$DEM_CURRRENT_ADDRESS',DEM_CA_PINCODE='$DEM_CA_PINCODE',DEM_MOBILE_NUMBER='$DEM_MOBILE_NUMBER',DEM_ALTERNATE_MOBILE_NUMBER='$DEM_ALTERNATE_MOBILE_NUMBER',DEM_PERSONAL_EMAIL_ID='$DEM_PERSONAL_EMAIL_ID',DEM_OFFICIAL_EMAIL_ID='$DEM_OFFICIAL_EMAIL_ID',DEM_START_DATE='$DEM_START_DATE',DEM_END_DATE='$DEM_END_DATE',DEM_ACTIVE_FLAG='$DEM_ACTIVE_FLAG',DEM_LAST_UPDATED_BY='".$_SESSION['ad_id']."' WHERE DEM_EMP_ID ='".$DEM_EMP_ID."'");
+    $user_update = $db->query("UPDATE dw_employee_master SET DEM_EMP_NAME_PREFIX='$DEM_EMP_NAME_PREFIX', DEM_EMP_FIRST_NAME='$DEM_EMP_FIRST_NAME',DEM_EMP_MIDDLE_NAME='$DEM_EMP_MIDDLE_NAME',DEM_EMP_LAST_NAME='$DEM_EMP_LAST_NAME',DEM_EMP_GENDER='$DEM_EMP_GENDER', DEM_EMP_DOB ='$DEM_EMP_DOB',DEM_EMP_AGE='$DEM_EMP_AGE',DEM_PERMANENT_ADDRESS='$DEM_PERMANENT_ADDRESS',DEM_PA_PINCODE='$DEM_PA_PINCODE',DEM_CURRRENT_ADDRESS='$DEM_CURRRENT_ADDRESS',DEM_CA_PINCODE='$DEM_CA_PINCODE',DEM_MOBILE_NUMBER='$DEM_MOBILE_NUMBER',DEM_ALTERNATE_MOBILE_NUMBER='$DEM_ALTERNATE_MOBILE_NUMBER',DEM_PERSONAL_EMAIL_ID='$DEM_PERSONAL_EMAIL_ID',DEM_OFFICIAL_EMAIL_ID='$DEM_OFFICIAL_EMAIL_ID',DEM_ADHAR_ID='$DEM_ADHAR_ID',DEM_PAN_ID='$DEM_PAN_ID',DEM_START_DATE='$DEM_START_DATE',DEM_END_DATE='$DEM_END_DATE',DEM_ACTIVE_FLAG='$DEM_ACTIVE_FLAG',DEM_LAST_UPDATED_BY='".$_SESSION['ad_id']."' WHERE DEM_EMP_ID ='".$DEM_EMP_ID."'");
 
 
     $user_update_cred = $db->query("UPDATE dw_user_login SET DUL_USER_NAME='$DUL_USER_NAME', DUL_USER_PASSWORD='$DUL_USER_PASSWORD',DUL_USER_ROLE='$DUL_USER_ROLE',DUL_LAST_UPDATED_BY='".$_SESSION['ad_id']."' WHERE DEM_EMP_ID ='".$DEM_EMP_ID."'");
@@ -23,7 +23,8 @@ if (isset($_POST['save_user']))
     if($getpayroldet){
 
     }else{
-      $insert_payrole_history = $db->query("INSERT INTO dw_payroll_history VALUES('',NOW(),'".$_SESSION['ad_id']."',NOW(),'".$_SESSION['ad_id']."','$DPM_RATE','$DPM_VALID_FROM','$DPM_VALID_TO','$DPM_BASIC_SALARY','$DPM_HRA','$DPM_OTHER_ALLOWANCE','$DPM_SPECIAL_ALLOWANCE','$DPM_GROSS_WAGES_PAYABLE','$DPM_PROFESSIONAL_TAX','$DPM_PF_EMPLOYEE','$DPM_PF_EMPLOYER','$DPM_ESIC_EMPLOYEE','$DPM_ESIC_EMPLOYER','$DPM_CALCULATED_AMOUNT','$DEM_EMP_ID','$user_id')");
+      $insert_payrole_history = $db->query("INSERT INTO dw_payroll_history (`DPM_CREATION_DATE`, `DPM_CREATED_BY`, `DPM_LAST_UPDATAED_DATE`, `DPM_LAST_UPDATED_BY`, `DPM_RATE`, `DPM_VALID_FROM`, `DPM_VALID_TO`, `DPM_BASIC_SALARY`, `DPM_HRA`, `DPM_OTHER_ALLOWANCE`, `DPM_SPECIAL_ALLOWANCE`, `DPM_GROSS_WAGES_PAYABLE`, `DPM_PROFESSIONAL_TAX`, `DPM_PF_EMPLOYEE`, `DPM_PF_EMPLOYER`, `DPM_ESIC_EMPLOYEE`, `DPM_ESIC_EMPLOYER`, `DPM_CALCULATED_AMOUNT`, `DEM_EMP_ID`, `DUL_USER_ID`) VALUES(NOW(),'".$_SESSION['ad_id']."',NOW(),'".$_SESSION['ad_id']."','$DPM_RATE','$DPM_VALID_FROM','$DPM_VALID_TO','$DPM_BASIC_SALARY','$DPM_HRA','$DPM_OTHER_ALLOWANCE','$DPM_SPECIAL_ALLOWANCE','$DPM_GROSS_WAGES_PAYABLE','$DPM_PROFESSIONAL_TAX','$DPM_PF_EMPLOYEE','$DPM_PF_EMPLOYER','$DPM_ESIC_EMPLOYEE','$DPM_ESIC_EMPLOYER','$DPM_CALCULATED_AMOUNT','$DEM_EMP_ID','$user_id')");
+      
     
     }
 
@@ -98,8 +99,8 @@ if (isset($_POST['save_user']))
         }
       }
       global  $succ;
-      // $succ= "Employee Details Update Successfully...!";
-      // header("Refresh:1.0; url=index.php?folder=employees&file=employee_list");
+      $succ= "Employee Details Update Successfully...!";
+      header("Refresh:1.0; url=index.php?folder=employees&file=employee_list");
     }
     else
     {
@@ -109,8 +110,8 @@ if (isset($_POST['save_user']))
   }
   else
   {
-    $user_insert=$db->query("INSERT INTO dw_employee_master values('','','$DEM_EMP_NAME_PREFIX','$DEM_EMP_FIRST_NAME','$DEM_EMP_MIDDLE_NAME','$DEM_EMP_LAST_NAME','$DEM_EMP_GENDER','$DEM_EMP_DOB','$DEM_EMP_AGE','$DEM_PERMANENT_ADDRESS','$DEM_PA_PINCODE','$DEM_CURRRENT_ADDRESS','$DEM_CA_PINCODE','$DEM_MOBILE_NUMBER','$DEM_ALTERNATE_MOBILE_NUMBER','$DEM_PERSONAL_EMAIL_ID','$DEM_OFFICIAL_EMAIL_ID','$DEM_START_DATE','$DEM_END_DATE','$DEM_ACTIVE_FLAG',NOW(),'".$_SESSION['ad_id']."','','".$_SESSION['ad_id']."')");      
-     
+    $user_insert=$db->query("INSERT INTO dw_employee_master (`DEM_EMP_NAME_PREFIX`, `DEM_EMP_FIRST_NAME`, `DEM_EMP_MIDDLE_NAME`, `DEM_EMP_LAST_NAME`, `DEM_EMP_GENDER`, `DEM_EMP_DOB`, `DEM_EMP_AGE`, `DEM_PERMANENT_ADDRESS`, `DEM_PA_PINCODE`, `DEM_CURRRENT_ADDRESS`, `DEM_CA_PINCODE`, `DEM_MOBILE_NUMBER`, `DEM_ALTERNATE_MOBILE_NUMBER`, `DEM_PERSONAL_EMAIL_ID`, `DEM_OFFICIAL_EMAIL_ID`, `DEM_ADHAR_ID`, `DEM_PAN_ID`, `DEM_START_DATE`, `DEM_END_DATE`, `DEM_ACTIVE_FLAG`, `DEM_CREATION_DATE`, `DEM_CREATED_BY`, `DEM_LAST_UPDATED_DATE`, `DEM_LAST_UPDATED_BY`,`DEM_EMP_ID`) values('$DEM_EMP_NAME_PREFIX','$DEM_EMP_FIRST_NAME','$DEM_EMP_MIDDLE_NAME','$DEM_EMP_LAST_NAME','$DEM_EMP_GENDER','$DEM_EMP_DOB','$DEM_EMP_AGE','$DEM_PERMANENT_ADDRESS','$DEM_PA_PINCODE','$DEM_CURRRENT_ADDRESS','$DEM_CA_PINCODE','$DEM_MOBILE_NUMBER','$DEM_ALTERNATE_MOBILE_NUMBER','$DEM_PERSONAL_EMAIL_ID','$DEM_OFFICIAL_EMAIL_ID','$DEM_ADHAR_ID','$DEM_PAN_ID','$DEM_START_DATE','$DEM_END_DATE','$DEM_ACTIVE_FLAG',NOW(),'".$_SESSION['ad_id']."',NOW(),'".$_SESSION['ad_id']."','0')");      
+        // $db->debug();
     if($user_insert)
     {
       $last_id = $db->insert_id;    
@@ -118,11 +119,11 @@ if (isset($_POST['save_user']))
       $update_empid = $db->query("UPDATE dw_employee_master SET DEM_EMP_ID='$DEM_EMP_ID' WHERE DEM_ID='$last_id' ");
       $user_id = $db->insert_id;
 
-      $insert_user = $db->query("INSERT INTO dw_user_login VALUES('','$DUL_USER_NAME','$DUL_USER_PASSWORD','$DUL_USER_ROLE','$DEM_EMP_ID',NOW(),'".$_SESSION['ad_id']."',NOW(),'".$_SESSION['ad_id']."','ACITVE')");
+      $insert_user = $db->query("INSERT INTO dw_user_login (`DUL_USER_NAME`, `DUL_USER_PASSWORD`, `DUL_USER_ROLE`, `DEM_EMP_ID`, `DUL_CREATION_DATE`, `DUL_CREATED_BY`, `DUL_LAST_UPDATED_DATE`, `DUL_LAST_UPDATED_BY`, `DUL_ACTIVE_FLAG`) VALUES('$DUL_USER_NAME','$DUL_USER_PASSWORD','$DUL_USER_ROLE','$DEM_EMP_ID',NOW(),'".$_SESSION['ad_id']."',NOW(),'".$_SESSION['ad_id']."','ACITVE')");
 
       $insert_payrole = $db->query("INSERT INTO dw_payroll_master VALUES('',NOW(),'".$_SESSION['ad_id']."',NOW(),'".$_SESSION['ad_id']."','$DPM_RATE','$DPM_VALID_FROM','$DPM_VALID_TO','$DPM_BASIC_SALARY','$DPM_HRA','$DPM_OTHER_ALLOWANCE','$DPM_SPECIAL_ALLOWANCE','$DPM_GROSS_WAGES_PAYABLE','$DPM_PROFESSIONAL_TAX','$DPM_PF_EMPLOYEE','$DPM_PF_EMPLOYER','$DPM_ESIC_EMPLOYEE','$DPM_ESIC_EMPLOYER','$DPM_CALCULATED_AMOUNT','$DEM_EMP_ID','$user_id')");
 
-      $insert_payrole_history = $db->query("INSERT INTO dw_payroll_history VALUES('',NOW(),'".$_SESSION['ad_id']."',NOW(),'".$_SESSION['ad_id']."','$DPM_RATE','$DPM_VALID_FROM','$DPM_VALID_TO','$DPM_BASIC_SALARY','$DPM_HRA','$DPM_OTHER_ALLOWANCE','$DPM_SPECIAL_ALLOWANCE','$DPM_GROSS_WAGES_PAYABLE','$DPM_PROFESSIONAL_TAX','$DPM_PF_EMPLOYEE','$DPM_PF_EMPLOYER','$DPM_ESIC_EMPLOYEE','$DPM_ESIC_EMPLOYER','$DPM_CALCULATED_AMOUNT','$DEM_EMP_ID','$user_id')");
+      $insert_payrole_history = $db->query("INSERT INTO dw_payroll_history (`DPM_CREATION_DATE`, `DPM_CREATED_BY`, `DPM_LAST_UPDATAED_DATE`, `DPM_LAST_UPDATED_BY`, `DPM_RATE`, `DPM_VALID_FROM`, `DPM_VALID_TO`, `DPM_BASIC_SALARY`, `DPM_HRA`, `DPM_OTHER_ALLOWANCE`, `DPM_SPECIAL_ALLOWANCE`, `DPM_GROSS_WAGES_PAYABLE`, `DPM_PROFESSIONAL_TAX`, `DPM_PF_EMPLOYEE`, `DPM_PF_EMPLOYER`, `DPM_ESIC_EMPLOYEE`, `DPM_ESIC_EMPLOYER`, `DPM_CALCULATED_AMOUNT`, `DEM_EMP_ID`, `DUL_USER_ID`) VALUES('',NOW(),'".$_SESSION['ad_id']."',NOW(),'".$_SESSION['ad_id']."','$DPM_RATE','$DPM_VALID_FROM','$DPM_VALID_TO','$DPM_BASIC_SALARY','$DPM_HRA','$DPM_OTHER_ALLOWANCE','$DPM_SPECIAL_ALLOWANCE','$DPM_GROSS_WAGES_PAYABLE','$DPM_PROFESSIONAL_TAX','$DPM_PF_EMPLOYEE','$DPM_PF_EMPLOYER','$DPM_ESIC_EMPLOYEE','$DPM_ESIC_EMPLOYER','$DPM_CALCULATED_AMOUNT','$DEM_EMP_ID','$user_id')");
 
       
 
@@ -175,7 +176,7 @@ if (isset($_POST['save_user']))
 
         if ($pro->uploaded) 
         {
-          $pro->file_new_name_body = $id;      
+          $pro->file_new_name_body = $id."_SIGN";      
           $pro->image_convert = 'jpg';
           $pro->Process($path);
           if ($pro->processed)
@@ -285,7 +286,7 @@ if (isset($_GET['activeemp_id']))
 if(isset($_POST['save_attd']) || isset($_POST['save_lock_attd']))
 {
   extract($_POST);  
-  // prnt($_POST);
+//   prnt($_POST);
   if(isset($_POST['save_attd'])){
     $lock_status = 1;
   } 
@@ -296,7 +297,7 @@ if(isset($_POST['save_attd']) || isset($_POST['save_lock_attd']))
 
   foreach ($_POST['DEA_IN_TIME'] as $key => $value) {    
      
-    if(($DEA_IN_TIME[$key] && $DEA_OUT_TIME[$key] && $DEA_CURRENT_LOCATION[$key] && $DEA_SIGN[$key])!=''){
+    if(($DEA_IN_TIME[$key] && $DEA_OUT_TIME[$key] && $DEA_CURRENT_LOCATION[$key])){
       
       $attdarray = explode("-",$attd_date[$key]);
       if($DEA_ID[$key]!=''){
@@ -313,12 +314,12 @@ if(isset($_POST['save_attd']) || isset($_POST['save_lock_attd']))
           $newset =",DEA_STATUS='$lock_status'";
           $filter = "DEM_EMPLOYEE_ID='$DEM_EMP_ID' AND DEA_ID='".$DEA_ID[$key]."' AND DEA_STATUS='1'";
         }
-        $update1=$db->query("UPDATE dw_emp_attendance SET DEA_IN_TIME='$DEA_IN_TIME[$key]',DEA_OUT_TIME='$DEA_OUT_TIME[$key]',DEA_CURRENT_LOCATION='$DEA_CURRENT_LOCATION[$key]',DEA_SIGN='$DEA_SIGN[$key]',DEA_REMARK='$DEA_REMARK[$key]' $newset WHERE $filter");
+        $update1=$db->query("UPDATE dw_emp_attendance SET DEA_IN_TIME='$DEA_IN_TIME[$key]',DEA_OUT_TIME='$DEA_OUT_TIME[$key]',DEA_CURRENT_LOCATION='$DEA_CURRENT_LOCATION[$key]',DEA_REMARK='$DEA_REMARK[$key]' $newset WHERE $filter");
         // $db->debug();       
 
       }
       else{
-        $insert1=$db->query("INSERT INTO dw_emp_attendance (DEA_CREATION_DATE,DEA_CREATION_BY,DEA_LAST_UPDATED_DATE,DPT_LAST_UPDATED_BY,DEA_ATTD_DATE,DEA_ATTD_MONTH,DEA_ATTD_YEAR,DEA_IN_TIME,DEA_OUT_TIME,DEA_CURRENT_LOCATION,DEA_REMARK,DEA_SIGN,DEA_LATITUDE,DEA_LONGITUDE, DEA_STATUS, DEM_EMPLOYEE_ID) VALUES (NOW(),'".$_SESSION['ad_id']."',NOW(),'".$_SESSION['ad_id']."','$attd_date[$key]','$attdarray[1]','$attdarray[0]','$DEA_IN_TIME[$key]','$DEA_OUT_TIME[$key]','$DEA_CURRENT_LOCATION[$key]','$DEA_REMARK[$key]','$DEA_SIGN[$key]','','','$lock_status','".$DEM_EMP_ID."')");
+        $insert1=$db->query("INSERT INTO dw_emp_attendance (DEA_CREATION_DATE,DEA_CREATION_BY,DEA_LAST_UPDATED_DATE,DPT_LAST_UPDATED_BY,DEA_ATTD_DATE,DEA_ATTD_MONTH,DEA_ATTD_YEAR,DEA_IN_TIME,DEA_OUT_TIME,DEA_CURRENT_LOCATION,DEA_REMARK,DEA_LATITUDE,DEA_LONGITUDE, DEA_STATUS, DEM_EMPLOYEE_ID) VALUES (NOW(),'".$_SESSION['ad_id']."',NOW(),'".$_SESSION['ad_id']."','$attd_date[$key]','$attdarray[1]','$attdarray[0]','$DEA_IN_TIME[$key]','$DEA_OUT_TIME[$key]','$DEA_CURRENT_LOCATION[$key]','$DEA_REMARK[$key]','','','$lock_status','".$DEM_EMP_ID."')");
         // $db->debug();        
       }
       if($insert1 || $update1)
@@ -349,35 +350,43 @@ if(isset($_POST['save_attd']) || isset($_POST['save_lock_attd']))
 
 
 
-if(isset($_POST['PAYMENT_SUBMIT']))
+if(isset($_POST['PAYMENT_SUBMIT'])|| isset($_POST['PAYMENT_SUBMIT_LOCK']))
 {
   extract($_POST);
   // echo "<pre>";
   // print_r($_POST);
   // echo "</pre>";
+  if(isset($_POST['PAYMENT_SUBMIT']))
+  {
+    $paystatus=1;
+  }
+  if(isset($_POST['PAYMENT_SUBMIT_LOCK']))
+  {
+    $paystatus=0;
+  }
   
   $attdarray = explode("-",$pay_month_year);
   if($_GET['DPT_ID']!=''){
 
-    $update1=$db->query("UPDATE dw_payment_tracker SET DPT_LAST_UPDATED_BY='".$_SESSION['ad_id']."',DPT_PAYMENT_DATE='$DPT_PAYMENT_DATE',DPT_PAYMENT_MONTH='$attdarray[1]',DPT_PAYMENT_YEAR='$attdarray[0]',DPT_TOTAL_DAYS_WORKED='$DPT_TOTAL_DAYS_WORKED',DPT_TOTAL_GW_HRS='$DPT_TOTAL_GW_HRS',TOTAL_DEDUCTION='$TOTAL_DEDUCTION',DPT_NET_WAGES_PAID='$DPT_NET_WAGES_PAID',DPT_INVOICE_NO='$DPT_INVOICE_NO' WHERE DPT_ID='".$_GET['DPT_ID']."'");
+    $update1=$db->query("UPDATE dw_payment_tracker SET DPT_LAST_UPDATED_BY='".$_SESSION['ad_id']."',DPT_PAYMENT_DATE='$DPT_PAYMENT_DATE',DPT_PAYMENT_MONTH='$attdarray[1]',DPT_PAYMENT_YEAR='$attdarray[0]',DPT_TOTAL_DAYS_WORKED='$DPT_TOTAL_DAYS_WORKED',DPT_TOTAL_GW_HRS='$DPT_TOTAL_GW_HRS',TOTAL_DEDUCTION='$TOTAL_DEDUCTION',DPT_NET_WAGES_PAID='$DPT_NET_WAGES_PAID',DPT_INVOICE_NO='$DPT_INVOICE_NO',DPT_STATUS='$paystatus' WHERE DPT_ID='".$_GET['DPT_ID']."'");
     // $db->debug();
     if($update1)
     {
       global  $succ;
       echo "<script> alert('Payment Details Updated Successfully..!');</script>";
       echo "<script> window.location='index.php?folder=employees&file=payment_tracker_view&DEM_EMP_ID=".$DEM_EMP_ID."';</script>";
-      header("Refresh:1.0; url=index.php?folder=employees&file=payment_tracker_view");
+      
     } 
 
   }
   else{
-    $insert1=$db->query("INSERT INTO dw_payment_tracker (DPT_CREATION_DATE,DPT_CREATED_BY,DPT_LAST_UPDATED_DATE,DPT_LAST_UPDATED_BY,DPT_PAYMENT_DATE,DPT_PAYMENT_MONTH,DPT_PAYMENT_YEAR,DPT_TOTAL_DAYS_WORKED,DPT_TOTAL_GW_HRS,TOTAL_DEDUCTION,DPT_NET_WAGES_PAID,DPT_INVOICE_NO,DPT_STATUS,DEM_EMP_ID) VALUES (NOW(),'".$_SESSION['ad_id']."',NOW(),'".$_SESSION['ad_id']."','$DPT_PAYMENT_DATE','$attdarray[1]','$attdarray[0]','$DPT_TOTAL_DAYS_WORKED','$DPT_TOTAL_GW_HRS','$TOTAL_DEDUCTION','$DPT_NET_WAGES_PAID','$DPT_INVOICE_NO','1','".$DEM_EMP_ID."')");
+    $insert1=$db->query("INSERT INTO dw_payment_tracker (DPT_CREATION_DATE,DPT_CREATED_BY,DPT_LAST_UPDATED_DATE,DPT_LAST_UPDATED_BY,DPT_PAYMENT_DATE,DPT_PAYMENT_MONTH,DPT_PAYMENT_YEAR,DPT_TOTAL_DAYS_WORKED,DPT_TOTAL_GW_HRS,TOTAL_DEDUCTION,DPT_NET_WAGES_PAID,DPT_INVOICE_NO,DPT_STATUS,DEM_EMP_ID) VALUES (NOW(),'".$_SESSION['ad_id']."',NOW(),'".$_SESSION['ad_id']."','$DPT_PAYMENT_DATE','$attdarray[1]','$attdarray[0]','$DPT_TOTAL_DAYS_WORKED','$DPT_TOTAL_GW_HRS','$TOTAL_DEDUCTION','$DPT_NET_WAGES_PAID','$DPT_INVOICE_NO','$paystatus','".$DEM_EMP_ID."')");
     // $db->debug();
     if($insert1)
     {
       global  $succ;
       $succ= "Payment Details Added Successfully..!";
-      header("Refresh:1.0; url=index.php?folder=employees&file=payment_tracker_view");
+      echo "<script> window.location='index.php?folder=employees&file=payment_tracker_view&DEM_EMP_ID=".$DEM_EMP_ID."';</script>";
     }
   }
     

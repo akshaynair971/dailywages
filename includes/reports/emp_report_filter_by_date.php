@@ -67,7 +67,7 @@
           </div>
 
           <div class="col-md-12">
-            <input type="hidden" name="att_type" value="single">
+            
             <input type="submit" name="rep_attd_sub_sin_mon" value="Get Attendance Report" class="btn btn-primary btn-round">
             
           </div>
@@ -76,6 +76,56 @@
     </div>   
   </div>
 </div>
+
+<div class="col-lg-6 col-md-6 col-sm-12">
+  <div class="box box-primary">
+    <div class="box-header">
+      <h3 class="box-title"><label><i class="fa fa-book"></i> Select Week to Generate Attendance Report </label></h3>
+      <div class="box-tools">
+        <!-- <br><br>
+        <form method="POST" action="?folder=reports&file=emp_report_single_month">
+          <input type="hidden" name="curr_month_attd_date" value="<?php echo date('Y-m'); ?>">
+          <input type="submit" name="rep_attd_sub_sin_cur_mon" value="Current Month (<?php echo date('F Y'); ?>)" class="btn btn-success btn-round">
+        </form> -->
+        
+      </div>
+    </div>
+    <div class="box-body">
+      <form method="POST"><br>
+        <div class="row">
+          <div class="form-group col-md-6">
+              <label style=" margin-left: 10px;">Select Year : <span style="color: red;">*</span></label>
+              <select class="form-control" name="weekly_attd_year" id="weekly_attd_year" onchange="get_weeks_in_year();">
+                <option value="">Select Year</option>
+                <?php for($mc=1950;$mc<=2050;$mc++){ 
+
+                ?>
+                <option value="<?php echo $mc; ?>" <?php if(date('Y')==$mc){ echo "selected"; }  ?>><?php echo $mc; ?></option>
+                <?php 
+                if((date('Y'))==$mc){ break;  }
+                } ?>
+              </select> 
+            </div>
+
+            <div class="form-group col-md-6" >
+              <label style="margin-left: 10px;">Select Week : <span style="color: red;">*</span></label>
+              <select class="form-control" name="weekly_attd_week" id="weekly_attd_week" onchange="get_dates_attendance();">
+                <option value="">Select Year First</option>                
+                
+              </select>
+            </div>
+
+          <div class="col-md-12">
+            <input type="hidden" name="att_type" value="single">
+            <input type="submit" name="get_weekly_attd_report" value="Get Weekly Attendance Report" class="btn btn-primary btn-round">
+            
+          </div>
+        </div>
+      </form>
+    </div>   
+  </div>
+</div>
+
 
 <!-- <div class="col-lg-6 col-md-6 col-sm-12">
   <div class="box box-primary">
@@ -102,7 +152,6 @@
 </div> -->
 
 
-   
 
 <script>
   $(function() {
@@ -252,6 +301,34 @@
     });
   });
 </script>
+
+<script>
+  function get_weeks_in_year()
+  {    
+         
+    var attd_year = $('#weekly_attd_year').val(); 
+    $.ajax({
+      url: 'get_weeks_in_year.php',
+      type: 'POST',
+      data: {attd_year:attd_year,get_weeks_in_yearfor_report:1},
+      dataType: 'html'
+    })
+    .done(function(data){
+      // console.log(data);  
+          
+      $('#weekly_attd_week').html(data); // load response 
+      
+    });
+    
+  } 
+
+  $(document).ready(function(){
+    get_weeks_in_year();
+    
+  }); 
+</script>
+
+
 
 
 

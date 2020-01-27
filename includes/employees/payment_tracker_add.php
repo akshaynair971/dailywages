@@ -57,10 +57,10 @@
                 <input type="text" class="form-control" id='DPT_TOTAL_DAYS_WORKED'  name='DPT_TOTAL_DAYS_WORKED' placeholder="Enter Total Days Worked" value="<?php if(isset($user_edit)){ echo $user_edit->DPT_TOTAL_DAYS_WORKED; } ?>" required readonly>  
               </div>
 
-              <div class="form-group col-md-3">
+              <!-- <div class="form-group col-md-3">
                 <label for="DPT_TOTAL_GW_HRS">Total GW Hours </label>
                 <input type="text" class="form-control" id='DPT_TOTAL_GW_HRS'  name='DPT_TOTAL_GW_HRS' placeholder="Enter Total Gross Work Hours" value="<?php if(isset($user_edit)){ echo $user_edit->DPT_TOTAL_GW_HRS; } ?>"  >  
-              </div>
+              </div> -->
 
               <div class="form-group col-md-3">
                 <label for="TOTAL_DEDUCTION">Total Deduction <span style="color: #e22b0e;">*</span></label>
@@ -73,13 +73,14 @@
               </div>
 
               <div class="form-group col-md-3">
-                <label for="DPT_INVOICE_NO">Payment Referance<span style="color: #e22b0e;">*</span></label>
-                <input type="text" class="form-control" id='DPT_INVOICE_NO'  name='DPT_INVOICE_NO' placeholder="Enter Payment Referance" value="<?php if(isset($user_edit)){ echo $user_edit->DPT_INVOICE_NO; } ?>" required >  
+                <label for="DPT_INVOICE_NO">Payment Reference<span style="color: #e22b0e;">*</span></label>
+                <input type="text" class="form-control" id='DPT_INVOICE_NO'  name='DPT_INVOICE_NO' placeholder="Enter Payment Reference" value="<?php if(isset($user_edit)){ echo $user_edit->DPT_INVOICE_NO; } ?>" required >  
               </div>
 
               <div class="form-group col-md-12">   
                 <center>             
-                  <input type="submit" class="btn btn-primary btn-round" id='PAYMENT_SUBMIT'  name='PAYMENT_SUBMIT' value="Submit Payment" >  
+                  <input type="submit" class="btn btn-primary btn-round" id='PAYMENT_SUBMIT'  name='PAYMENT_SUBMIT' value="Save Payment" > 
+                  <input type="submit" name="PAYMENT_SUBMIT_LOCK" id="PAYMENT_SUBMIT_LOCK" class="btn btn-warning btn-round" value="Save & Lock Payment" > 
                 </center>
               </div>
 

@@ -6,11 +6,7 @@ if(isset($_GET['select_attd_month']))
   
   $datearray = explode("-",$select_attd_month);
   $fulldate = date('F-Y',strtotime($select_attd_month));
-  if($_SESSION['user_type']=="2"){
-    $r=$db->get_results("SELECT * FROM dw_employee_master WHERE DEM_EMP_ID='".$_SESSION['DEM_EMP_ID']."'");  
-  }else{
-    $r=$db->get_results("SELECT * FROM dw_employee_master");
-  }
+  $r=$db->get_row("SELECT * FROM dw_employee_master WHERE DEM_EMP_ID='".$DEM_EMP_ID."'");   
 
 
 }
@@ -20,9 +16,10 @@ if(isset($_GET['select_attd_month']))
   <div class="box box-primary">
         
     <div class="box-header">
-      <h3 class="box-title"><b>Attendance Report of Month <?php echo $fulldate; ?></b></h3>
+      <h3 class="box-title"><b>Attendance Report of <span style="color:green;"><?php echo strtoupper($r->DEM_EMP_FIRST_NAME." ".$r->DEM_EMP_MIDDLE_NAME." ".$r->DEM_EMP_LAST_NAME); ?></span> (Month <?php echo $fulldate; ?>)</b></h3>
       <div class="box-tools">
-        <a href="index.php?folder=reports&file=emp_attd_single_month_list&DEM_EMP_ID=<?php echo $DEM_EMP_ID; ?>&expxlselect_attd_month=<?php echo $select_attd_month; ?>" class="btn btn-warning btn-round"><i class="fa fa-file"></i> Excel</a>        
+        <a href="index.php?folder=reports&file=emp_attd_detailed_single_month&DEM_EMP_ID=<?php echo $DEM_EMP_ID; ?>&exppdfselect_attd_month=<?php echo $select_attd_month; ?>" class="btn btn-info btn-round"><i class="fa fa-file"></i> PDF</a>        
+        <a href="index.php?folder=reports&file=emp_attd_detailed_single_month&DEM_EMP_ID=<?php echo $DEM_EMP_ID; ?>&expxlselect_attd_month=<?php echo $select_attd_month; ?>" class="btn btn-warning btn-round"><i class="fa fa-file"></i> Excel</a>        
         <a href="index.php?folder=reports&file=emp_attd_single_month_list&DEM_EMP_ID=<?php echo $DEM_EMP_ID; ?>&select_attd_month=<?php echo $select_attd_month; ?>" class="btn btn-default btn-round"><i class="fa fa-share"></i> Back</a>        
       </div>
     </div>
@@ -36,7 +33,7 @@ if(isset($_GET['select_attd_month']))
             <th style="border: 1px solid black !important;">Out Time</th>
             <th style="border: 1px solid black !important;">Location</th>
             <th style="border: 1px solid black !important;">Remark</th>
-            <th style="border: 1px solid black !important;">Sign</th>
+            <!-- <th style="border: 1px solid black !important;">Sign</th> -->
           </tr>
         </thead>
         <tbody>
@@ -58,19 +55,19 @@ if(isset($_GET['select_attd_month']))
           ?>
             <tr>
               <td style="border: 1px solid black !important;"> 
-                <?php echo $convdate; ?>
+                <?php echo date("d-M-Y",strtotime($convdate)); ?>
               </td>
               <td style="border: 1px solid black !important;"><?php echo $convday; ?></td>
-              <td style="border: 1px solid black !important;"><?php if($getattd->DEA_IN_TIME!=''){ echo $getattd->DEA_IN_TIME; }else{ echo "--"; } ?>
+              <td style="border: 1px solid black !important;"><?php if($getattd->DEA_IN_TIME!=''){ echo $getattd->DEA_IN_TIME; }elseif($convday=="Sun"){ echo "9:00 AM"; }else{ echo "--"; } ?>
               </td>
-              <td style="border: 1px solid black !important;"><?php if($getattd->DEA_OUT_TIME!=''){ echo $getattd->DEA_OUT_TIME; }else{ echo "--"; } ?>
+              <td style="border: 1px solid black !important;"><?php if($getattd->DEA_OUT_TIME!=''){ if(date('h:i A',strtotime($getattd->DEA_OUT_TIME))< date('h:i A',strtotime("6:00 PM")) ){ echo $getattd->DEA_OUT_TIME; }else{ echo "6:00 PM"; } }elseif($convday=="Sun"){ echo "6:00 PM"; }else{ echo "--"; } ?>
               </td>
-              <td style="border: 1px solid black !important;"><?php if($getattd->DEA_CURRENT_LOCATION!=''){ echo $getattd->DEA_CURRENT_LOCATION; }else{ echo "--"; } ?>
+              <td style="border: 1px solid black !important;"><?php if($getattd->DEA_CURRENT_LOCATION!=''){ echo $getattd->DEA_CURRENT_LOCATION; }elseif($convday=="Sun"){ echo "WEEKLY OFF"; }else{ echo "--"; } ?>
               </td>
               <td style="border: 1px solid black !important;"><?php if($getattd->DEA_REMARK!=''){ echo $getattd->DEA_REMARK; }else{ echo "--"; } ?>
               </td>
-              <td style="border: 1px solid black !important;"><span style="display: none;"> <?php echo base64_encode("images/user_sign/".$DEM_EMP_ID."_SIGN.jpg"); ?></span><img style="width:100px;width:70px;" src="images/user_sign/<?php echo $DEM_EMP_ID."_SIGN.jpg"; ?> " onerror="this.src='images/sign.jpg'">
-              </td>         
+              <!-- <td style="border: 1px solid black !important;"><span style="display: none;"> <?php echo base64_encode("images/user_sign/".$DEM_EMP_ID."_SIGN.jpg"); ?></span><img style="width:100px;width:70px;" src="images/user_sign/<?php echo $DEM_EMP_ID."_SIGN.jpg"; ?> " onerror="this.src='images/sign.jpg'">
+              </td>  -->        
             </tr>
           <?php
           }

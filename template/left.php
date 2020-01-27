@@ -11,9 +11,9 @@
         </div>
       </div>
   <ul class="sidebar-menu" data-widget="tree">  
-    <li class="active"><a href="index.php"><i class="fa fa-dashboard"></i> Main Dashboard </a></li>
+    <li ><a href="<?php echo site_root; ?>index.php"><i class="fa fa-dashboard"></i> Main Dashboard </a></li>
     <?php if($_SESSION['user_type']=="1"){?>
-      <li class="treeview ">
+      <li class="treeview">
         <a href="#">
           <i class="fa fa-lock"></i>
           <span>Security</span>   
@@ -23,11 +23,11 @@
         </a>
         <ul class="treeview-menu">
         
-          <li><a href="?folder=security&file=general_setting"><i class="fa fa-cog"></i>General Setting</a></li>
+          <li><a href="<?php echo site_root; ?>index.php?folder=security&file=general_setting"><i class="fa fa-cog"></i>General Setting</a></li>
         
 
         
-          <li><a href="?folder=security&file=change_password"><i class="fa fa-key"></i>Change Password</a></li>
+          <li><a href="<?php echo site_root; ?>index.php?folder=security&file=change_password"><i class="fa fa-key"></i>Change Password</a></li>
           
           <!-- <li><a href="?folder=admin&file=sms_setting_view"><i class="fa fa-line-chart"></i> SMS General Setting </a></li>       -->
           <!-- <?php if(in_array('39',$tab_data)){ ?>
@@ -51,12 +51,13 @@
           </span>
         </a>
         <ul class="treeview-menu">      
-          <li><a href="?folder=employees&file=employee_list"><i class="fa fa-hand-o-right"></i> Employees List </a></li>
-          <li><a href="?folder=employees&file=admin_employee_attendance_view"><i class="fa fa-hand-o-right"></i>  Employees Attendance & <br> Payment</a></li>     
+          <li><a href="<?php echo site_root; ?>index.php?folder=employees&file=employee_list"><i class="fa fa-hand-o-right"></i> Employees List </a></li>
+          <li><a href="<?php echo site_root; ?>index.php?folder=employees&file=admin_employee_attendance_view"><i class="fa fa-hand-o-right"></i>  Employees Attendance & <br> Payment</a></li>     
           <!-- <li><a href="?folder=employees&file=admin_employee_paytrack_view"><i class="fa fa-hand-o-right"></i>  Employees Payment Tracker</a></li>      -->
         </ul>
       </li> 
-      <li><a href="?folder=reports&file=emp_report_filter_by_date"><i class="fa fa-file"></i> Reports</a></li>
+      <li><a href="<?php echo site_root; ?>index.php?folder=travel_expense&file=travel_expense_list"><i class="fa fa-file"></i> Travel & Expense</a></li>
+      <li><a href="<?php echo site_root; ?>index.php?folder=reports&file=emp_report_filter_by_date"><i class="fa fa-file"></i> Reports</a></li>
 
       <!-- <li  class="treeview">
         <a href="#">
@@ -87,14 +88,15 @@
           </span>
         </a>
         <ul class="treeview-menu">
-          <li><a href="?folder=employees&file=employee_profile"><i class="fa fa-user"></i>My Profile</a></li>
-          <li><a href="?folder=security&file=change_password"><i class="fa fa-key"></i>Change Password</a></li>
+          <li><a href="<?php echo site_root; ?>index.php?folder=employees&file=employee_profile"><i class="fa fa-user"></i>My Profile</a></li>
+          <li><a href="<?php echo site_root; ?>index.php?folder=security&file=change_password"><i class="fa fa-key"></i>Change Password</a></li>
        
         </ul>
       </li>
-      <li><a href="?folder=employees&file=employee_attendance_view"><i class="fa fa-hand-o-right"></i> Attendance </a></li>
-      <li><a href="?folder=employees&file=payment_tracker_view&DEM_EMP_ID=<?php echo $_SESSION['DEM_EMP_ID']; ?>"><i class="fa fa-rupee"></i> Payment Tracker </a></li>
-      <li><a href="?folder=reports&file=emp_report_filter_by_date"><i class="fa fa-file"></i> Reports</a></li>
+      <li><a href="<?php echo site_root; ?>index.php?folder=employees&file=employee_attendance_view"><i class="fa fa-hand-o-right"></i> Attendance </a></li>
+      <li><a href="<?php echo site_root; ?>index.php?folder=employees&file=payment_tracker_view&DEM_EMP_ID=<?php echo $_SESSION['DEM_EMP_ID']; ?>"><i class="fa fa-rupee"></i> Payment Tracker </a></li>
+      <li><a href="<?php echo site_root; ?>index.php?folder=travel_expense&file=travel_expense_list"><i class="fa fa-file"></i> Travel & Expense</a></li>
+      <li><a href="<?php echo site_root; ?>index.php?folder=reports&file=emp_report_filter_by_date"><i class="fa fa-file"></i> Reports</a></li>
       <!-- <li  class="treeview">
         <a href="#">
           <i class="fa fa-file" aria-hidden="true"></i> <span> Reports</span>

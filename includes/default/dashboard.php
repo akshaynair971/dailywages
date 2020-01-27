@@ -57,24 +57,28 @@
             <p style="font-weight: 700; font-size: 18px;"> Todays Attendance </p>
           </div>
           <div class="icon">
-            <i class="fa fa-report"></i>
+            <i class="fa fa-clock-o"></i>
           </div>
         </div>
       </div>
 
       
-      <!-- <div class="col-lg-3 col-xs-6" style="color: white;">
+      <div class="col-lg-3 col-xs-6" style="color: white;">
         
-        <div class="small-box bg-yellow ">
+        <div class="small-box " style="background: #2a586f;">
+          <?php 
+            $tdate= date("Y-m-d");
+            $curmonexp = $db->get_var("SELECT COUNT(DTE_ID) FROM dw_travel_expense WHERE YEAR(DTE_VOUCHER_DATE)=YEAR('$tdate') AND MONTH(DTE_VOUCHER_DATE)=MONTH('$tdate')");
+          ?>
           <div class="inner">
-            <h3><?php if(isset($stud_regi)){ echo $stud_regi; } else { echo '0'; } ?></h3>
-            <p style="font-weight: 700; font-size: 18px;">Current Month Attendance</p>
+            <h3><?php if(isset($curmonexp)){ echo $curmonexp; } else { echo '0'; } ?></h3>
+            <p style="font-weight: 700; font-size: 18px;">Current Month Expense</p>
           </div>
           <div class="icon">
-            <i class="ion ion-pie-graph"></i>
+            <i class="fa fa-bus"></i>
           </div>
         </div>
-      </div> -->
+      </div>
         
       <!-- <div class="col-lg-3 col-xs-6" style="color: white;">        
         <div class="small-box bg-red">
@@ -128,7 +132,24 @@
             <p style="font-weight: 700; font-size: 18px;"> Todays Attendance </p>
           </div>
           <div class="icon">
-            <i class="ion ion-person-add"></i>
+            <i class="fa fa-clock-o"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-xs-6" style="color: white;">
+        
+        <div class="small-box " style="background: #2a586f;">
+          <?php 
+            $tdate= date("Y-m-d");
+            $curmonexp = $db->get_var("SELECT COUNT(DTE_ID) FROM dw_travel_expense WHERE YEAR(DTE_VOUCHER_DATE)=YEAR('$tdate') AND MONTH(DTE_VOUCHER_DATE)=MONTH('$tdate') AND DEM_EMP_ID='".$_SESSION['DEM_EMP_ID']."'");
+          ?>
+          <div class="inner">
+            <h3><?php if(isset($curmonexp)){ echo $curmonexp; } else { echo '0'; } ?></h3>
+            <p style="font-weight: 700; font-size: 18px;">Current Month Expense</p>
+          </div>
+          <div class="icon">
+            <i class="fa fa-bus"></i>
           </div>
         </div>
       </div>

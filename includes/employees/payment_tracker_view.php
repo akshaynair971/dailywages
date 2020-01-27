@@ -33,7 +33,7 @@
             <?php 
               if($_GET['DEM_EMP_ID']){
             ?>
-            <input type="button" name="save_lock_attd" id="save_lock_attd" class="btn btn-primary" value="Save & Lock Payment Details" onclick="save_lock_payd();">
+            <!-- <input type="button" name="save_lock_attd" id="save_lock_attd" class="btn btn-primary" value="Save & Lock Payment Details" onclick="save_lock_payd();"> -->
             <?php 
             } ?>
           </div>  	
@@ -62,10 +62,10 @@
                     <th style="border: 1px solid black !important;">Pay Status</th>
                     <th style="border: 1px solid black !important;">Payment Date</th>
                     <th style="border: 1px solid black !important;">Total Days Worked</th>
-                    <th style="border: 1px solid black !important;">Total GW Hours</th>
+                    <!-- <th style="border: 1px solid black !important;">Total GW Hours</th> -->
                     <th style="border: 1px solid black !important;">Total Deduction</th>
                     <th style="border: 1px solid black !important;">Net Wages Paid</th>
-                    <th style="border: 1px solid black !important;">Payment Refereance</th>
+                    <th style="border: 1px solid black !important;">Payment Reference</th>
                     <th style="border: 1px solid black !important;">Action</th>
                   </tr>
                 </thead>
@@ -85,7 +85,7 @@
                       <td style="border: 1px solid black !important;"><?php if($getpaydet){ echo "PAID"; }else{ echo "--"; } ?></td>
                       <td style="border: 1px solid black !important;"><?php if($getpaydet->DPT_PAYMENT_DATE){ echo $getpaydet->DPT_PAYMENT_DATE; }else{ echo "--"; } ?></td>
                       <td style="border: 1px solid black !important;"><?php if($getpaydet->DPT_TOTAL_DAYS_WORKED){ echo $getpaydet->DPT_TOTAL_DAYS_WORKED; }else{ echo "--"; } ?></td>
-                      <td style="border: 1px solid black !important;"><?php if($getpaydet->DPT_TOTAL_GW_HRS){ echo $getpaydet->DPT_TOTAL_GW_HRS; }else{ echo "--"; } ?></td>
+                      <!-- <td style="border: 1px solid black !important;"><?php if($getpaydet->DPT_TOTAL_GW_HRS){ echo $getpaydet->DPT_TOTAL_GW_HRS; }else{ echo "--"; } ?></td> -->
                       <td style="border: 1px solid black !important;"><?php if($getpaydet->TOTAL_DEDUCTION){ echo $getpaydet->TOTAL_DEDUCTION; }else{ echo "--"; } ?></td>
                       <td style="border: 1px solid black !important;"><?php if($getpaydet->DPT_NET_WAGES_PAID){ echo $getpaydet->DPT_NET_WAGES_PAID; }else{ echo "--"; } ?></td>
                       <td style="border: 1px solid black !important;"><?php if($getpaydet->DPT_INVOICE_NO){ echo $getpaydet->DPT_INVOICE_NO; }else{ echo "--"; } ?></td>

@@ -31,9 +31,13 @@ $user_edit = $db->get_row("SELECT * FROM dw_employee_master as a LEFT JOIN dw_us
                 <h3>Basic Details</h3>
                 <hr style="border: 1px solid;">
               </div>
-              <div class="form-group col-md-12"> 
+              <div class="form-group col-md-6"> 
                 
                 <img src="images/user_profile/<?php if($user_edit->DEM_EMP_ID!=''){ echo $user_edit->DEM_EMP_ID.'.jpg'; } ?>" class="img-rounded" id='profile_preview' onerror="this.src='images/user.jpg'"  style="border:2px solid #d2d6de; height: 150px; width: 140px;">   
+              </div>
+              <div class="form-group col-md-6"> 
+                
+                <img src="images/user_profile/<?php if($user_edit->DEM_EMP_ID!=''){ echo $user_edit->DEM_EMP_ID.'_SIGN.jpg'; } ?>" class="img-rounded" id='profile_preview' onerror="this.src='images/sign.jpg'"  style="border:2px solid #d2d6de; height: 150px; width: 140px;">   
               </div>
               <div class="form-group col-md-3">
                 <label for="DEM_EMP_NAME_PREFIX">Prefix <span style="color: #e22b0e;">*</span></label>
@@ -120,8 +124,18 @@ $user_edit = $db->get_row("SELECT * FROM dw_employee_master as a LEFT JOIN dw_us
               </div>   
 
               <div class="form-group col-md-4">
-                <label for="DEM_START_DATE">Start Date <span style="color: #e22b0e;">*</span> </label>
-                <input type="text" class="form-control" id='DEM_START_DATE' name='DEM_START_DATE' placeholder="Enter Start Date" value="<?php if(isset($user_edit)){ echo $user_edit->DEM_START_DATE; } ?>" required autocomplete="false" readonly> 
+                <label for="DEM_ADHAR_ID">Adhar No. <span style="color: #e22b0e;">*</span></label>
+                <input type="text" class="form-control" id='DEM_ADHAR_ID' name='DEM_ADHAR_ID' placeholder="Enter Adhar No." value="<?php if(isset($user_edit)){ echo $user_edit->DEM_ADHAR_ID; } ?>" maxlength="16" onkeypress="return isNumberKey(event)" pattern="^\S{10,}$" required readonly> 
+              </div>      
+
+              <div class="form-group col-md-3">
+                <label for="DEM_PAN_ID">PAN No. <span style="color: #e22b0e;">*</span></label>
+                <input type="text" class="form-control" id='DEM_PAN_ID' name='DEM_PAN_ID' placeholder="Enter PAN No." value="<?php if(isset($user_edit)){ echo $user_edit->DEM_PAN_ID; } ?>" required readonly> 
+              </div>
+
+              <div class="form-group col-md-2">
+                <label for="DEM_START_DATE">Date of Joining <span style="color: #e22b0e;">*</span> </label>
+                <input type="text" class="form-control" id='DEM_START_DATE' name='DEM_START_DATE' placeholder="Enter Joining Date" value="<?php if(isset($user_edit)){ echo $user_edit->DEM_START_DATE; } ?>" required autocomplete="false" readonly> 
               </div>          
 
               <div class="form-group col-md-3">
@@ -135,8 +149,8 @@ $user_edit = $db->get_row("SELECT * FROM dw_employee_master as a LEFT JOIN dw_us
               </div>
 
               <div class="form-group col-md-3" style="display: none;">
-                <label for="DEM_END_DATE">End Date <span style="color: #e22b0e;">*</span> </label>
-                <input type="text" class="form-control" id='DEM_END_DATE' name='DEM_END_DATE' placeholder="Enter End Date" value="<?php if(isset($user_edit)){ echo $user_edit->DEM_END_DATE; } ?>" autocomplete="off" readonly> 
+                <label for="DEM_END_DATE">Date of Relieving<span style="color: #e22b0e;">*</span> </label>
+                <input type="text" class="form-control" id='DEM_END_DATE' name='DEM_END_DATE' placeholder="Enter Relieving Date" value="<?php if(isset($user_edit)){ echo $user_edit->DEM_END_DATE; } ?>" autocomplete="off" readonly> 
               </div>
 
               <div class="form-group col-md-12">

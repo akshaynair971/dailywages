@@ -23,8 +23,9 @@ if(isset($_POST['report_sub_sin_mon']) || isset($_POST['report_sub_sin_cur_mon']
   <div class="box box-primary">
         
     <div class="box-header">
-      <h3 class="box-title"><b>Employee Attendance Report of Month <?php echo $fulldate; ?></b></h3>
+      <h3 class="box-title"><b>Employee Payment Report of Month <?php echo $fulldate; ?></b></h3>
       <div class="box-tools">
+        <a href="?folder=reports&file=emp_report_single_month&exppdfselect_pay_month=<?php echo $select_pay_month; ?>" class="btn btn-info btn-round"><i class="fa fa-file"></i> PDF</a>
         <a href="?folder=reports&file=emp_report_single_month&expxlselect_pay_month=<?php echo $select_pay_month; ?>" class="btn btn-warning btn-round"><i class="fa fa-file"></i> Excel</a>
         <a href="?folder=reports&file=emp_report_filter_by_date" class="btn btn-default btn-round"><i class="fa fa-share"></i> Back</a>
       </div>
