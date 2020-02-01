@@ -84,10 +84,10 @@
                       <td style="border: 1px solid black !important;"><?php echo date('F - Y',strtotime($dyearmon)); ?></td>
                       <td style="border: 1px solid black !important;"><?php if($getpaydet){ echo "PAID"; }else{ echo "--"; } ?></td>
                       <td style="border: 1px solid black !important;"><?php if($getpaydet->DPT_PAYMENT_DATE){ echo $getpaydet->DPT_PAYMENT_DATE; }else{ echo "--"; } ?></td>
-                      <td style="border: 1px solid black !important;"><?php if($getpaydet->DPT_TOTAL_DAYS_WORKED){ echo $getpaydet->DPT_TOTAL_DAYS_WORKED; }else{ echo "--"; } ?></td>
+                      <td style="border: 1px solid black !important; text-align: right;"><?php if($getpaydet->DPT_TOTAL_DAYS_WORKED){ echo $getpaydet->DPT_TOTAL_DAYS_WORKED; }else{ echo "--"; } ?></td>
                       <!-- <td style="border: 1px solid black !important;"><?php if($getpaydet->DPT_TOTAL_GW_HRS){ echo $getpaydet->DPT_TOTAL_GW_HRS; }else{ echo "--"; } ?></td> -->
-                      <td style="border: 1px solid black !important;"><?php if($getpaydet->TOTAL_DEDUCTION){ echo $getpaydet->TOTAL_DEDUCTION; }else{ echo "--"; } ?></td>
-                      <td style="border: 1px solid black !important;"><?php if($getpaydet->DPT_NET_WAGES_PAID){ echo $getpaydet->DPT_NET_WAGES_PAID; }else{ echo "--"; } ?></td>
+                      <td style="border: 1px solid black !important;  text-align: right;"><?php if($getpaydet->TOTAL_DEDUCTION){ echo $getpaydet->TOTAL_DEDUCTION; }else{ echo "--"; } ?></td>
+                      <td style="border: 1px solid black !important; text-align: right;"><?php if($getpaydet->DPT_NET_WAGES_PAID){ echo $getpaydet->DPT_NET_WAGES_PAID; }else{ echo "--"; } ?></td>
                       <td style="border: 1px solid black !important;"><?php if($getpaydet->DPT_INVOICE_NO){ echo $getpaydet->DPT_INVOICE_NO; }else{ echo "--"; } ?></td>
                       <td style="border: 1px solid black !important;">
                         <?php if($getpaydet->DPT_STATUS!='0' || $_SESSION['user_type']=="1"){

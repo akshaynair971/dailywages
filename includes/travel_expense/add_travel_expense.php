@@ -82,7 +82,7 @@
 
               <div class="form-group col-md-3">
                 <label for="DTE_LOCATION">Location <span style="color: #e22b0e;">*</span></label>
-                <input type="text" class="form-control" id='DTE_LOCATION'  name='DTE_LOCATION' placeholder="Enter Total Deduction" value="<?php if($gettravel->DTE_LOCATION!=''){ echo $gettravel->DTE_LOCATION; }elseif($totaldeduction!=''){ echo $totaldeduction; } ?>" required >  
+                <input type="text" class="form-control" id='DTE_LOCATION'  name='DTE_LOCATION' placeholder="Enter Location" value="<?php if($gettravel->DTE_LOCATION!=''){ echo $gettravel->DTE_LOCATION; }elseif($totaldeduction!=''){ echo $totaldeduction; } ?>" required >  
               </div>
 
               <div class="form-group col-md-12">
@@ -124,7 +124,7 @@
                         </th>  
 
                         <th style="font-size: 13px;">
-                          <input type="text" class="form-control" id='JOURNEY_PLACE<?php echo $rowCount; ?>'  name='DTE_TRAVEL_SUMMARY[JOURNEY_PLACE][]' placeholder="Enter Date" value="<?php if($json->JOURNEY_PLACE[$i]!=''){ echo $json->JOURNEY_PLACE[$i]; } ?>" required >
+                          <input type="text" class="form-control JOURNEY_PLACE" id='JOURNEY_PLACE<?php echo $rowCount; ?>'  name='DTE_TRAVEL_SUMMARY[JOURNEY_PLACE][]' placeholder="Enter Date" value="<?php if($json->JOURNEY_PLACE[$i]!=''){ echo $json->JOURNEY_PLACE[$i]; } ?>" required  onkeyup="$(this).val($(this).val().toUpperCase());"  >
                         </th>  
 
                         <th style="font-size: 13px;">
@@ -148,7 +148,7 @@
                         </th>      
 
                         <th style="font-size: 13px;">
-                          <textarea class="form-control" id='REMARKS<?php echo $rowCount; ?>'  name='DTE_TRAVEL_SUMMARY[REMARKS][]' placeholder="Enter Remarks"><?php if($json->REMARKS[$i]!=''){ echo $json->REMARKS[$i]; } ?></textarea>
+                          <textarea class="form-control REMARKS" id='REMARKS<?php echo $rowCount; ?>'  name='DTE_TRAVEL_SUMMARY[REMARKS][]' placeholder="Enter Remarks"  onkeyup="$(this).val($(this).val().toUpperCase());" ><?php if($json->REMARKS[$i]!=''){ echo $json->REMARKS[$i]; } ?></textarea>
                         </th>                            
 
                                                         
@@ -249,7 +249,7 @@ function cal_payment(ident) {
 
       html += '<td><input type="text" class="form-control" id="JOURNEY_DATE'+rowCount+'" placeholder="Enter Journey Date" name="DTE_TRAVEL_SUMMARY[JOURNEY_DATE][]" autocomplete="off" ></td>';
 
-      html += '<td><input type="text" class="form-control" id="JOURNEY_PLACE'+rowCount+'" placeholder="Enter Journey Place " name="DTE_TRAVEL_SUMMARY[JOURNEY_PLACE][]" required ></td>';
+      html += '<td><input type="text" class="form-control JOURNEY_PLACE" id="JOURNEY_PLACE'+rowCount+'" placeholder="Enter Journey Place " name="DTE_TRAVEL_SUMMARY[JOURNEY_PLACE][]" required onkeyup="$(this).val($(this).val().toUpperCase());" ></td>';
 
       html += '<td><input type="text" class="form-control" id="TRAVEL_CHRG'+rowCount+'" placeholder="Enter Travel Charges" name="DTE_TRAVEL_SUMMARY[TRAVEL_CHRG][]" required oninput="cal_payment('+rowCount+');" onkeypress="return isNumberKey(event)" value="0"></td>';
 
@@ -261,7 +261,7 @@ function cal_payment(ident) {
 
       html += '<td><input type="text" class="form-control" id="TOTAL_CHRG'+rowCount+'" placeholder="Enter Total Charges" name="DTE_TRAVEL_SUMMARY[TOTAL_CHRG][]" required readonly ></td>';
 
-      html += '<td><textarea class="form-control" id="REMARKS'+rowCount+'" placeholder="Enter Remarks" name="DTE_TRAVEL_SUMMARY[REMARKS][]" ></textarea></td>';
+      html += '<td><textarea class="form-control REMARKS" id="REMARKS'+rowCount+'" placeholder="Enter Remarks" name="DTE_TRAVEL_SUMMARY[REMARKS][]"  onkeyup="$(this).val($(this).val().toUpperCase());"  ></textarea></td>';
 
       html += '<td><button type="button" name="remove" class="btn btn-danger btn-sm remove"><span class="fa fa-minus"></span></button><br><span style="font-size: 10px; color: red;">Click..</span></td></tr>';
 
@@ -282,3 +282,12 @@ function cal_payment(ident) {
      
     });
     </script>
+
+    <script type="text/javascript">
+  $(function() {
+    $('#DTE_LOCATION').keyup(function(){
+
+      $(this).val($(this).val().toUpperCase());
+    });
+  });
+</script>

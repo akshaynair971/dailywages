@@ -164,6 +164,7 @@
             <?php  
             if(isset($r)){
             $emp = 0;
+            $grand_travel_total = $grand_conveyance_total = $grand_lb_total = $grand_extra_total = $grand_subtotal = 0;
             foreach ($r as $row){
             $emp++;        
             $json = json_decode($row->DTE_TRAVEL_SUMMARY);
@@ -203,11 +204,18 @@
                 <td style="border: 1px solid black !important;"><?php echo date("d-M-Y",strtotime($row->DTE_RETURNED_DATE)); ?></td> 
 
                 <td style="border: 1px solid black !important;"><?php echo $row->DTE_LOCATION; ?></td> 
-                <td style="border: 1px solid black !important;"><?php echo $travel_total; ?></td> 
-                <td style="border: 1px solid black !important;"><?php echo $conveyance_total; ?></td> 
-                <td style="border: 1px solid black !important;"><?php echo $lb_total; ?></td> 
-                <td style="border: 1px solid black !important;"><?php echo $extra_total; ?></td> 
-                <td style="border: 1px solid black !important;"><?php echo $subtotal; ?></td> 
+                <td style="border: 1px solid black !important; text-align:right;"><?php echo $travel_total; ?></td> 
+                <td style="border: 1px solid black !important; text-align:right;"><?php echo $conveyance_total; ?></td> 
+                <td style="border: 1px solid black !important; text-align:right;"><?php echo $lb_total; ?></td> 
+                <td style="border: 1px solid black !important; text-align:right;"><?php echo $extra_total; ?></td> 
+                <td style="border: 1px solid black !important; text-align:right;"><?php echo $subtotal; ?></td> 
+                <?php 
+                $grand_travel_total += $travel_total;
+                $grand_conveyance_total += $conveyance_total;
+                $grand_lb_total += $lb_total;
+                $grand_extra_total += $extra_total;
+                $grand_subtotal += $subtotal;
+                ?>
 
                 <td style="border: 1px solid black !important;"><?php if($row->DTE_PAYMENT_STATUS==1){ echo "PAID"; }else{ echo "UNPAID"; } ?></td> 
 
@@ -249,6 +257,19 @@
               </tr>
             <?php }  ?> 
             </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="8" style=" border: 1px solid black !important; text-align: right;"><b>Total</b></td>
+                <td style=" border: 1px solid black !important; text-align: right;"><b><?php echo $grand_travel_total; ?></b></td>
+                <td style=" border: 1px solid black !important; text-align: right;"><b><?php echo $grand_conveyance_total; ?></b></td>
+                <td style=" border: 1px solid black !important; text-align: right;"><b><?php echo $grand_lb_total; ?></b></td>
+                <td style=" border: 1px solid black !important; text-align: right;"><b><?php echo $grand_extra_total; ?></b></td>
+                <td style=" border: 1px solid black !important; text-align: right;"><b><?php echo $grand_subtotal; ?></b></td>
+                <td style=" border: 1px solid black !important; text-align: right;"><b></b></td>
+                <td style=" border: 1px solid black !important;"></td>
+                <td style=" border: 1px solid black !important;"></td>
+              </tr>
+            </tfoot>
           </table>
         </div>
         <!-- /.box-body -->

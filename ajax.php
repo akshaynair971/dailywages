@@ -343,7 +343,7 @@ if(isset($_POST['get_dates_attendance']))
 				    </td>
 					<td style="border: 1px solid black !important;">
 						<div class="form-group">
-				            <textarea name="DEA_REMARK[]" id="DEA_REMARK" class="form-control" <?php if((isset($getattd->DEA_STATUS)) && ($getattd->DEA_STATUS==0) && ($_SESSION['user_type']!='1')){ echo "disabled"; } if(($convday==="Sun") && ($_SESSION['user_type']!='1')){ echo "disabled"; }  ?>><?php if($getattd->DEA_REMARK!=''){ echo $getattd->DEA_REMARK; } ?></textarea>
+				            <textarea name="DEA_REMARK[]" id="DEA_REMARK" class="form-control" <?php if((isset($getattd->DEA_STATUS)) && ($getattd->DEA_STATUS==0) && ($_SESSION['user_type']!='1')){ echo "disabled"; } if(($convday==="Sun") && ($_SESSION['user_type']!='1')){ echo "disabled"; }  ?>  onkeyup="$(this).val($(this).val().toUpperCase());"><?php if($getattd->DEA_REMARK!=''){ echo $getattd->DEA_REMARK; } ?></textarea>
 				            <input type="hidden" name="attd_date[]" id="attd_date" class="form-control" value="<?php echo $convdate; ?>" <?php if((isset($getattd->DEA_STATUS)) && ($getattd->DEA_STATUS==0) && ($_SESSION['user_type']!='1')){ echo "disabled"; } ?>>
 				            <input type="hidden" name="DEA_ID[]" id="DEA_ID" class="form-control" value="<?php echo $getattd->DEA_ID; ?>" <?php if((isset($getattd->DEA_STATUS)) && ($getattd->DEA_STATUS==0) && ($_SESSION['user_type']!='1')){ echo "disabled"; } ?> >
 				      	</div>

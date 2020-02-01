@@ -34,25 +34,25 @@ if(isset($_POST['report_sub_sin_mon']) || isset($_POST['report_sub_sin_cur_mon']
       <table id="example" class="table table-bordered table-striped example table-responsive" role="grid" aria-describedby="example1_info" style="border: 1px solid black !important;">
         <thead class="table-border">
         <tr>
-          <th style="border: 1px solid black !important;" class="text-center">Sr. No.</th>
-          <th style="border: 1px solid black !important; width: 30% !important;" class="text-center">EMPLOYEE NAME</th>
-          <th style="border: 1px solid black !important;" class="text-center">AGE</th>
-          <th style="border: 1px solid black !important;" class="text-center">TOTAL DAYS WORKED</th>
-          <th style="border: 1px solid black !important;" class="text-center">RATE</th>
-          <th style="border: 1px solid black !important;" class="text-center">TOTAL GW HRS.</th>
-          <th style="border: 1px solid black !important;" class="text-center">BASIC</th>
-          <th style="border: 1px solid black !important;" class="text-center">HRA</th>
-          <th style="border: 1px solid black !important;" class="text-center">OTHER ALLOWANCES</th>
-          <th style="border: 1px solid black !important;" class="text-center">GROSS WAGES PAYABLE</th>
-          <th style="border: 1px solid black !important;" class="text-center">PROFF. TAX</th>
-          <th style="border: 1px solid black !important;" class="text-center">P.F. (12%)</th>
-          <th style="border: 1px solid black !important;" class="text-center">PF (12%)</th>
-          <th style="border: 1px solid black !important;" class="text-center">ESIC (.75%)</th>
-          <th style="border: 1px solid black !important;" class="text-center">ESIC (3.25%)</th>
-          <th style="border: 1px solid black !important;" class="text-center">TOTAL DEDUCTION</th>
-          <th style="border: 1px solid black !important;" class="text-center">NET WAGES PAID</th>
-          <th style="border: 1px solid black !important;" class="text-center">PAYMENT REFERENCE</th>
-          <th style="border: 1px solid black !important;" class="text-center">SIGN</th>
+          <th style="border: 1px solid black !important; text-align: left;">Sr. No.</th>
+          <th style="border: 1px solid black !important; width: 30% !important; text-align: left;">EMPLOYEE NAME</th>
+          <th style="border: 1px solid black !important; text-align: left;">AGE</th>
+          <th style="border: 1px solid black !important; text-align: left;">TOTAL DAYS WORKED</th>
+          <th style="border: 1px solid black !important; text-align: left;">RATE</th>
+          <th style="border: 1px solid black !important; text-align: left;">TOTAL GW HRS.</th>
+          <th style="border: 1px solid black !important; text-align: left;">BASIC</th>
+          <th style="border: 1px solid black !important; text-align: left;">HRA</th>
+          <th style="border: 1px solid black !important; text-align: left;">OTHER ALLOWANCES</th>
+          <th style="border: 1px solid black !important; text-align: left;">GROSS WAGES PAYABLE</th>
+          <th style="border: 1px solid black !important; text-align: left;">PROFF. TAX</th>
+          <th style="border: 1px solid black !important; text-align: left;">P.F. (12%)</th>
+          <th style="border: 1px solid black !important; text-align: left;">PF (12%)</th>
+          <th style="border: 1px solid black !important; text-align: left;">ESIC (.75%)</th>
+          <th style="border: 1px solid black !important; text-align: left;">ESIC (3.25%)</th>
+          <th style="border: 1px solid black !important; text-align: left;">TOTAL DEDUCTION</th>
+          <th style="border: 1px solid black !important; text-align: left;">NET WAGES PAID</th>
+          <th style="border: 1px solid black !important; text-align: left;">PAYMENT REFERENCE</th>
+          <th style="border: 1px solid black !important; text-align: left;">SIGN</th>
         </tr>
         
         </thead>
@@ -73,22 +73,22 @@ if(isset($_POST['report_sub_sin_mon']) || isset($_POST['report_sub_sin_cur_mon']
             <tr>
               <td style="border: 1px solid black !important;" ><?php echo $i;  ?></td>
               <td style="border: 1px solid black !important; width: 30% !important;" ><?php echo strtoupper($rw->DEM_EMP_NAME_PREFIX." ".$rw->DEM_EMP_FIRST_NAME." ".$rw->DEM_EMP_MIDDLE_NAME." ".$rw->DEM_EMP_LAST_NAME); ?></td>
-              <td style="border: 1px solid black !important;" ><?php echo $rw->DEM_EMP_AGE; ?></td>
-              <td style="border: 1px solid black !important;" ><?php if($pay_track->DPT_TOTAL_DAYS_WORKED){ echo $pay_track->DPT_TOTAL_DAYS_WORKED; }else{ echo "-"; } ?></td>
-              <td style="border: 1px solid black !important;" ><?php echo $payroll_det->DPM_RATE; ?></td>
-              <td style="border: 1px solid black !important;" ><?php if($pay_track->DPT_TOTAL_GW_HRS){ echo $pay_track->DPT_TOTAL_GW_HRS; }else{ echo "-"; } ?></td>
-              <td style="border: 1px solid black !important;" ><?php echo $payroll_det->DPM_BASIC_SALARY; $basictotal+= $payroll_det->DPM_BASIC_SALARY; ?></td>
-              <td style="border: 1px solid black !important;" ><?php echo $payroll_det->DPM_HRA; $hratotal += $payroll_det->DPM_HRA; ?></td>
-              <td style="border: 1px solid black !important;" ><?php echo $payroll_det->DPM_OTHER_ALLOWANCE; $otherallowancestotal += $payroll_det->DPM_OTHER_ALLOWANCE; ?></td>
-              <td style="border: 1px solid black !important;" ><?php echo $payroll_det->DPM_GROSS_WAGES_PAYABLE; $grosswagespayabletotal += $payroll_det->DPM_GROSS_WAGES_PAYABLE; ?></td>
-              <td style="border: 1px solid black !important;" ><?php echo $payroll_det->DPM_PROFESSIONAL_TAX; $proftaxtotal += $payroll_det->DPM_PROFESSIONAL_TAX; ?></td>
-              <td style="border: 1px solid black !important;" ><?php echo $payroll_det->DPM_PF_EMPLOYEE; $ep_pftotal += $payroll_det->DPM_PF_EMPLOYEE; ?></td>
-              <td style="border: 1px solid black !important;" ><?php echo $payroll_det->DPM_PF_EMPLOYER;  $er_pftotal += $payroll_det->DPM_PF_EMPLOYER; ?></td>
-              <td style="border: 1px solid black !important;" ><?php echo $payroll_det->DPM_ESIC_EMPLOYEE; $ep_esictotal += $payroll_det->DPM_ESIC_EMPLOYEE; ?></td>
-              <td style="border: 1px solid black !important;" ><?php echo $payroll_det->DPM_ESIC_EMPLOYER; $er_esictotal += $payroll_det->DPM_ESIC_EMPLOYER; ?></td>
-              <td style="border: 1px solid black !important;" ><?php if($pay_track->TOTAL_DEDUCTION){ $totaldeductionsum += $pay_track->TOTAL_DEDUCTION; echo $pay_track->TOTAL_DEDUCTION; }else{ echo "-"; } ?></td>
-              <td style="border: 1px solid black !important;" ><?php if($pay_track->DPT_NET_WAGES_PAID){ $netwagespaidsum += $pay_track->DPT_NET_WAGES_PAID; echo $pay_track->DPT_NET_WAGES_PAID; }else{ echo "-"; }  ?></td>
-              <td style="border: 1px solid black !important;" ><?php if($pay_track->DPT_INVOICE_NO){ echo $pay_track->DPT_INVOICE_NO; }else{ echo "-"; } ?></td>
+              <td style="border: 1px solid black !important; text-align: center;" ><?php echo $rw->DEM_EMP_AGE; ?></td>
+              <td style="border: 1px solid black !important; text-align: center;" ><?php if($pay_track->DPT_TOTAL_DAYS_WORKED){ echo $pay_track->DPT_TOTAL_DAYS_WORKED; }else{ echo "-"; } ?></td>
+              <td style="border: 1px solid black !important; text-align: center;" ><?php echo $payroll_det->DPM_RATE; ?></td>
+              <td style="border: 1px solid black !important; text-align: center;" ><?php if($pay_track->DPT_TOTAL_GW_HRS){ echo $pay_track->DPT_TOTAL_GW_HRS; }else{ echo "-"; } ?></td>
+              <td style="border: 1px solid black !important; text-align: center;" ><?php echo $payroll_det->DPM_BASIC_SALARY; $basictotal+= $payroll_det->DPM_BASIC_SALARY; ?></td>
+              <td style="border: 1px solid black !important; text-align: center;" ><?php echo $payroll_det->DPM_HRA; $hratotal += $payroll_det->DPM_HRA; ?></td>
+              <td style="border: 1px solid black !important; text-align: center;" ><?php echo $payroll_det->DPM_OTHER_ALLOWANCE; $otherallowancestotal += $payroll_det->DPM_OTHER_ALLOWANCE; ?></td>
+              <td style="border: 1px solid black !important; text-align: center;" ><?php echo $payroll_det->DPM_GROSS_WAGES_PAYABLE; $grosswagespayabletotal += $payroll_det->DPM_GROSS_WAGES_PAYABLE; ?></td>
+              <td style="border: 1px solid black !important; text-align: center;" ><?php echo $payroll_det->DPM_PROFESSIONAL_TAX; $proftaxtotal += $payroll_det->DPM_PROFESSIONAL_TAX; ?></td>
+              <td style="border: 1px solid black !important; text-align: center;" ><?php echo $payroll_det->DPM_PF_EMPLOYEE; $ep_pftotal += $payroll_det->DPM_PF_EMPLOYEE; ?></td>
+              <td style="border: 1px solid black !important; text-align: center;" ><?php echo $payroll_det->DPM_PF_EMPLOYER;  $er_pftotal += $payroll_det->DPM_PF_EMPLOYER; ?></td>
+              <td style="border: 1px solid black !important; text-align: center;" ><?php echo $payroll_det->DPM_ESIC_EMPLOYEE; $ep_esictotal += $payroll_det->DPM_ESIC_EMPLOYEE; ?></td>
+              <td style="border: 1px solid black !important; text-align: center;" ><?php echo $payroll_det->DPM_ESIC_EMPLOYER; $er_esictotal += $payroll_det->DPM_ESIC_EMPLOYER; ?></td>
+              <td style="border: 1px solid black !important; text-align: center;" ><?php if($pay_track->TOTAL_DEDUCTION){ $totaldeductionsum += $pay_track->TOTAL_DEDUCTION; echo $pay_track->TOTAL_DEDUCTION; }else{ echo "-"; } ?></td>
+              <td style="border: 1px solid black !important; text-align: center;" ><?php if($pay_track->DPT_NET_WAGES_PAID){ $netwagespaidsum += $pay_track->DPT_NET_WAGES_PAID; echo $pay_track->DPT_NET_WAGES_PAID; }else{ echo "-"; }  ?></td>
+              <td style="border: 1px solid black !important; text-align: center;" ><?php if($pay_track->DPT_INVOICE_NO){ echo $pay_track->DPT_INVOICE_NO; }else{ echo "-"; } ?></td>
               <td style="border: 1px solid black !important;" ><?php echo "-"; ?></td>
                    
             </tr>
@@ -98,42 +98,42 @@ if(isset($_POST['report_sub_sin_mon']) || isset($_POST['report_sub_sin_cur_mon']
         </tbody>
         <tfoot>
           <tr>
-            <td style="border: 1px solid black !important;" ><b></b></td>
-            <td style="border: 1px solid black !important;" ><b>Total</b></td>
-            <td style="border: 1px solid black !important;" ><b></b></td>
-            <td style="border: 1px solid black !important;" ><b></b></td>
-            <td style="border: 1px solid black !important;" ><b></b></td>
-            <td style="border: 1px solid black !important;" ><b></b></td>
-            <td style="border: 1px solid black !important;" ><b><?php echo $basictotal;  ?></b></td>
-            <td style="border: 1px solid black !important;" ><b><?php echo $hratotal;  ?></b></td>
-            <td style="border: 1px solid black !important;" ><b><?php echo $otherallowancestotal;  ?></b></td>
-            <td style="border: 1px solid black !important;" ><b><?php echo $grosswagespayabletotal; ?></b></td>
-            <td style="border: 1px solid black !important;" ><b><?php echo $proftaxtotal; ?></b></td>
-            <td style="border: 1px solid black !important;" ><b><?php echo $ep_pftotal; ?></b></td>
-            <td style="border: 1px solid black !important;" ><b><?php echo $er_pftotal; ?></b></td>
-            <td style="border: 1px solid black !important;" ><b><?php echo $ep_esictotal; ?></b></td>
-            <td style="border: 1px solid black !important;" ><b><?php echo $er_esictotal;  ?></b></td>
-            <td style="border: 1px solid black !important;" ><b><?php echo $totaldeductionsum; ?></b></td>
-            <td style="border: 1px solid black !important;" ><b><?php echo $netwagespaidsum; ?></b></td>
-            <td style="border: 1px solid black !important;" ><b><?php  ?></b></td>
-            <td style="border: 1px solid black !important;" ><b><?php  ?></b></td>            
+            <td style="border: 1px solid black !important; text-align: right;" ><b></b></td>
+            <td style="border: 1px solid black !important; text-align: right;" ><b>Total</b></td>
+            <td style="border: 1px solid black !important; text-align: center;" ><b></b></td>
+            <td style="border: 1px solid black !important; text-align: center;" ><b></b></td>
+            <td style="border: 1px solid black !important; text-align: center;" ><b></b></td>
+            <td style="border: 1px solid black !important; text-align: center;" ><b></b></td>
+            <td style="border: 1px solid black !important; text-align: center;" ><b><?php echo $basictotal;  ?></b></td>
+            <td style="border: 1px solid black !important; text-align: center;" ><b><?php echo $hratotal;  ?></b></td>
+            <td style="border: 1px solid black !important; text-align: center;" ><b><?php echo $otherallowancestotal;  ?></b></td>
+            <td style="border: 1px solid black !important; text-align: center;" ><b><?php echo $grosswagespayabletotal; ?></b></td>
+            <td style="border: 1px solid black !important; text-align: center;" ><b><?php echo $proftaxtotal; ?></b></td>
+            <td style="border: 1px solid black !important; text-align: center;" ><b><?php echo $ep_pftotal; ?></b></td>
+            <td style="border: 1px solid black !important; text-align: center;" ><b><?php echo $er_pftotal; ?></b></td>
+            <td style="border: 1px solid black !important; text-align: center;" ><b><?php echo $ep_esictotal; ?></b></td>
+            <td style="border: 1px solid black !important; text-align: center;" ><b><?php echo $er_esictotal;  ?></b></td>
+            <td style="border: 1px solid black !important; text-align: center;" ><b><?php echo $totaldeductionsum; ?></b></td>
+            <td style="border: 1px solid black !important; text-align: center;" ><b><?php echo $netwagespaidsum; ?></b></td>
+            <td style="border: 1px solid black !important; text-align: center;" ><b><?php  ?></b></td>
+            <td style="border: 1px solid black !important; text-align: center;" ><b><?php  ?></b></td>            
           </tr>          
         </tfoot>
       </table>
-      <table class="table table-bordered" style="width:50%;border: 1px solid black !important;">
+      <table class="table table-bordered" style="width:30%;border: 1px solid black !important;">
         <tr style="border: 1px solid black !important;">
-          <td style="border: 1px solid black !important;"> PF CHALAN AMT</td>
-          <td style="border: 1px solid black !important;"> <?php echo $ep_pftotal + $er_pftotal; ?></td>
+          <td style="border: 1px solid black !important;"> PF CHALLAN AMOUNT</td>
+          <td style="border: 1px solid black !important; text-align: right;"> <?php echo $ep_pftotal + $er_pftotal; ?></td>
         </tr>
 
         <tr style="border: 1px solid black !important;">
-          <td style="border: 1px solid black !important;"> ESIC CHALAN AMT </td>
-          <td style="border: 1px solid black !important;"> <?php echo $ep_esictotal + $er_esictotal; ?></td>
+          <td style="border: 1px solid black !important;"> ESIC CHALLAN AMOUNT </td>
+          <td style="border: 1px solid black !important; text-align: right;"> <?php echo $ep_esictotal + $er_esictotal; ?></td>
         </tr>
 
         <tr style="border: 1px solid black !important;">
-          <td style="border: 1px solid black !important;"> ESIC CHALAN AMT </td>
-          <td style="border: 1px solid black !important;"> <?php echo  $ep_pftotal + $er_pftotal + $ep_esictotal + $er_esictotal; ?></td>
+          <td style="border: 1px solid black !important;"> TOTAL AMOUNT </td>
+          <td style="border: 1px solid black !important; text-align: right;"> <?php echo  $ep_pftotal + $er_pftotal + $ep_esictotal + $er_esictotal; ?></td>
         </tr>        
       </table>
        

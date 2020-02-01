@@ -129,13 +129,13 @@ if(isset($_GET['DEM_EMP_ID']) && isset($_GET['exppdf_weeklyattd']))
   $html.='<table id="example1" class="table table-bordered table-striped" role="grid">
   <thead>
     <tr>
-      <th>Sr. No.</th>
-      <th> Attendance Date</th>
-      <th> Attendance Day</th>
-      <th> In Time</th>
-      <th> Out Time</th>
-      <th> Location</th>
-      <th> Remark</th>      
+      <th style="text-align:center;">Sr. No.</th>
+      <th style="text-align:center;"> Attendance Date</th>
+      <th style="text-align:center;"> Attendance Day</th>
+      <th style="text-align:center;"> In Time</th>
+      <th style="text-align:center;"> Out Time</th>
+      <th style="text-align:center;"> Location</th>
+      <th style="text-align:center;"> Remark</th>      
     </tr>  
   </thead>
   <tbody>';
@@ -148,9 +148,9 @@ if(isset($_GET['DEM_EMP_ID']) && isset($_GET['exppdf_weeklyattd']))
 
     $getattd= $db->get_row("SELECT * FROM dw_emp_attendance WHERE DEM_EMPLOYEE_ID='$DEM_EMP_ID' AND DEA_ATTD_DATE='$convdate'");
     $html.='<tr>';
-    $html.='<td>'.$emp.'</td>'; 
-    $html.='<td>'.date("d-M-Y",strtotime($convdate)).'</td>';
-    $html.='<td>'.$convday.'</td>';
+    $html.='<td style="text-align:center;">'.$emp.'</td>'; 
+    $html.='<td style="text-align:center;">'.date("d-M-Y",strtotime($convdate)).'</td>';
+    $html.='<td style="text-align:center;">'.$convday.'</td>';
 
     if($getattd->DEA_IN_TIME!=''){
       $DEA_IN_TIME = $getattd->DEA_IN_TIME;
@@ -159,13 +159,13 @@ if(isset($_GET['DEM_EMP_ID']) && isset($_GET['exppdf_weeklyattd']))
     }else{
       $DEA_IN_TIME ='--';
     }
-    $html.='<td>'.$DEA_IN_TIME.'</td>';
+    $html.='<td style="text-align:center;">'.$DEA_IN_TIME.'</td>';
 
     $DEA_OUT_TIME = '';
     // $DEA_OUT_TIME = $getattd->DEA_OUT_TIME!=''?$getattd->DEA_OUT_TIME:'--';
     if($getattd->DEA_OUT_TIME!=''){ if(date('h:i A',strtotime($getattd->DEA_OUT_TIME))< date('h:i A',strtotime("6:00 PM")) ){ $DEA_OUT_TIME = $getattd->DEA_OUT_TIME; }else{ $DEA_OUT_TIME= "6:00 PM"; } }elseif($convday=="Sun"){ $DEA_OUT_TIME= "6:00 PM"; }else{ $DEA_OUT_TIME = "--"; }
 
-    $html.='<td>'.$DEA_OUT_TIME.'</td>';
+    $html.='<td style="text-align:center;">'.$DEA_OUT_TIME.'</td>';
 
     if($getattd->DEA_CURRENT_LOCATION!=''){
       $DEA_CURRENT_LOCATION = $getattd->DEA_CURRENT_LOCATION;
@@ -174,10 +174,10 @@ if(isset($_GET['DEM_EMP_ID']) && isset($_GET['exppdf_weeklyattd']))
     }else{
       $DEA_CURRENT_LOCATION ='--';
     }
-    $html.='<td>'.$DEA_CURRENT_LOCATION.'</td>';
+    $html.='<td style="text-align:center;">'.$DEA_CURRENT_LOCATION.'</td>';
 
     $DEA_REMARK = $getattd->DEA_REMARK!=''?$getattd->DEA_REMARK:'--';
-    $html.='<td>'.$DEA_REMARK.'</td>';
+    $html.='<td style="text-align:center;">'.$DEA_REMARK.'</td>';
     $html.='</tr>';
   }
 
@@ -449,13 +449,13 @@ if(isset($_GET['DEM_EMP_ID']) && isset($_GET['exppdfselect_attd_month']))
   $html.='<table id="example1" class="table table-bordered table-striped" role="grid">
   <thead>
     <tr>
-      <th>Sr. No.</th>
-      <th> Attendance Date</th>
-      <th> Attendance Day</th>
-      <th> In Time</th>
-      <th> Out Time</th>
-      <th> Location</th>
-      <th> Remark</th>      
+      <th style="text-align:center;">Sr. No.</th>
+      <th style="text-align:center;"> Attendance Date</th>
+      <th style="text-align:center;"> Attendance Day</th>
+      <th style="text-align:center;"> In Time</th>
+      <th style="text-align:center;"> Out Time</th>
+      <th style="text-align:center;"> Location</th>
+      <th style="text-align:center;"> Remark</th>      
     </tr>  
   </thead>
   <tbody>';
@@ -469,9 +469,9 @@ if(isset($_GET['DEM_EMP_ID']) && isset($_GET['exppdfselect_attd_month']))
 
     $getattd= $db->get_row("SELECT * FROM dw_emp_attendance WHERE DEM_EMPLOYEE_ID='$DEM_EMP_ID' AND DEA_ATTD_DATE='$convdate'");
     $html.='<tr>';
-    $html.='<td>'.$emp.'</td>'; 
-    $html.='<td>'.date("d-M-Y",strtotime($convdate)).'</td>';
-    $html.='<td>'.$convday.'</td>';
+    $html.='<td style="text-align:center;">'.$emp.'</td>'; 
+    $html.='<td style="text-align:center;">'.date("d-M-Y",strtotime($convdate)).'</td>';
+    $html.='<td style="text-align:center;">'.$convday.'</td>';
 
     if($getattd->DEA_IN_TIME!=''){
       $DEA_IN_TIME = $getattd->DEA_IN_TIME;
@@ -480,7 +480,7 @@ if(isset($_GET['DEM_EMP_ID']) && isset($_GET['exppdfselect_attd_month']))
     }else{
       $DEA_IN_TIME ='--';
     }
-    $html.='<td>'.$DEA_IN_TIME.'</td>';
+    $html.='<td style="text-align:center;">'.$DEA_IN_TIME.'</td>';
 
     $DEA_OUT_TIME = '';
     // $DEA_OUT_TIME = $getattd->DEA_OUT_TIME!=''?$getattd->DEA_OUT_TIME:'--';
@@ -488,7 +488,7 @@ if(isset($_GET['DEM_EMP_ID']) && isset($_GET['exppdfselect_attd_month']))
       $DEA_OUT_TIME = "6:00 PM"; 
     }else{ $DEA_OUT_TIME = "--"; }
 
-    $html.='<td>'.$DEA_OUT_TIME.'</td>';
+    $html.='<td style="text-align:center;">'.$DEA_OUT_TIME.'</td>';
 
     if($getattd->DEA_CURRENT_LOCATION!=''){
       $DEA_CURRENT_LOCATION = $getattd->DEA_CURRENT_LOCATION;
@@ -497,10 +497,10 @@ if(isset($_GET['DEM_EMP_ID']) && isset($_GET['exppdfselect_attd_month']))
     }else{
       $DEA_CURRENT_LOCATION ='--';
     }
-    $html.='<td>'.$DEA_CURRENT_LOCATION.'</td>';
+    $html.='<td style="text-align:center;">'.$DEA_CURRENT_LOCATION.'</td>';
 
     $DEA_REMARK = $getattd->DEA_REMARK!=''?$getattd->DEA_REMARK:'--';
-    $html.='<td>'.$DEA_REMARK.'</td>';
+    $html.='<td style="text-align:center;">'.$DEA_REMARK.'</td>';
     $html.='</tr>';
   }
 
@@ -780,24 +780,24 @@ if(isset($_GET['exppdfselect_pay_month']))
   $html.='<table id="example1" class="table table-bordered table-striped" role="grid">
   <thead>
     <tr>
-      <th>Sr. No.</th>
-      <th> Employee Name</th>
-      <th> AGE</th>
-      <th> TOTAL DAYS WORKED</th>
-      <th> RATE</th>
-      <th> TOTAL GW HRS.</th>
-      <th> BASIC</th>      
-      <th> HRA</th>      
-      <th> OTHER ALLOWANCES</th>      
-      <th> GROSS WAGES PAYABLE</th>      
-      <th> PROFF. TAX</th>      
-      <th> P.F. 12%</th>      
-      <th> PF 12%</th>      
-      <th> ESIC .75%</th>      
-      <th> ESIC 3.25%</th>      
-      <th> TOTAL DEDUCTION</th>      
-      <th> NET WAGES PAID</th>      
-      <th> PAYMENT REFERANCE</th>      
+      <th style="text-align:center;">Sr. No.</th>
+      <th style="text-align:center;"> Employee Name</th>
+      <th style="text-align:center;"> AGE</th>
+      <th style="text-align:center;"> TOTAL DAYS WORKED</th>
+      <th style="text-align:center;"> RATE</th>
+      <th style="text-align:center;"> TOTAL GW HRS.</th>
+      <th style="text-align:center;"> BASIC</th>      
+      <th style="text-align:center;"> HRA</th>      
+      <th style="text-align:center;"> OTHER ALLOWANCES</th>      
+      <th style="text-align:center;"> GROSS WAGES PAYABLE</th>      
+      <th style="text-align:center;"> PROFF. TAX</th>      
+      <th style="text-align:center;"> P.F. 12%</th>      
+      <th style="text-align:center;"> PF 12%</th>      
+      <th style="text-align:center;"> ESIC .75%</th>      
+      <th style="text-align:center;"> ESIC 3.25%</th>      
+      <th style="text-align:center;"> TOTAL DEDUCTION</th>      
+      <th style="text-align:center;"> NET WAGES PAID</th>      
+      <th style="text-align:center;"> PAYMENT REFERANCE</th>      
     </tr>  
   </thead>
   <tbody>';
@@ -809,47 +809,47 @@ if(isset($_GET['exppdfselect_pay_month']))
     $pay_track=$db->get_row("SELECT * FROM dw_payment_tracker WHERE DEM_EMP_ID='$rw->DEM_EMP_ID' AND DPT_PAYMENT_YEAR='".$datearray[0]."' AND DPT_PAYMENT_MONTH='".$datearray[1]."'");
 
     $html.='<tr>';
-    $html.='<td>'.$emp.'</td>'; 
-    $html.='<td>'.strtoupper($rw->DEM_EMP_NAME_PREFIX." ".$rw->DEM_EMP_FIRST_NAME." ".$rw->DEM_EMP_MIDDLE_NAME." ".$rw->DEM_EMP_LAST_NAME).'</td>';
-    $html.='<td>'.$rw->DEM_EMP_AGE.'</td>';
-    $html.='<td>'.$pay_track->DPT_TOTAL_DAYS_WORKED.'</td>';
-    $html.='<td>'.$payroll_det->DPM_RATE.'</td>';
-    $html.='<td>'.$pay_track->DPT_TOTAL_GW_HRS.'</td>';
+    $html.='<td style="text-align:center;">'.$emp.'</td>'; 
+    $html.='<td style="text-align:center;">'.strtoupper($rw->DEM_EMP_NAME_PREFIX." ".$rw->DEM_EMP_FIRST_NAME." ".$rw->DEM_EMP_MIDDLE_NAME." ".$rw->DEM_EMP_LAST_NAME).'</td>';
+    $html.='<td style="text-align:center;">'.$rw->DEM_EMP_AGE.'</td>';
+    $html.='<td style="text-align:center;">'.$pay_track->DPT_TOTAL_DAYS_WORKED.'</td>';
+    $html.='<td style="text-align:center;">'.$payroll_det->DPM_RATE.'</td>';
+     $html.='<td style="text-align:center;">'.$pay_track->DPT_TOTAL_GW_HRS.'</td>';
 
-    $html.='<td>'.$payroll_det->DPM_BASIC_SALARY.'</td>';
+    $html.='<td style="text-align:center;">'.$payroll_det->DPM_BASIC_SALARY.'</td>';
     $basictotal+= $payroll_det->DPM_BASIC_SALARY;
 
-    $html.='<td>'.$payroll_det->DPM_HRA.'</td>';
+    $html.='<td style="text-align:center;">'.$payroll_det->DPM_HRA.'</td>';
     $hratotal += $payroll_det->DPM_HRA;
 
-    $html.='<td>'.$payroll_det->DPM_OTHER_ALLOWANCE.'</td>';
+    $html.='<td style="text-align:center;">'.$payroll_det->DPM_OTHER_ALLOWANCE.'</td>';
     $otherallowancestotal += $payroll_det->DPM_OTHER_ALLOWANCE;
 
-    $html.='<td>'.$payroll_det->DPM_GROSS_WAGES_PAYABLE.'</td>';
+    $html.='<td style="text-align:center;">'.$payroll_det->DPM_GROSS_WAGES_PAYABLE.'</td>';
     $grosswagespayabletotal += $payroll_det->DPM_GROSS_WAGES_PAYABLE;
 
-    $html.='<td>'.$payroll_det->DPM_PROFESSIONAL_TAX.'</td>';
+    $html.='<td style="text-align:center;">'.$payroll_det->DPM_PROFESSIONAL_TAX.'</td>';
     $proftaxtotal += $payroll_det->DPM_PROFESSIONAL_TAX;
 
-    $html.='<td>'.$payroll_det->DPM_PF_EMPLOYEE.'</td>';
+    $html.='<td style="text-align:center;">'.$payroll_det->DPM_PF_EMPLOYEE.'</td>';
     $ep_pftotal += $payroll_det->DPM_PF_EMPLOYEE;
 
-    $html.='<td>'.$payroll_det->DPM_PF_EMPLOYER.'</td>';
+    $html.='<td style="text-align:center;">'.$payroll_det->DPM_PF_EMPLOYER.'</td>';
     $er_pftotal += $payroll_det->DPM_PF_EMPLOYER;
 
-    $html.='<td>'.$payroll_det->DPM_ESIC_EMPLOYEE.'</td>';
+    $html.='<td >'.$payroll_det->DPM_ESIC_EMPLOYEE.'</td>';
     $ep_esictotal += $payroll_det->DPM_ESIC_EMPLOYEE;
 
-    $html.='<td>'.$payroll_det->DPM_ESIC_EMPLOYER.'</td>';
+    $html.='<td style="text-align:center;">'.$payroll_det->DPM_ESIC_EMPLOYER.'</td>';
     $er_esictotal += $payroll_det->DPM_ESIC_EMPLOYER;
 
-    $html.='<td>'.$pay_track->TOTAL_DEDUCTION.'</td>';
+    $html.='<td style="text-align:center;">'.$pay_track->TOTAL_DEDUCTION.'</td>';
     $totaldeductionsum += $pay_track->TOTAL_DEDUCTION;
 
-    $html.='<td>'.$pay_track->DPT_NET_WAGES_PAID.'</td>';
+    $html.='<td style="text-align:center;">'.$pay_track->DPT_NET_WAGES_PAID.'</td>';
     $netwagespaidsum += $pay_track->DPT_NET_WAGES_PAID;
 
-    $html.='<td>'.$pay_track->DPT_INVOICE_NO.'</td>';
+    $html.='<td style="text-align:center;">'.$pay_track->DPT_INVOICE_NO.'</td>';
     $html.='</tr>';
   }
 
@@ -857,18 +857,18 @@ if(isset($_GET['exppdfselect_pay_month']))
   $html.='<tfoot>';
   $html.='<tr>'; 
   $html.='<th colspan="6" style="text-align:right;">Total</th>';
-  $html.='<th>'.$basictotal.'</th>';
-  $html.='<th>'.$hratotal.'</th>';
-  $html.='<th>'.$otherallowancestotal.'</th>';
-  $html.='<th>'.$grosswagespayabletotal.'</th>';
-  $html.='<th>'.$proftaxtotal.'</th>';
-  $html.='<th>'.$ep_pftotal.'</th>';
-  $html.='<th>'.$er_pftotal.'</th>';
-  $html.='<th>'.$ep_esictotal.'</th>';
-  $html.='<th>'.$er_esictotal.'</th>';
-  $html.='<th>'.$totaldeductionsum.'</th>';
-  $html.='<th>'.$netwagespaidsum.'</th>';
-  $html.='<th></th>';
+  $html.='<th style="text-align:center;">'.$basictotal.'</th>';
+  $html.='<th style="text-align:center;">'.$hratotal.'</th>';
+  $html.='<th style="text-align:center;">'.$otherallowancestotal.'</th>';
+  $html.='<th style="text-align:center;">'.$grosswagespayabletotal.'</th>';
+  $html.='<th style="text-align:center;">'.$proftaxtotal.'</th>';
+  $html.='<th style="text-align:center;">'.$ep_pftotal.'</th>';
+  $html.='<th style="text-align:center;">'.$er_pftotal.'</th>';
+  $html.='<th style="text-align:center;">'.$ep_esictotal.'</th>';
+  $html.='<th style="text-align:center;">'.$er_esictotal.'</th>';
+  $html.='<th style="text-align:center;">'.$totaldeductionsum.'</th>';
+  $html.='<th style="text-align:center;">'.$netwagespaidsum.'</th>';
+  $html.='<th style="text-align:center;"></th>';
   
   $html.='</tr>';
   $html.='</tfoot>';
@@ -878,7 +878,7 @@ if(isset($_GET['exppdfselect_pay_month']))
   $html.='<table id="example1" class="table" style="border:none !important;">';
   $html.='<tr style="border:none !important;">';
   $pfchalan=$ep_pftotal + $er_pftotal;
-  $html.='<td style="width:25%;border:none !important;">PF CHALAN AMT:</td>';
+  $html.='<td style="width:10%!important;border:none !important;">PF CHALLAN AMT:</td>';
   $html.='<td style="width:25%;text-align:left;border:none !important;">'.$pfchalan.'</td>';
   $html.='<td rowspan="3" style="width:25%;text-align:right;border:none !important;">Signature:</td>';
   
@@ -888,7 +888,7 @@ if(isset($_GET['exppdfselect_pay_month']))
 
   $html.='<tr style="border:none !important;">';
   $esicchalan=$ep_esictotal + $er_esictotal;
-  $html.='<td style="border:none !important;">ESIC CHALAN AMT:</td>';
+  $html.='<td style="border:none !important;">ESIC CHALLAN AMT:</td>';
   $html.='<td style="text-align:left;border:none !important;">'.$esicchalan.'</td>';
   
   $html.='</tr>';  

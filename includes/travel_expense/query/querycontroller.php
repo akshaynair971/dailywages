@@ -14,7 +14,7 @@ if(isset($_GET['del_DTE_ID']))
 if(isset($_POST['SAVE_TRAVEL_EXP']) || isset($_POST['SAVE_LOCK_TRAVEL_EXP']))
 {
   extract($_POST);
-  prnt($_POST);
+  
   
 
   $userid = $db->get_var("SELECT DEM_ID FROM dw_employee_master WHERE DEM_EMP_ID='$DEM_EMP_ID'");
@@ -49,7 +49,7 @@ if(isset($_POST['SAVE_TRAVEL_EXP']) || isset($_POST['SAVE_LOCK_TRAVEL_EXP']))
 
   }else{
     $insert_trexp= $db->query("INSERT INTO dw_travel_expense (DEM_EMP_ID,DTE_VOUCHER_REF,DTE_VOUCHER_DATE,DTE_DEPARTED_DATE,DTE_RETURNED_DATE,DTE_LOCATION,DTE_TRAVEL_SUMMARY,DTE_CREATED_DATE,DTE_UPDATED_DATE,DTE_CREATED_BY,DTE_UPDATED_BY,DTE_STATUS) VALUES('$DEM_EMP_ID','$voucherref','$DTE_VOUCHER_DATE','$DTE_DEPARTED_DATE','$DTE_RETURNED_DATE','$DTE_LOCATION','$DTE_TRAVEL_SUMMARY',NOW(),NOW(),'".$_SESSION['ad_id']."','".$_SESSION['ad_id']."','$DTE_STATUS')"); 
-    $db->debug();
+    
     if($insert_trexp)
     {
       echo "<script> alert('Travel & Expense Saved Successfully..!'); window.location='?folder=travel_expense&file=travel_expense_list';</script>";
@@ -356,19 +356,19 @@ if(isset($_GET['overall_trexp_pdf']))
   <thead>
     <tr>
       <th>Sr. No.</th>
-      <th> Engineer Name</th>
-      <th> Place</th>
-      <th> Voucher Date</th>
-      <th> Voucher Ref.</th>
-      <th> Date From</th>
-      <th> Date to</th>
-      <th> Travel</th>
-      <th> Conveyance</th>
-      <th> L/B</th>
-      <th> Extra</th>
-      <th> Total</th>
-      <th> Status</th>
-      <th> Paid Date</th>
+      <th style="text-align:center;"> Engineer Name</th>
+      <th style="text-align:center;"> Place</th>
+      <th style="text-align:center;"> Voucher Date</th>
+      <th style="text-align:center;"> Voucher Ref.</th>
+      <th style="text-align:center;"> Date From</th>
+      <th style="text-align:center;"> Date to</th>
+      <th style="text-align:center;"> Travel</th>
+      <th style="text-align:center;"> Conveyance</th>
+      <th style="text-align:center;"> L/B</th>
+      <th style="text-align:center;"> Extra</th>
+      <th style="text-align:center;"> Total</th>
+      <th style="text-align:center;"> Status</th>
+      <th style="text-align:center;"> Paid Date</th>
     </tr>  
   </thead>
   <tbody>';
@@ -379,13 +379,13 @@ if(isset($_GET['overall_trexp_pdf']))
     {
       $emp++;
       $html.='<tr>'; 
-      $html.='<td>'.$emp.'</td>'; 
-      $html.='<td>'.$row->DEM_EMP_NAME_PREFIX." ".$row->DEM_EMP_FIRST_NAME." ".$row->DEM_EMP_MIDDLE_NAME." ".$row->DEM_EMP_LAST_NAME.'</td>'; 
-      $html.='<td>'.$row->DTE_LOCATION.'</td>'; 
-      $html.='<td>'.date("d-M-Y",strtotime($row->DTE_VOUCHER_DATE)).'</td>'; 
-      $html.='<td>'.$row->DTE_VOUCHER_REF.'</td>'; 
-      $html.='<td>'.date("d-M-Y",strtotime($row->DTE_DEPARTED_DATE)).'</td>'; 
-      $html.='<td>'.date("d-M-Y",strtotime($row->DTE_RETURNED_DATE)).'</td>'; 
+      $html.='<td style="text-align:center;">'.$emp.'</td>'; 
+      $html.='<td style="text-align:center;">'.$row->DEM_EMP_NAME_PREFIX." ".$row->DEM_EMP_FIRST_NAME." ".$row->DEM_EMP_MIDDLE_NAME." ".$row->DEM_EMP_LAST_NAME.'</td>'; 
+      $html.='<td style="text-align:center;">'.$row->DTE_LOCATION.'</td>'; 
+      $html.='<td style="text-align:center;">'.date("d-M-Y",strtotime($row->DTE_VOUCHER_DATE)).'</td>'; 
+      $html.='<td style="text-align:center;">'.$row->DTE_VOUCHER_REF.'</td>'; 
+      $html.='<td style="text-align:center;">'.date("d-M-Y",strtotime($row->DTE_DEPARTED_DATE)).'</td>'; 
+      $html.='<td style="text-align:center;">'.date("d-M-Y",strtotime($row->DTE_RETURNED_DATE)).'</td>'; 
    
       $json = json_decode($row->DTE_TRAVEL_SUMMARY);
 
@@ -411,13 +411,13 @@ if(isset($_GET['overall_trexp_pdf']))
       if($row->DTE_PAYMENT_STATUS==1){ $paystat= "PAID"; }else{ $paystat= "UNPAID"; }
       if($row->DTE_PAID_DATE!=0){ $DTE_PAID_DATE= date("d-M-Y",strtotime($row->DTE_PAID_DATE)); }else{ $DTE_PAID_DATE= "--"; }
 
-      $html.='<td>'.$travel_total.'</td>'; 
-      $html.='<td>'.$conveyance_total.'</td>'; 
-      $html.='<td>'.$lb_total.'</td>'; 
-      $html.='<td>'.$extra_total.'</td>'; 
-      $html.='<td>'.$subtotal.'</td>'; 
-      $html.='<td>'.$paystat.'</td>'; 
-      $html.='<td>'.$DTE_PAID_DATE.'</td>'; 
+      $html.='<td style="text-align:center;">'.$travel_total.'</td>'; 
+      $html.='<td style="text-align:center;">'.$conveyance_total.'</td>'; 
+      $html.='<td style="text-align:center;">'.$lb_total.'</td>'; 
+      $html.='<td style="text-align:center;">'.$extra_total.'</td>'; 
+      $html.='<td style="text-align:center;">'.$subtotal.'</td>'; 
+      $html.='<td style="text-align:center;">'.$paystat.'</td>'; 
+      $html.='<td style="text-align:center;">'.$DTE_PAID_DATE.'</td>'; 
       $html.='</tr>'; 
     }
     $html.='</tbody>';
@@ -425,17 +425,13 @@ if(isset($_GET['overall_trexp_pdf']))
     $html.='<tfoot>';
     $html.='<tr>';
     $html.='<th></th>';
-    $html.='<th>Total</th>';
-    $html.='<th></th>';
-    $html.='<th></th>';
-    $html.='<th></th>';
-    $html.='<th></th>';
-    $html.='<th></th>';
-    $html.='<th>'.$grand_travel_total.'</th>';
-    $html.='<th>'.$grand_conveyance_total.'</th>';
-    $html.='<th>'.$grand_lb_total.'</th>';
-    $html.='<th>'.$grand_extra_total.'</th>';
-    $html.='<th>'.$grand_subtotal.'</th>';
+    $html.='<th  style="text-align:right;" colspan="6">Total</th>';
+   
+    $html.='<th style="text-align:center;">'.$grand_travel_total.'</th>';
+    $html.='<th style="text-align:center;">'.$grand_conveyance_total.'</th>';
+    $html.='<th style="text-align:center;">'.$grand_lb_total.'</th>';
+    $html.='<th style="text-align:center;">'.$grand_extra_total.'</th>';
+    $html.='<th style="text-align:center;">'.$grand_subtotal.'</th>';
     $html.='<th></th>';
     $html.='<th></th>';
     $html.='</tr>';
@@ -446,19 +442,19 @@ if(isset($_GET['overall_trexp_pdf']))
     $html.='<tr>';
     $html.='<th></th>';
     $html.='<th style="width:20%;"></th>';
-    $html.='<th>Grand Total</th>';
-    $html.='<th>'.$grand_subtotal.'</th>';
+    $html.='<th  style="text-align:right;">Grand Total</th>';
+    $html.='<th  style="text-align:left;">'.$grand_subtotal.'</th>';
     $html.='</tr>';
 
     $html.='<tr>';
-    $html.='<th>Signature</th>';
+    $html.='<th  style="text-align:right;">Signature</th>';
     $html.='<th></th>';
-    $html.='<th>Approved By</th>';
+    $html.='<th  style="text-align:right;">Approved By</th>';
     $html.='<th></th>';
     $html.='</tr>'; 
 
     $html.='<tr>';
-    $html.='<th>Place</th>';
+    $html.='<th  style="text-align:right;">Place</th>';
     $html.='<th colspan="3"></th>';
     $html.='</tr>';
     $html.='</table>';
@@ -619,24 +615,24 @@ if(isset($_GET['exppdfdte_id']))
        
         $emp++;
         $html.='<tr>'; 
-        $html.='<td>'.$emp.'</td>'; 
-        $html.='<td>'.date("d-M-Y",strtotime($json->JOURNEY_DATE[$i])).'</td>'; 
-        $html.='<td>'.$json->JOURNEY_PLACE[$i].'</td>'; 
+        $html.='<td style="text-align:center;">'.$emp.'</td>'; 
+        $html.='<td style="text-align:center;">'.date("d-M-Y",strtotime($json->JOURNEY_DATE[$i])).'</td>'; 
+        $html.='<td style="text-align:center;">'.$json->JOURNEY_PLACE[$i].'</td>'; 
 
-        $html.='<td>'.$json->TRAVEL_CHRG[$i].'</td>'; 
+        $html.='<td class="text-center" style="text-align:center;">'.$json->TRAVEL_CHRG[$i].'</td>'; 
         $travel_total += $json->TRAVEL_CHRG[$i];
 
-        $html.='<td>'.$json->CONVEY_CHRG[$i].'</td>'; 
+        $html.='<td class="text-center" style="text-align:center;">'.$json->CONVEY_CHRG[$i].'</td>'; 
         $conveyance_total += $json->CONVEY_CHRG[$i];
 
-        $html.='<td>'.$json->L_B_CHRG[$i].'</td>'; 
+        $html.='<td class="text-center" style="text-align:center;">'.$json->L_B_CHRG[$i].'</td>'; 
         $lb_total += $json->L_B_CHRG[$i];  
 
-        $html.='<td>'.$json->EXTRA_CHRG[$i].'</td>'; 
+        $html.='<td class="text-center" style="text-align:center;">'.$json->EXTRA_CHRG[$i].'</td>'; 
         $extra_total += $json->EXTRA_CHRG[$i]; 
 
 
-        $html.='<td>'.$json->TOTAL_CHRG[$i].'</td>'; 
+        $html.='<td class="text-center" style="text-align:center;">'.$json->TOTAL_CHRG[$i].'</td>'; 
         $subtotal += $json->TOTAL_CHRG[$i];  
         
         $html.='<td>'.$json->REMARKS[$i].'</td>';
@@ -652,12 +648,12 @@ if(isset($_GET['exppdfdte_id']))
 
     $html.='<tfoot>';
     $html.='<tr>';  
-    $html.='<th colspan="3">Total</th>';  
-    $html.='<th>'.$travel_total.'</th>';
-    $html.='<th>'.$conveyance_total.'</th>';
-    $html.='<th>'.$lb_total.'</th>';
-    $html.='<th>'.$extra_total.'</th>';
-    $html.='<th>'.$subtotal.'</th>';
+    $html.='<th colspan="3" class="text-right" style="text-align:right;">Total</th>';  
+    $html.='<th class="text-center" style="text-align:center;">'.$travel_total.'</th>';
+    $html.='<th class="text-center" style="text-align:center;">'.$conveyance_total.'</th>';
+    $html.='<th class="text-center" style="text-align:center;">'.$lb_total.'</th>';
+    $html.='<th class="text-center" style="text-align:center;">'.$extra_total.'</th>';
+    $html.='<th class="text-center" style="text-align:center;">'.$subtotal.'</th>';
     $html.='<th></th>';
     $html.='</tr>';
     $html.='</tfoot>';
@@ -668,28 +664,28 @@ if(isset($_GET['exppdfdte_id']))
     $html.='<table id="example1" class="table table-bordered table-striped" role="grid" style="border-top:solid 1px;">';
     $html.='<tr>';
     $html.='<th colspan="2"></th>';
-    $html.='<th> Grand Total</th>';
-    $html.='<td>'.$subtotal.'</td>';
+    $html.='<th class="text-right" style="text-align:right;"> Grand Total</th>';
+    $html.='<td style="text-align:left;">'.$subtotal.'</td>';
     $html.='</tr>';
 
     $html.='<tr>';
-    $html.='<th style="width:25%;">Signature</th>';
+    $html.='<th style="width:25%;text-align:right;">Signature</th>';
     $html.='<td style="width:25%;"></td>';
-    $html.='<th style="width:25%;">Approved By</th>';
+    $html.='<th style="width:25%;text-align:right;">Approved By</th>';
     $html.='<td style="width:25%;"></td>';
     $html.='</tr>';
 
     $html.='<tr>';
-    $html.='<th style="width:25%;">Advance in Hand</th>';
+    $html.='<th style="width:25%;text-align:right;">Advance in Hand</th>';
     $html.='<td style="width:25%;"></td>';
-    $html.='<th style="width:25%;">Place</th>';
+    $html.='<th style="width:25%;text-align:right;">Place</th>';
     $html.='<td style="width:25%;"></td>';
     $html.='</tr>';
 
     $html.='<tr>';
     $html.='<th colspan="2"></th>';   
-    $html.='<th>Date</th>';
-    $html.='<td></td>';
+    $html.='<th style="text-align:right;">Date</th>';
+    $html.='<td>'.date('d-M-Y').'</td>';
     $html.='</tr>';
     $html.='</table>';
 
