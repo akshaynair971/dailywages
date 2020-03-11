@@ -82,8 +82,10 @@
 
               <div class="form-group col-md-3">
                 <label for="DTE_LOCATION">Location <span style="color: #e22b0e;">*</span></label>
-                <input type="text" class="form-control" id='DTE_LOCATION'  name='DTE_LOCATION' placeholder="Enter Location" value="<?php if($gettravel->DTE_LOCATION!=''){ echo $gettravel->DTE_LOCATION; }elseif($totaldeduction!=''){ echo $totaldeduction; } ?>" required >  
+                <input type="text" class="form-control" id='DTE_LOCATION'  name='DTE_LOCATION' placeholder="Enter Location" value="<?php if($gettravel->DTE_LOCATION!=''){ echo $gettravel->DTE_LOCATION; } ?>" required >  
               </div>
+
+              
 
               <div class="form-group col-md-12">
                 <table class="table table-bordered" id="item_table">
@@ -173,13 +175,18 @@
                   </tbody>
                 </table>                
               </div>
+
+              <div class="form-group col-md-3">
+                <label for="DTE_ADVANCE_IN_HAND">Advance in Hand <span style="color: #e22b0e;">*</span></label>
+                <input type="text" class="form-control" id='DTE_ADVANCE_IN_HAND'  name='DTE_ADVANCE_IN_HAND' placeholder="Enter Advance in hand" value="<?php if($gettravel->DTE_ADVANCE_IN_HAND!=''){ echo $gettravel->DTE_ADVANCE_IN_HAND; }else{ echo "0"; } ?>" required >  
+              </div>
               
 
               <div class="form-group col-md-12">   
                 <center>  
                   <!-- <input type="hidden" name="DEM_EMP_ID"  id="DEM_EMP_ID" value="<?php echo $_GET['DEM_EMP_ID']; ?>">            -->
                   <input type="submit" class="btn btn-warning btn-round" id='SAVE_TRAVEL_EXP'  name='SAVE_TRAVEL_EXP' value="Save Travel Expense" >  
-                  <input type="submit" class="btn btn-primary btn-round" id='SAVE_LOCK_TRAVEL_EXP'  name='SAVE_LOCK_TRAVEL_EXP' value="Save & Lock Travel Expense" >  
+                  <input type="submit" class="btn btn-primary btn-round" id='SAVE_LOCK_TRAVEL_EXP'  name='SAVE_LOCK_TRAVEL_EXP' value="<?php if($_SESSION['user_type']==1){ echo "Approve"; } if($_SESSION['user_type']==2){ echo "Submit"; } ?> Travel Expense" >  
                 </center>
               </div>
 
@@ -203,6 +210,16 @@
 
   <script>
   $(function() {
+    $("#DTE_RETURNED_DATE").change(function () {
+        var DTE_DEPARTED_DATE = document.getElementById("DTE_DEPARTED_DATE").value;
+        var DTE_RETURNED_DATE = document.getElementById("DTE_RETURNED_DATE").value;
+
+        if ((Date.parse(DTE_DEPARTED_DATE) >= Date.parse(DTE_RETURNED_DATE))) {
+            alert("Returned Date should be greater than Departed date");
+            document.getElementById("DTE_RETURNED_DATE").value = "";
+        }
+    });
+
     $( "#DTE_VOUCHER_DATE,#DTE_DEPARTED_DATE,#DTE_RETURNED_DATE" ).datepicker({
       dateFormat: 'yy-mm-dd',
       changeMonth: true,

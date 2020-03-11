@@ -141,23 +141,23 @@
           <table id="example1" class="table table-bordered table-striped table-responsive" style="border: 1px solid black !important;">
             <thead>
               <tr>
-                <th style="border: 1px solid black !important;" >Sr.No</th>
-                <th style="border: 1px solid black !important;" >Voucher Ref.</th> 
-                <th style="border: 1px solid black !important;" >Voucher Date</th>
-                <th style="border: 1px solid black !important;" >Emp. Code</th>
-                <th style="border: 1px solid black !important;" >Engineer Name</th>
-                <th style="border: 1px solid black !important;" >Departed Date</th>
-                <th style="border: 1px solid black !important;" >Returned Date</th>
-                <th style="border: 1px solid black !important;" >Location</th> 
-                <th style="border: 1px solid black !important;" >Travel</th> 
-                <th style="border: 1px solid black !important;" >Conveyance</th> 
-                <th style="border: 1px solid black !important;" >L/B</th> 
-                <th style="border: 1px solid black !important;" >Extra</th> 
-                <th style="border: 1px solid black !important;" >Total</th> 
-                <th style="border: 1px solid black !important;" >Status</th>
-                <th style="border: 1px solid black !important;" >Paid Date</th>
-                <!-- <th style="border: 1px solid black !important;" >Login Detail</th> -->
-                <th style="width:15% !important;border: 1px solid black !important;">Action</th>
+                <th class="text-center" style="border: 1px solid black !important;" >Sr.No</th>
+                <th class="text-center" style="border: 1px solid black !important;" >Voucher Ref.</th> 
+                <th class="text-center" style="border: 1px solid black !important;" >Voucher Date</th>
+                <th class="text-center" style="border: 1px solid black !important;" >Emp. Code</th>
+                <th class="text-center" style="border: 1px solid black !important;" >Engineer Name</th>
+                <th class="text-center" style="border: 1px solid black !important;" >Departed Date</th>
+                <th class="text-center" style="border: 1px solid black !important;" >Returned Date</th>
+                <th class="text-center" style="border: 1px solid black !important;" >Location</th> 
+                <th class="text-center" style="border: 1px solid black !important;" >Travel</th> 
+                <th class="text-center" style="border: 1px solid black !important;" >Conveyance</th> 
+                <th class="text-center" style="border: 1px solid black !important;" >L/B</th> 
+                <th class="text-center" style="border: 1px solid black !important;" >Extra</th> 
+                <th class="text-center" style="border: 1px solid black !important;" >Total</th> 
+                <th class="text-center" style="border: 1px solid black !important;" >Status</th>
+                <th class="text-center" style="border: 1px solid black !important;" >Paid Date</th>
+                <!-- <th class="text-center" style="border: 1px solid black !important;" >Login Detail</th> -->
+                <th class="text-center" style="width:15% !important;border: 1px solid black !important;">Action</th>
               </tr>
             </thead> 
             <tbody>
@@ -183,32 +183,32 @@
               }
             }                
             ?>
-              <tr>
+              <tr style="<?php if($row->DTE_STATUS=="0"){ echo 'background-color: #122630; color: white;'; } ?>">
                 
-                <td style="border: 1px solid black !important;"><?php echo $emp; ?></td>                
+                <td class="text-center" style="border: 1px solid black !important;"><?php echo $emp; ?></td>                
                 
-                <td style="border: 1px solid black !important;"><?php echo $row->DTE_VOUCHER_REF; ?></td>
+                <td class="text-center" style="border: 1px solid black !important;"><?php echo $row->DTE_VOUCHER_REF; ?></td>
 
-                <td style="border: 1px solid black !important;"><?php echo date("d-M-Y",strtotime($row->DTE_VOUCHER_DATE)); ?></td>
+                <td class="text-center" style="border: 1px solid black !important;"><?php echo date("d-M-Y",strtotime($row->DTE_VOUCHER_DATE)); ?></td>
 
-                <td style="border: 1px solid black !important;"><?php echo $row->DEM_EMP_ID; ?></td>
+                <td class="text-center" style="border: 1px solid black !important;"><?php echo $row->DEM_EMP_ID; ?></td>
 
-                <td style="border: 1px solid black !important;">
+                <td class="text-center" style="border: 1px solid black !important;">
                   <?php echo $row->DEM_EMP_NAME_PREFIX." ".$row->DEM_EMP_FIRST_NAME." ".$row->DEM_EMP_MIDDLE_NAME." ".$row->DEM_EMP_LAST_NAME; ?>                      
                 </td>
 
-                <td style="border: 1px solid black !important;">
+                <td class="text-center" style="border: 1px solid black !important;">
                   <?php echo date("d-M-Y",strtotime($row->DTE_DEPARTED_DATE)); ?>               
                 </td>  
 
-                <td style="border: 1px solid black !important;"><?php echo date("d-M-Y",strtotime($row->DTE_RETURNED_DATE)); ?></td> 
+                <td class="text-center" style="border: 1px solid black !important;"><?php echo date("d-M-Y",strtotime($row->DTE_RETURNED_DATE)); ?></td> 
 
-                <td style="border: 1px solid black !important;"><?php echo $row->DTE_LOCATION; ?></td> 
-                <td style="border: 1px solid black !important; text-align:right;"><?php echo $travel_total; ?></td> 
-                <td style="border: 1px solid black !important; text-align:right;"><?php echo $conveyance_total; ?></td> 
-                <td style="border: 1px solid black !important; text-align:right;"><?php echo $lb_total; ?></td> 
-                <td style="border: 1px solid black !important; text-align:right;"><?php echo $extra_total; ?></td> 
-                <td style="border: 1px solid black !important; text-align:right;"><?php echo $subtotal; ?></td> 
+                <td class="text-center" style="border: 1px solid black !important;"><?php echo $row->DTE_LOCATION; ?></td> 
+                <td class="text-center" style="border: 1px solid black !important; "><?php echo $travel_total; ?></td> 
+                <td class="text-center" style="border: 1px solid black !important; "><?php echo $conveyance_total; ?></td> 
+                <td class="text-center" style="border: 1px solid black !important; "><?php echo $lb_total; ?></td> 
+                <td class="text-center" style="border: 1px solid black !important; "><?php echo $extra_total; ?></td> 
+                <td class="text-center" style="border: 1px solid black !important; "><?php echo $subtotal; ?></td> 
                 <?php 
                 $grand_travel_total += $travel_total;
                 $grand_conveyance_total += $conveyance_total;
@@ -217,11 +217,11 @@
                 $grand_subtotal += $subtotal;
                 ?>
 
-                <td style="border: 1px solid black !important;"><?php if($row->DTE_PAYMENT_STATUS==1){ echo "PAID"; }else{ echo "UNPAID"; } ?></td> 
+                <td class="text-center" style="border: 1px solid black !important;"><?php if($row->DTE_PAYMENT_STATUS==1){ echo "PAID"; }else{ echo "UNPAID"; } ?></td> 
 
-                <td style="border: 1px solid black !important;"><?php if($row->DTE_PAID_DATE!=0){ echo date("d-M-Y",strtotime($row->DTE_PAID_DATE)); } ?></td> 
+                <td class="text-center" style="border: 1px solid black !important;"><?php if($row->DTE_PAID_DATE!=0){ echo date("d-M-Y",strtotime($row->DTE_PAID_DATE)); } ?></td> 
                 
-                <td style="border: 1px solid black !important;"  align="center">
+                <td class="text-center" style="border: 1px solid black !important;"  align="center">
 
                   <a title="View Details" href="?folder=travel_expense&file=view_travel_expense&DTE_ID=<?php echo $row->DTE_ID; ?>" class="btn btn-primary" style="margin: 2px;"><i class="fa fa-eye"></i> </a>
 
@@ -259,15 +259,15 @@
             </tbody>
             <tfoot>
               <tr>
-                <td colspan="8" style=" border: 1px solid black !important; text-align: right;"><b>Total</b></td>
-                <td style=" border: 1px solid black !important; text-align: right;"><b><?php echo $grand_travel_total; ?></b></td>
-                <td style=" border: 1px solid black !important; text-align: right;"><b><?php echo $grand_conveyance_total; ?></b></td>
-                <td style=" border: 1px solid black !important; text-align: right;"><b><?php echo $grand_lb_total; ?></b></td>
-                <td style=" border: 1px solid black !important; text-align: right;"><b><?php echo $grand_extra_total; ?></b></td>
-                <td style=" border: 1px solid black !important; text-align: right;"><b><?php echo $grand_subtotal; ?></b></td>
-                <td style=" border: 1px solid black !important; text-align: right;"><b></b></td>
-                <td style=" border: 1px solid black !important;"></td>
-                <td style=" border: 1px solid black !important;"></td>
+                <td colspan="8" style=" border: 1px solid black !important;"><b>Total</b></td>
+                <td class="text-center" style=" border: 1px solid black !important;"><b><?php echo $grand_travel_total; ?></b></td>
+                <td class="text-center" style=" border: 1px solid black !important;"><b><?php echo $grand_conveyance_total; ?></b></td>
+                <td class="text-center" style=" border: 1px solid black !important;"><b><?php echo $grand_lb_total; ?></b></td>
+                <td class="text-center" style=" border: 1px solid black !important;"><b><?php echo $grand_extra_total; ?></b></td>
+                <td class="text-center" style=" border: 1px solid black !important;"><b><?php echo $grand_subtotal; ?></b></td>
+                <td class="text-center" style=" border: 1px solid black !important;"><b></b></td>
+                <td class="text-center" style=" border: 1px solid black !important;"></td>
+                <td class="text-center" style=" border: 1px solid black !important;"></td>
               </tr>
             </tfoot>
           </table>
@@ -311,6 +311,10 @@
                 <div class="form-group col-md-12">
                   <label>Paid Date</label>
                   <input type="text" class="form-control" name="DTE_PAID_DATE" id="DTE_PAID_DATE" autocomplete="off">
+                </div>
+                <div class="form-group col-md-12">
+                  <label>Remark/Payment Reference </label>
+                  <textarea class="form-control" name="DTE_PAYMENT_REFERENCE" id="DTE_PAYMENT_REFERENCE" ></textarea>
                 </div>
 
                 <div class="col-md-12">
@@ -371,6 +375,7 @@ $(document).ready(function(){
 
           $('#DTE_PAYMENT_STATUS').val(ob.DTE_PAYMENT_STATUS);
           $('#DTE_PAID_DATE').val(ob.DTE_PAID_DATE);
+          $('#DTE_PAYMENT_REFERENCE').val(ob.DTE_PAYMENT_REFERENCE);
           $('#DTE_SUBMIT_PAYMENT_STATUS').show();
           $('#PAYMENT_MSG').html('');
 

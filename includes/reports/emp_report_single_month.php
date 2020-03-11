@@ -35,6 +35,7 @@ if(isset($_POST['report_sub_sin_mon']) || isset($_POST['report_sub_sin_cur_mon']
         <thead class="table-border">
         <tr>
           <th style="border: 1px solid black !important; text-align: left;">Sr. No.</th>
+          <th style="border: 1px solid black !important; width: 30% !important; text-align: left;">EMPLOYEE ID</th>
           <th style="border: 1px solid black !important; width: 30% !important; text-align: left;">EMPLOYEE NAME</th>
           <th style="border: 1px solid black !important; text-align: left;">AGE</th>
           <th style="border: 1px solid black !important; text-align: left;">TOTAL DAYS WORKED</th>
@@ -45,14 +46,14 @@ if(isset($_POST['report_sub_sin_mon']) || isset($_POST['report_sub_sin_cur_mon']
           <th style="border: 1px solid black !important; text-align: left;">OTHER ALLOWANCES</th>
           <th style="border: 1px solid black !important; text-align: left;">GROSS WAGES PAYABLE</th>
           <th style="border: 1px solid black !important; text-align: left;">PROFF. TAX</th>
-          <th style="border: 1px solid black !important; text-align: left;">P.F. (12%)</th>
-          <th style="border: 1px solid black !important; text-align: left;">PF (12%)</th>
-          <th style="border: 1px solid black !important; text-align: left;">ESIC (.75%)</th>
-          <th style="border: 1px solid black !important; text-align: left;">ESIC (3.25%)</th>
+          <th style="border: 1px solid black !important; text-align: left;">EMPLOYEE P.F. (12%)</th>
+          <th style="border: 1px solid black !important; text-align: left;">EMPLOYER PF (12%)</th>
+          <th style="border: 1px solid black !important; text-align: left;">EMPLOYEE ESIC (.75%)</th>
+          <th style="border: 1px solid black !important; text-align: left;">EMPLOYER ESIC (3.25%)</th>
           <th style="border: 1px solid black !important; text-align: left;">TOTAL DEDUCTION</th>
           <th style="border: 1px solid black !important; text-align: left;">NET WAGES PAID</th>
           <th style="border: 1px solid black !important; text-align: left;">PAYMENT REFERENCE</th>
-          <th style="border: 1px solid black !important; text-align: left;">SIGN</th>
+          <!-- <th style="border: 1px solid black !important; text-align: left;">SIGN</th> -->
         </tr>
         
         </thead>
@@ -65,16 +66,23 @@ if(isset($_POST['report_sub_sin_mon']) || isset($_POST['report_sub_sin_cur_mon']
             foreach($r as $rw){
 
               $payroll_det=$db->get_row("SELECT * FROM dw_payroll_master WHERE DEM_EMP_ID='$rw->DEM_EMP_ID'");
+
+              $totaldeduction= $payroll_det->DPM_PROFESSIONAL_TAX + $payroll_det->DPM_PF_EMPLOYEE  + $payroll_det->DPM_ESIC_EMPLOYEE; 
+
+             
+              $getempattd= $db->get_var("SELECT COUNT(*) FROM dw_emp_attendance WHERE  DEM_EMPLOYEE_ID = '$rw->DEM_EMP_ID' AND DEA_ATTD_YEAR='$datearray[0]' AND DEA_ATTD_MONTH='$datearray[1]'");
+              // $db->debug();
               $pay_track=$db->get_row("SELECT * FROM dw_payment_tracker WHERE DEM_EMP_ID='$rw->DEM_EMP_ID' AND DPT_PAYMENT_YEAR='".$datearray[0]."' AND DPT_PAYMENT_MONTH='".$datearray[1]."'");
-              // prnt($pay_track);
+              // prnt($getempattd);
             
             $i++;
          ?>
             <tr>
               <td style="border: 1px solid black !important;" ><?php echo $i;  ?></td>
+              <td style="border: 1px solid black !important; text-align: center;" ><?php echo $rw->DEM_EMP_ID; ?></td>
               <td style="border: 1px solid black !important; width: 30% !important;" ><?php echo strtoupper($rw->DEM_EMP_NAME_PREFIX." ".$rw->DEM_EMP_FIRST_NAME." ".$rw->DEM_EMP_MIDDLE_NAME." ".$rw->DEM_EMP_LAST_NAME); ?></td>
               <td style="border: 1px solid black !important; text-align: center;" ><?php echo $rw->DEM_EMP_AGE; ?></td>
-              <td style="border: 1px solid black !important; text-align: center;" ><?php if($pay_track->DPT_TOTAL_DAYS_WORKED){ echo $pay_track->DPT_TOTAL_DAYS_WORKED; }else{ echo "-"; } ?></td>
+              <td style="border: 1px solid black !important; text-align: center;" ><?php if($getempattd){ echo $getempattd; }else{ echo "-"; } ?></td>
               <td style="border: 1px solid black !important; text-align: center;" ><?php echo $payroll_det->DPM_RATE; ?></td>
               <td style="border: 1px solid black !important; text-align: center;" ><?php if($pay_track->DPT_TOTAL_GW_HRS){ echo $pay_track->DPT_TOTAL_GW_HRS; }else{ echo "-"; } ?></td>
               <td style="border: 1px solid black !important; text-align: center;" ><?php echo $payroll_det->DPM_BASIC_SALARY; $basictotal+= $payroll_det->DPM_BASIC_SALARY; ?></td>
@@ -86,10 +94,10 @@ if(isset($_POST['report_sub_sin_mon']) || isset($_POST['report_sub_sin_cur_mon']
               <td style="border: 1px solid black !important; text-align: center;" ><?php echo $payroll_det->DPM_PF_EMPLOYER;  $er_pftotal += $payroll_det->DPM_PF_EMPLOYER; ?></td>
               <td style="border: 1px solid black !important; text-align: center;" ><?php echo $payroll_det->DPM_ESIC_EMPLOYEE; $ep_esictotal += $payroll_det->DPM_ESIC_EMPLOYEE; ?></td>
               <td style="border: 1px solid black !important; text-align: center;" ><?php echo $payroll_det->DPM_ESIC_EMPLOYER; $er_esictotal += $payroll_det->DPM_ESIC_EMPLOYER; ?></td>
-              <td style="border: 1px solid black !important; text-align: center;" ><?php if($pay_track->TOTAL_DEDUCTION){ $totaldeductionsum += $pay_track->TOTAL_DEDUCTION; echo $pay_track->TOTAL_DEDUCTION; }else{ echo "-"; } ?></td>
-              <td style="border: 1px solid black !important; text-align: center;" ><?php if($pay_track->DPT_NET_WAGES_PAID){ $netwagespaidsum += $pay_track->DPT_NET_WAGES_PAID; echo $pay_track->DPT_NET_WAGES_PAID; }else{ echo "-"; }  ?></td>
+              <td style="border: 1px solid black !important; text-align: center;" ><?php if($totaldeduction){ $totaldeductionsum += $totaldeduction; echo $totaldeduction; }else{ echo "-"; } ?></td>
+              <td style="border: 1px solid black !important; text-align: center;" ><?php if($payroll_det->DPM_CALCULATED_AMOUNT){ $netwagespaidsum += $payroll_det->DPM_CALCULATED_AMOUNT; echo $payroll_det->DPM_CALCULATED_AMOUNT; }else{ echo "-"; }  ?></td>
               <td style="border: 1px solid black !important; text-align: center;" ><?php if($pay_track->DPT_INVOICE_NO){ echo $pay_track->DPT_INVOICE_NO; }else{ echo "-"; } ?></td>
-              <td style="border: 1px solid black !important;" ><?php echo "-"; ?></td>
+              <!-- <td style="border: 1px solid black !important;" ><?php echo "-"; ?></td> -->
                    
             </tr>
             <?php 
@@ -98,6 +106,7 @@ if(isset($_POST['report_sub_sin_mon']) || isset($_POST['report_sub_sin_cur_mon']
         </tbody>
         <tfoot>
           <tr>
+            <td style="border: 1px solid black !important; text-align: right;" ><b></b></td>
             <td style="border: 1px solid black !important; text-align: right;" ><b></b></td>
             <td style="border: 1px solid black !important; text-align: right;" ><b>Total</b></td>
             <td style="border: 1px solid black !important; text-align: center;" ><b></b></td>
@@ -116,7 +125,7 @@ if(isset($_POST['report_sub_sin_mon']) || isset($_POST['report_sub_sin_cur_mon']
             <td style="border: 1px solid black !important; text-align: center;" ><b><?php echo $totaldeductionsum; ?></b></td>
             <td style="border: 1px solid black !important; text-align: center;" ><b><?php echo $netwagespaidsum; ?></b></td>
             <td style="border: 1px solid black !important; text-align: center;" ><b><?php  ?></b></td>
-            <td style="border: 1px solid black !important; text-align: center;" ><b><?php  ?></b></td>            
+            <!-- <td style="border: 1px solid black !important; text-align: center;" ><b><?php  ?></b></td>             -->
           </tr>          
         </tfoot>
       </table>
@@ -149,10 +158,10 @@ $(document).ready(function() {
         dom: 'Bfrtip',
         buttons: [
             // 'copyHtml5',
-            'colvis',
+            // 'colvis',
             // { extend: 'copyHtml5', footer: true },
-            { extend: 'excelHtml5', footer: true, title: '<?php if (isset($title)){echo $title->ins_name." (".$fulldate." )";}   ?>' ,messageTop: 'FORM II M.W. RULES 1963 Rule 27'
-            },
+            // { extend: 'excelHtml5', footer: true, title: '<?php if (isset($title)){echo $title->ins_name." (".$fulldate." )";}   ?>' ,messageTop: 'FORM II M.W. RULES 1963 Rule 27'
+            // },
             // // { extend: 'csvHtml5', footer: true },
             // { extend: 'pdfHtml5', footer: true, title: '<?php if (isset($title)){echo $title->ins_name." (".$fulldate." )";}   ?>' , messageTop: 'FORM II M.W. RULES 1963 Rule 27', orientation: 'landscape',pageSize: 'A3' }
             

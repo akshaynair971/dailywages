@@ -13,6 +13,11 @@
 }
 </style>
 <br>
+<?php 
+if($_SESSION['user_type']==1)
+{
+ ?>
+
 <div class="col-lg-6 col-md-6 col-sm-12">
   <div class="box box-primary">
     <div class="box-header">
@@ -43,7 +48,8 @@
     </div>   
   </div>
 </div>
-
+<?php 
+} ?>
 
 <div class="col-lg-6 col-md-6 col-sm-12">
   <div class="box box-primary">
@@ -51,7 +57,7 @@
       <h3 class="box-title"><label><i class="fa fa-book"></i> Select Month to Generate Attendance Report </label></h3>
       <div class="box-tools">
         <br><br>
-        <form method="POST" action="?folder=reports&file=emp_report_single_month">
+        <form method="POST" >
           <input type="hidden" name="curr_month_attd_date" value="<?php echo date('Y-m'); ?>">
           <input type="submit" name="rep_attd_sub_sin_cur_mon" value="Current Month (<?php echo date('F Y'); ?>)" class="btn btn-success btn-round">
         </form>
@@ -126,6 +132,61 @@
   </div>
 </div>
 
+<!-- Generate Salary Slip Overview -->
+
+<div class="col-lg-6 col-md-6 col-sm-12">
+  <div class="box box-primary">
+    <div class="box-header">
+      <h3 class="box-title"><label><i class="fa fa-book"></i> Salary Summary Report </label></h3>
+      <div class="box-tools">
+        <!-- <br><br>
+        <form method="POST" action="?folder=reports&file=emp_report_single_month">
+          <input type="hidden" name="curr_month_attd_date" value="<?php echo date('Y-m'); ?>">
+          <input type="submit" name="rep_attd_sub_sin_cur_mon" value="Current Month (<?php echo date('F Y'); ?>)" class="btn btn-success btn-round">
+        </form> -->
+        
+      </div>
+    </div>
+    <div class="box-body">
+      <form method="POST"><br>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <label style=" margin-left: 10px;">Select Employee <span style="color: red;">*</span></label>
+            <select class="form-control select2" name="DEM_EMP_ID">
+              <option>Select / Search Employee</option>
+              <?php 
+              $get_emp = $db->get_results("SELECT DEM_EMP_ID,DEM_EMP_NAME_PREFIX,DEM_EMP_FIRST_NAME,DEM_EMP_MIDDLE_NAME,DEM_EMP_LAST_NAME FROM dw_employee_master ORDER BY DEM_EMP_ID ASC");
+              if($get_emp)
+              {
+                foreach ($get_emp as $get_empkey) {               
+                ?>
+                <option value="<?php echo $get_empkey->DEM_EMP_ID; ?>">(<?php echo $get_empkey->DEM_EMP_ID; ?>) <?php echo strtoupper($get_empkey->DEM_EMP_NAME_PREFIX." ".$get_empkey->DEM_EMP_FIRST_NAME." ".$get_empkey->DEM_EMP_MIDDLE_NAME." ".$get_empkey->DEM_EMP_LAST_NAME); ?> </option>
+                <?php 
+                }
+              } ?>
+            </select>
+          </div>
+
+          <div class="form-group col-md-6">
+            <label style=" margin-left: 10px;">From Month : <span style="color: red;">*</span></label>
+            <input type="text" name="SAL_SUM_REP_FROM_DATE" id="SAL_SUM_REP_FROM_DATE" class="form-control" placeholder="Select From Month" autocomplete="off" required>
+          </div>
+
+          <div class="form-group col-md-6" >
+            <label style="margin-left: 10px;">To Month : <span style="color: red;">*</span></label>
+            <input type="text" name="SAL_SUM_REP_TO_DATE" id="SAL_SUM_REP_TO_DATE" class="form-control" placeholder="Select To Month" autocomplete="off" required>
+          </div>
+
+          <div class="col-md-12">            
+            <input type="submit" name="get_salary_summary_report" value="Get Salary Summary Report" class="btn btn-primary btn-round">
+            
+          </div>
+        </div>
+      </form>
+    </div>   
+  </div>
+</div>
+
 
 <!-- <div class="col-lg-6 col-md-6 col-sm-12">
   <div class="box box-primary">
@@ -155,8 +216,8 @@
 
 <script>
   $(function() {
-    $( "#start_date" ).datepicker({      
-      dateFormat: "mm/yy",
+    $( "#start_date,#SAL_SUM_REP_FROM_DATE,#SAL_SUM_REP_TO_DATE" ).datepicker({      
+      dateFormat: "yy-mm",
       changeMonth: true,
       changeYear: true,
       showButtonPanel: true,

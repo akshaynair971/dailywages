@@ -24,7 +24,7 @@ if($_POST)
     }
     elseif ($user_type==2) 
     {
-      $checkadmin = $db->get_var("SELECT COUNT(*) FROM dw_user_login WHERE DUL_USER_NAME='$username' AND DUL_USER_PASSWORD='$password' AND DUL_ACTIVE_FLAG='ACTIVE'");
+      $checkadmin = $db->get_var("SELECT COUNT(*) FROM dw_user_login WHERE DUL_USER_NAME='$username' AND DUL_USER_PASSWORD='$password' ");
     }
 		
 		
@@ -129,8 +129,8 @@ if($_POST)
               <form class="login-form" role="form" method="POST">
 
                 <select class="form-control form-group" id="user_type" name="user_type" style="border-radius: 6px;">
-                  <option value="1">ADMIN</option>
                   <option value="2">USER</option>
+                  <option value="1">ADMIN</option>
                 </select>
 
                 <input type="text" class="form-control" id="uname" name="uname" placeholder="username" autocomplete="off">

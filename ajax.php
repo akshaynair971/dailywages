@@ -52,7 +52,7 @@ if(isset($_POST['view_emp_details']))
 				<b>Date Of Birth:</b> 
 			</td>
 			<td>
-				<?php echo date("d/m/Y",strtotime($get_emp_details->DEM_EMP_DOB)); ?> 
+				<?php echo date("d-M-Y",strtotime($get_emp_details->DEM_EMP_DOB)); ?> 
 			</td>
 		</tr>
 		<tr>
@@ -94,7 +94,7 @@ if(isset($_POST['view_emp_details']))
 				<b>Added On:</b>
 			</td> 
 			<td> 
-				<?php echo strtoupper($get_emp_details->DEM_CREATION_DATE); ?> 
+				<?php echo date('d-M-Y h:i A',strtotime($get_emp_details->DEM_CREATION_DATE)); ?> 
 			</td>
 		</tr>
 		<tr>
@@ -233,7 +233,7 @@ if(isset($_POST['view_emp_details']))
 				<b>Date of Joining:</b>
 			</td> 
 			<td> 
-				<?php echo strtoupper($get_emp_details->DEM_START_DATE); ?> 
+				<?php echo date('d-M-Y',strtotime($get_emp_details->DEM_START_DATE)); ?> 
 			</td>			
 						
 		</tr>
@@ -248,7 +248,7 @@ if(isset($_POST['view_emp_details']))
 				<b>Date of Relieving:</b>
 			</td>
 			<td>
-				<?php echo strtoupper($get_emp_details->DEM_END_DATE); ?> 
+				<?php if($get_emp_details->DEM_END_DATE!=''){ echo date('d-M-Y',strtotime($get_emp_details->DEM_END_DATE)); } ?> 
 			</td>
 						
 		</tr>
@@ -279,12 +279,12 @@ if(isset($_POST['get_dates_attendance']))
 	<table class="table table-responsive table-bordered" style="border: 1px solid black !important;">
 		<thead style="border: 1px solid black !important;">
 			<tr style="border: 1px solid black !important;">
-				<th style="width: 12%;border: 1px solid black !important;">Attd. Date</th>
-				<th style="width: 10%;border: 1px solid black !important;">Attd. Day</th>
-				<th style="width: 10% !important;border: 1px solid black !important;">In Time</th>
-				<th style="width: 10% !important;border: 1px solid black !important;">Out Time</th>
-				<th style="border: 1px solid black !important;">Location</th>
-				<th style="border: 1px solid black !important;">Remark</th>
+				<th class="text-center" style="width: 12%;border: 1px solid black !important;">Attd. Date</th>
+				<th class="text-center" style="width: 10%;border: 1px solid black !important;">Attd. Day</th>
+				<th class="text-center" style="width: 10% !important;border: 1px solid black !important;">In Time</th>
+				<th class="text-center" style="width: 10% !important;border: 1px solid black !important;">Out Time</th>
+				<th class="text-center" style="border: 1px solid black !important;">Location</th>
+				<th class="text-center" style="border: 1px solid black !important;">Remark</th>
 				<!-- <th style="border: 1px solid black !important;">Sign</th> -->
 			</tr>
 		</thead>
@@ -312,22 +312,22 @@ if(isset($_POST['get_dates_attendance']))
 				}	
 			?>
 				<tr style="<?php if($getattd->DEA_STATUS=="0"){ echo 'background-color: #122630; color: white;'; } ?><?php if($getattd->DEA_STATUS=="1"){ echo 'background-color: #b45935; color: white;'; } ?>border: 1px solid black !important;">
-					<td style="<?php if($getattd){ echo "background-color: green;"; }else{ echo "background-color: #2a586f;";  } ?>color: white; "> 
-						<center><span style="font-weight: 700;"><?php echo $convdate; ?></span> </center>			
+					<td class="text-center" style="<?php if($getattd){ echo "background-color: green;"; }else{ echo "background-color: #2a586f;";  } ?>color: white; "> 
+						<center><span style="font-weight: 700;"><?php echo date('d-M-Y',strtotime($convdate)); ?></span> </center>			
 					</td>
-					<td style="border: 1px solid black !important;"><span style="<?php if($convday==="Sun"){ echo "color: red;"; } ?>"><?php echo $convday; ?></span></td>
-					<td style="border: 1px solid black !important;">
+					<td class="text-center" style="border: 1px solid black !important;"><span style="<?php if($convday==="Sun"){ echo "color: red;"; } ?>"><?php echo $convday; ?></span></td>
+					<td class="text-center" style="border: 1px solid black !important;">
 						<div class="form-group">
 				            <input type="text" name="DEA_IN_TIME[]" id="DEA_dIN_TIME" class="form-control timepicker" value="<?php if($getattd->DEA_IN_TIME!=''){ echo $getattd->DEA_IN_TIME; } if($convday==="Sun"){ echo "9:00 AM"; } ?>" <?php if((isset($getattd->DEA_STATUS)) && ($getattd->DEA_STATUS==0) && ($_SESSION['user_type']!='1')){ echo "disabled"; } if(($convday==="Sun") && ($_SESSION['user_type']!='1')){ echo "disabled"; } ?> >
 				      	</div>
 					</td>
-					<td style="border: 1px solid black !important;">
+					<td class="text-center" style="border: 1px solid black !important;">
 						<div class="form-group">				        
 				            <input type="text" name="DEA_OUT_TIME[]" id="DEA_OUT_TIME" class="form-control timepicker" value="<?php if($getattd->DEA_OUT_TIME!=''){ echo $getattd->DEA_OUT_TIME; } if($convday==="Sun"){ echo "6:00 PM"; } ?>" <?php if((isset($getattd->DEA_STATUS)) && ($getattd->DEA_STATUS==0) && ($_SESSION['user_type']!='1')){ echo "disabled"; } if(($convday==="Sun") && ($_SESSION['user_type']!='1')){ echo "disabled"; }  ?> >
 				            
 				      	</div>
 					</td>
-					<td style="border: 1px solid black !important;">
+					<td class="text-center" style="border: 1px solid black !important;">
 						<div class="form-group">
 				            <select name="DEA_CURRENT_LOCATION[]" id="DEA_CURRENT_LOCATION" class="form-control" <?php if((isset($getattd->DEA_STATUS)) && ($getattd->DEA_STATUS==0) && ($_SESSION['user_type']!='1')){ echo "disabled"; } if(($convday==="Sun") && ($_SESSION['user_type']!='1')){ echo "disabled"; } ?>>
 				            	<option value="">Select Location</option>
@@ -338,12 +338,13 @@ if(isset($_POST['get_dates_attendance']))
 				            	<option value="SICK LEAVE" <?php if($getattd->DEA_CURRENT_LOCATION=="SICK LEAVE"){ echo "selected"; } ?>>SICK LEAVE</option>
 				            	<option value="WEEKLY OFF" <?php if($getattd->DEA_CURRENT_LOCATION=="WEEKLY OFF"){ echo "selected"; } elseif($convday==="Sun"){ echo "selected"; } ?>>WEEKLY OFF</option>
 				            	<option value="COMPENSATORY OFF" <?php if($getattd->DEA_CURRENT_LOCATION=="COMPENSATORY OFF"){ echo "selected"; } ?>>COMPENSATORY OFF</option>
+				            	<option value="PUBLIC HOLIDAY" <?php if($getattd->DEA_CURRENT_LOCATION=="PUBLIC HOLIDAY"){ echo "selected"; } ?>>PUBLIC HOLIDAY</option>
 				        	</select>
 				      	</div>
 				    </td>
-					<td style="border: 1px solid black !important;">
+					<td class="text-center" style="border: 1px solid black !important;">
 						<div class="form-group">
-				            <textarea name="DEA_REMARK[]" id="DEA_REMARK" class="form-control" <?php if((isset($getattd->DEA_STATUS)) && ($getattd->DEA_STATUS==0) && ($_SESSION['user_type']!='1')){ echo "disabled"; } if(($convday==="Sun") && ($_SESSION['user_type']!='1')){ echo "disabled"; }  ?>  onkeyup="$(this).val($(this).val().toUpperCase());"><?php if($getattd->DEA_REMARK!=''){ echo $getattd->DEA_REMARK; } ?></textarea>
+				            <textarea name="DEA_REMARK[]" id="DEA_REMARK" class="form-control" <?php if((isset($getattd->DEA_STATUS)) && ($getattd->DEA_STATUS==0) && ($_SESSION['user_type']!='1')){ echo "disabled"; } if(($convday==="Sun") && ($_SESSION['user_type']!='1')){ echo "disabled"; }  ?>  onkeyup="$(this).val($(this).val().toUpperCase());"payment_tracker_view><?php if($getattd->DEA_REMARK!=''){ echo $getattd->DEA_REMARK; } ?></textarea>
 				            <input type="hidden" name="attd_date[]" id="attd_date" class="form-control" value="<?php echo $convdate; ?>" <?php if((isset($getattd->DEA_STATUS)) && ($getattd->DEA_STATUS==0) && ($_SESSION['user_type']!='1')){ echo "disabled"; } ?>>
 				            <input type="hidden" name="DEA_ID[]" id="DEA_ID" class="form-control" value="<?php echo $getattd->DEA_ID; ?>" <?php if((isset($getattd->DEA_STATUS)) && ($getattd->DEA_STATUS==0) && ($_SESSION['user_type']!='1')){ echo "disabled"; } ?> >
 				      	</div>
@@ -580,10 +581,10 @@ if(isset($_POST['searchemp_for_attd']))
 	<table class="table table-responsive table-bordered">
 		<thead>
 			<tr>
-				<th>EMP. ID.</th>
-				<th>EMP. Name</th>
-				<th>EMP. Mobile</th>
-				<th>Action</th>
+				<th class="text-center">EMP. ID.</th>
+				<th class="text-center">EMP. Name</th>
+				<th class="text-center">EMP. Mobile</th>
+				<th class="text-center">Action</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -593,10 +594,10 @@ if(isset($_POST['searchemp_for_attd']))
 		{			
 		?>
 			<tr>
-				<td><?php echo $getempdetrw->DEM_EMP_ID; ?></td>
-				<td><?php echo $getempdetrw->DEM_EMP_FIRST_NAME." ".$getempdetrw->DEM_EMP_MIDDLE_NAME." ".$getempdetrw->DEM_EMP_LAST_NAME; ?></td>
-				<td><?php echo $getempdetrw->DEM_MOBILE_NUMBER; ?></td>
-				<td>
+				<td class="text-center"><?php echo $getempdetrw->DEM_EMP_ID; ?></td>
+				<td class="text-center"><?php echo $getempdetrw->DEM_EMP_FIRST_NAME." ".$getempdetrw->DEM_EMP_MIDDLE_NAME." ".$getempdetrw->DEM_EMP_LAST_NAME; ?></td>
+				<td class="text-center"><?php echo $getempdetrw->DEM_MOBILE_NUMBER; ?></td>
+				<td class="text-center">
 					<a class="btn btn-primary" href="?folder=employees&file=admin_take_employee_attendance&DEM_EMP_ID=<?php echo $getempdetrw->DEM_EMP_ID; ?>">TAKE ATTENDANCE</a>
 
 					<a class="btn btn-success" href="?folder=employees&file=payment_tracker_view&DEM_EMP_ID=<?php echo $getempdetrw->DEM_EMP_ID; ?>">UPDATE PAYMENT</a>
@@ -655,6 +656,7 @@ if(isset($_POST['get_travelexp_payment_status']))
 		$resp['status']= "success";
 		$resp['DTE_PAYMENT_STATUS']= $gettravelexp_status->DTE_PAYMENT_STATUS;
 		$resp['DTE_PAID_DATE']= $gettravelexp_status->DTE_PAID_DATE;
+		$resp['DTE_PAYMENT_REFERENCE']= $gettravelexp_status->DTE_PAYMENT_REFERENCE;
 		$resp['message']= "Payment Status";
       
     }else{

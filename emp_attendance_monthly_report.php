@@ -185,6 +185,7 @@ $db->query('SET collation_connection=utf8_unicode_ci');
                         </td>
                         <td colspan="3">                          
                           <center><h1 style="color:#9c4d55 !important ; font-weight:900; font-size: 32px;"><?php if(isset($invoice_settings)){ echo $invoice_settings->ins_name; }?></h1>
+                            <span><?php if(isset($invoice_settings)){ echo $invoice_settings->ins_address; }?></span>
                           </center>
                            
                         </td>   
@@ -195,7 +196,9 @@ $db->query('SET collation_connection=utf8_unicode_ci');
                       <table class="table-repsonsive " style="width: 100%;">
                        <tr>
                                             
-                        <td colspan="1">
+                        <td style="width: 33%;">
+                        </td>
+                        <td style="text-align: center;">
                           <center><b>Employee Monthly Attendance</b></center>
                         </td>
                         <td style="text-align: right;">

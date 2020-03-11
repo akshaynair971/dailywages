@@ -11,14 +11,17 @@ if(isset($_GET['del_DTE_ID']))
   }
 }
 
-if(isset($_POST['SAVE_TRAVEL_EXP']) || isset($_POST['SAVE_LOCK_TRAVEL_EXP']))
+
+// ADD GENERAL EXPENSE 
+if(isset($_POST['SAVE_GENERAL_EXP']) || isset($_POST['SAVE_LOCK_GENERAL_EXP']))
 {
   extract($_POST);
   
-  
+  // prnt($_POST);
+  // die();
 
-  $userid = $db->get_var("SELECT DEM_ID FROM dw_employee_master WHERE DEM_EMP_ID='$DEM_EMP_ID'");
-  $getmaxtrid = $db->get_var("SELECT count(DEM_EMP_ID) FROM dw_travel_expense WHERE DEM_EMP_ID='$DEM_EMP_ID'");
+  $userid = $db->get_row("SELECT DEM_ID,DEM_EMP_ID FROM dw_employee_master WHERE DEM_ID='$DEM_ID'");
+  $getmaxtrid = $db->get_var("SELECT count(DEM_ID) FROM dw_general_expenses WHERE DEM_ID='$DEM_ID'");
   $getmaxtrid +=1;
   if(date('M')>date('M',strtotime('March')))
   {
@@ -26,38 +29,43 @@ if(isset($_POST['SAVE_TRAVEL_EXP']) || isset($_POST['SAVE_LOCK_TRAVEL_EXP']))
   }else{
     $finyear = date('y',strtotime('-1 Years')).date('y');
   }
-  $voucherref = $DEM_EMP_ID.$finyear.$getmaxtrid."T";
-  
-  if(isset($_POST['SAVE_TRAVEL_EXP']))
+  $voucherref = $userid->DEM_EMP_ID.$finyear.$getmaxtrid."T";
+  // prnt($voucherref);
+  // die();
+  if(isset($_POST['SAVE_GENERAL_EXP']))
   {
-    $DTE_STATUS=1;
+    $DGE_STATUS=1;
   }
-  if(isset($_POST['SAVE_LOCK_TRAVEL_EXP']))
+  if(isset($_POST['SAVE_LOCK_GENERAL_EXP']))
   {
-    $DTE_STATUS=0;
+    $DGE_STATUS=0;
   }
   
-  $DTE_TRAVEL_SUMMARY = json_encode($DTE_TRAVEL_SUMMARY);
+  $DGE_EXPENSE_SUMMARY = json_encode($DGE_EXPENSE_SUMMARY);
   
-  if(isset($_GET['DTE_ID'])){
-    $update_trexp = $db->query("UPDATE dw_travel_expense SET DEM_EMP_ID='$DEM_EMP_ID',DTE_VOUCHER_REF='$voucherref',DTE_VOUCHER_DATE='$DTE_VOUCHER_DATE',DTE_DEPARTED_DATE='$DTE_DEPARTED_DATE',DTE_RETURNED_DATE='$DTE_RETURNED_DATE',DTE_LOCATION='$DTE_LOCATION',DTE_TRAVEL_SUMMARY='$DTE_TRAVEL_SUMMARY',DTE_ADVANCE_IN_HAND='$DTE_ADVANCE_IN_HAND',DTE_STATUS='$DTE_STATUS',DTE_UPDATED_DATE=NOW(),DTE_UPDATED_BY='".$_SESSION['ad_id']."' WHERE DTE_ID='".$_GET['DTE_ID']."'");
+  if(isset($_GET['DGE_ID'])){
+    $update_trexp = $db->query("UPDATE dw_general_expenses SET DEM_ID='$DEM_ID',DGE_VOUCHER_REF='$voucherref',DGE_VOUCHER_DATE='$DGE_VOUCHER_DATE',DGE_LOCATION='$DGE_LOCATION',DGE_INVOICE_NO='$DGE_INVOICE_NO',DGE_INVOICE_DATE='$DGE_INVOICE_DATE',DGE_EXPENSE_SUMMARY='$DGE_EXPENSE_SUMMARY',DGE_TOTAL='$DGE_TOTAL',DGE_STATUS='$DGE_STATUS',DGE_UPDATED_DATE=NOW() WHERE DGE_ID='".$_GET['DGE_ID']."'");
 
     if($update_trexp)
     {
-      echo "<script> alert('Travel & Expense Updated Successfully..!'); window.location='?folder=travel_expense&file=travel_expense_list';</script>";
+      echo "<script> alert('General Expense Updated Successfully..!'); window.location='?folder=general_expense&file=general_expense_list';</script>";
     }
 
   }else{
-    $insert_trexp= $db->query("INSERT INTO dw_travel_expense (DEM_EMP_ID,DTE_VOUCHER_REF,DTE_VOUCHER_DATE,DTE_DEPARTED_DATE,DTE_RETURNED_DATE,DTE_LOCATION,DTE_TRAVEL_SUMMARY,DTE_ADVANCE_IN_HAND,DTE_CREATED_DATE,DTE_UPDATED_DATE,DTE_CREATED_BY,DTE_UPDATED_BY,DTE_STATUS) VALUES('$DEM_EMP_ID','$voucherref','$DTE_VOUCHER_DATE','$DTE_DEPARTED_DATE','$DTE_RETURNED_DATE','$DTE_LOCATION','$DTE_TRAVEL_SUMMARY','$DTE_ADVANCE_IN_HAND',NOW(),NOW(),'".$_SESSION['ad_id']."','".$_SESSION['ad_id']."','$DTE_STATUS')"); 
+    $insert_trexp= $db->query("INSERT INTO dw_general_expenses (DEM_ID,DGE_VOUCHER_REF,DGE_VOUCHER_DATE,DGE_LOCATION,DGE_INVOICE_NO,DGE_INVOICE_DATE,DGE_EXPENSE_SUMMARY,DGE_TOTAL,DGE_CREATED_DATE,DGE_UPDATED_DATE,DGE_STATUS) VALUES('$DEM_ID','$voucherref','$DGE_VOUCHER_DATE','$DGE_LOCATION','$DGE_INVOICE_NO','$DGE_INVOICE_DATE','$DGE_EXPENSE_SUMMARY','$DGE_TOTAL',NOW(),NOW(),'$DGE_STATUS')"); 
+    // $db->debug();
     
     if($insert_trexp)
     {
-      echo "<script> alert('Travel & Expense Saved Successfully..!'); window.location='?folder=travel_expense&file=travel_expense_list';</script>";
+      echo "<script> alert('General Expense Saved Successfully..!'); window.location='?folder=general_expense&file=general_expense_list';</script>";
     }  
 
   }
   
 }
+
+// END OF ADD GENERAL EXPENSE 
+
 
 // Generate Excel for Overall Expense
 

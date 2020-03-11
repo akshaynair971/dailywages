@@ -30,31 +30,28 @@
           if($_GET['DEM_EMP_ID']){
             if($_GET['DPT_ID']!=''){
               extract($_GET);
-            $user_edit = $db->get_row("SELECT * FROM dw_payment_tracker WHERE DPT_ID='$DPT_ID'");
+              $user_edit = $db->get_row("SELECT * FROM dw_payment_tracker WHERE DPT_ID='$DPT_ID'");
+              $attd_date_array = explode("-",$paymonth);
+              $getempattd= $db->get_var("SELECT COUNT(*) FROM dw_emp_attendance WHERE  DEM_EMPLOYEE_ID = '$DEM_EMP_ID' AND DEA_ATTD_YEAR='$attd_date_array[0]' AND DEA_ATTD_MONTH='$attd_date_array[1]'");
             }
+            
+  
+  
 
             $payroll_details = $db->get_row("SELECT * FROM dw_payroll_master WHERE DEM_EMP_ID='".$_GET['DEM_EMP_ID']."'");
 
-            $totaldeduction= $payroll_details->DPM_PROFESSIONAL_TAX + $payroll_details->DPM_PF_EMPLOYEE + $payroll_details->DPM_PF_EMPLOYER + $payroll_details->DPM_ESIC_EMPLOYEE + $payroll_details->DPM_ESIC_EMPLOYER; 
+            $totaldeduction= $payroll_details->DPM_PROFESSIONAL_TAX + $payroll_details->DPM_PF_EMPLOYEE  + $payroll_details->DPM_ESIC_EMPLOYEE; 
             // $db->debug();
             $getuserdetails = $db->get_row("SELECT * FROM dw_employee_master WHERE  DEM_EMP_ID='".$_GET['DEM_EMP_ID']."' ");   
            ?>
            <h4 style="color: green;font-size: 18px;"><?php echo strtoupper($getuserdetails->DEM_EMP_FIRST_NAME." ".$getuserdetails->DEM_EMP_MIDDLE_NAME." ".$getuserdetails->DEM_EMP_LAST_NAME); ?> ( <?php echo $getuserdetails->DEM_EMP_ID; ?> )</h4>
           <form method="POST" action="" enctype="multipart/form-data">
             <div class="col-md-12 col-sm-12 col-xs-12">   
-              
-              <div class="form-group col-md-3">
-                <label for="DPT_PAYMENT_DATE">Payment Date <span style="color: #e22b0e;">*</span></label>
-                <input type="hidden" class="pay_month_year" id='pay_month_year'  name='pay_month_year' value="<?php if(isset($_GET['paymonth'])){ echo $_GET['paymonth']; } ?>" required >  
-                <input type="text" class="form-control DPT_PAYMENT_DATE" id='datepicker1'  name='DPT_PAYMENT_DATE' placeholder="Enter Payment Date" value="<?php if(isset($user_edit)){ echo $user_edit->DPT_PAYMENT_DATE; } ?>" required autocomplete="off" >  
-                <input type="hidden" name="DEM_EMP_ID"  id="DEM_EMP_ID" value="<?php echo $_GET['DEM_EMP_ID']; ?>">
-              </div>
-              
-
+                          
 
               <div class="form-group col-md-3">
                 <label for="DPT_TOTAL_DAYS_WORKED">Total Days Worked <span style="color: #e22b0e;">*</span></label>
-                <input type="text" class="form-control" id='DPT_TOTAL_DAYS_WORKED'  name='DPT_TOTAL_DAYS_WORKED' placeholder="Enter Total Days Worked" value="<?php if(isset($user_edit)){ echo $user_edit->DPT_TOTAL_DAYS_WORKED; } ?>" required readonly>  
+                <input type="text" class="form-control" id='DPT_TOTAL_DAYS_WORKED'  name='DPT_TOTAL_DAYS_WORKED' placeholder="Enter Total Days Worked" value="<?php if(isset($getempattd)){ echo $getempattd; } ?>" required readonly>  
               </div>
 
               <!-- <div class="form-group col-md-3">
@@ -64,13 +61,36 @@
 
               <div class="form-group col-md-3">
                 <label for="TOTAL_DEDUCTION">Total Deduction <span style="color: #e22b0e;">*</span></label>
-                <input type="text" class="form-control" id='TOTAL_DEDUCTION'  name='TOTAL_DEDUCTION' placeholder="Enter Total Deduction" value="<?php if($user_edit->TOTAL_DEDUCTION!=''){ echo $user_edit->TOTAL_DEDUCTION; }elseif($totaldeduction!=''){ echo $totaldeduction; } ?>" required readonly>  
+                <input type="text" class="form-control" id='TOTAL_DEDUCTION'  name='TOTAL_DEDUCTION' placeholder="Enter Total Deduction" value="<?php if($totaldeduction!=''){ echo $totaldeduction; } ?>" required readonly>  
               </div>
 
               <div class="form-group col-md-3">
                 <label for="DPT_NET_WAGES_PAID">Net Wages Paid<span style="color: #e22b0e;">*</span></label>
-                <input type="text" class="form-control" id='DPT_NET_WAGES_PAID'  name='DPT_NET_WAGES_PAID' placeholder="Enter Net Wages" value="<?php if($user_edit->DPT_NET_WAGES_PAID!=''){ echo $user_edit->DPT_NET_WAGES_PAID; }elseif($payroll_details->DPM_GROSS_WAGES_PAYABLE!=''){ echo $payroll_details->DPM_GROSS_WAGES_PAYABLE; } ?>" required readonly>  
+                <input type="text" class="form-control" id='DPT_NET_WAGES_PAID'  name='DPT_NET_WAGES_PAID' placeholder="Enter Net Wages" value="<?php if($payroll_details->DPM_CALCULATED_AMOUNT!=''){ echo $payroll_details->DPM_CALCULATED_AMOUNT; } ?>" required readonly>  
               </div>
+
+              <div class="form-group col-md-3">
+                <label for="CASH_REIMBURSEMENT_MOBILE">Cash Reimbursement Mobile <span style="color: #e22b0e;">*</span></label>
+                <input type="text" class="form-control" id='CASH_REIMBURSEMENT_MOBILE'  name='CASH_REIMBURSEMENT_MOBILE' placeholder="Enter Cash Reimbursement Mobile" value="<?php if($user_edit->CASH_REIMBURSEMENT_MOBILE!=''){ echo $user_edit->CASH_REIMBURSEMENT_MOBILE; } ?>" oninput="calculateCashReimbursement();" onkeypress="return isNumberKey(event)" required>  
+              </div>
+
+              <div class="form-group col-md-3">
+                <label for="CASH_REIMBURSEMENT_PETROL">Cash Reimbursement Petrol <span style="color: #e22b0e;">*</span></label>
+                <input type="text" class="form-control" id='CASH_REIMBURSEMENT_PETROL'  name='CASH_REIMBURSEMENT_PETROL' placeholder="Enter Cash Reimbursement Petrol" value="<?php if($user_edit->CASH_REIMBURSEMENT_PETROL!=''){ echo $user_edit->CASH_REIMBURSEMENT_PETROL; } ?>" oninput="calculateCashReimbursement();" onkeypress="return isNumberKey(event)" required>  
+              </div>
+
+              <div class="form-group col-md-3">
+                <label for="TOTAL_CASH_REIMBURSEMENT">Total Cash Reimbursement <span style="color: #e22b0e;">*</span></label>
+                <input type="text" class="form-control" id='TOTAL_CASH_REIMBURSEMENT'  name='TOTAL_CASH_REIMBURSEMENT' placeholder="Enter Total Cash Reimbursement" value="<?php if($user_edit->TOTAL_CASH_REIMBURSEMENT!=''){ echo $user_edit->TOTAL_CASH_REIMBURSEMENT; } ?>" required readonly>  
+              </div>
+
+              <div class="form-group col-md-3">
+                <label for="DPT_PAYMENT_DATE">Payment Date <span style="color: #e22b0e;">*</span></label>
+                <input type="hidden" class="pay_month_year" id='pay_month_year'  name='pay_month_year' value="<?php if(isset($_GET['paymonth'])){ echo $_GET['paymonth']; } ?>" required >  
+                <input type="text" class="form-control DPT_PAYMENT_DATE" id='datepicker1'  name='DPT_PAYMENT_DATE' placeholder="Enter Payment Date" value="<?php if(isset($user_edit)){ echo $user_edit->DPT_PAYMENT_DATE; } ?>" required autocomplete="off" >  
+                <input type="hidden" name="DEM_EMP_ID"  id="DEM_EMP_ID" value="<?php echo $_GET['DEM_EMP_ID']; ?>">
+              </div>
+              
 
               <div class="form-group col-md-3">
                 <label for="DPT_INVOICE_NO">Payment Reference<span style="color: #e22b0e;">*</span></label>
@@ -156,17 +176,22 @@
       $('.msg').css('color','red').html('<i class="glyphicon glyphicon-info-sign"></i> Something went wrong, Please try again...');
       
     });
-  }
-    
-  
+  } 
 
+  function calculateCashReimbursement()
+  {
+    var CASH_REIMBURSEMENT_MOBILE = parseFloat($('#CASH_REIMBURSEMENT_MOBILE').val()) || 0;
+    var CASH_REIMBURSEMENT_PETROL = parseFloat($('#CASH_REIMBURSEMENT_PETROL').val()) || 0;
+
+    $('#TOTAL_CASH_REIMBURSEMENT').val(CASH_REIMBURSEMENT_MOBILE + CASH_REIMBURSEMENT_PETROL);
+  }
 
 </script>
 
 
 <?php 
-if($_GET['paymonth']!=''){
-  echo "<script>get_emp_payment_details();</script>";
-}
+// if($_GET['paymonth']!=''){
+  // echo "<script>get_emp_payment_details();</script>";
+// }
 
  ?>

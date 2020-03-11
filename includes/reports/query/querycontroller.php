@@ -23,6 +23,14 @@ if(isset($_POST['rep_attd_sub_sin_mon']) || isset($_POST['rep_attd_sub_sin_cur_m
 }
 
 
+if(isset($_POST['get_salary_summary_report']))
+{
+  extract($_POST);
+  // prnt($_POST);
+  echo "<script>window.location='?folder=reports&file=salary_summary_report_list&DEM_EMP_ID=".$DEM_EMP_ID."&SAL_SUM_REP_FROM_DATE=".$SAL_SUM_REP_FROM_DATE."&SAL_SUM_REP_TO_DATE=".$SAL_SUM_REP_TO_DATE."';</script>";
+}
+
+
 // Get Weekly Report 
 
 if(isset($_POST['get_weekly_attd_report']))
@@ -115,8 +123,8 @@ if(isset($_GET['DEM_EMP_ID']) && isset($_GET['exppdf_weeklyattd']))
   <table style="width: 100%;border-bottom:1px solid;">
   <tr>
     <td><img src="images/logo/'.$title->inst_id.'.jpg"></td>
-    <td><center><h1 style="color:#9c4d55; font-size:22px; font-weight:900;">'.$title->ins_name.'</h1><center></td>
-    <td>'.date('d/m/Y').'</td>
+    <td><center><h5 style="color:#9c4d55; font-size:22px; font-weight:900;">'.$title->ins_name.'</h5><span>'.$title->ins_address.'</span><center></td>
+    <td>'.date('d-M-Y').'</td>
   </tr>
   ';
   $html.='</table>';
@@ -205,13 +213,13 @@ if(isset($_GET['DEM_EMP_ID']) && isset($_GET['exppdf_weeklyattd']))
   $dompdf->render();
   $pdf = $dompdf->output();
 
-  $fp = fopen("reports/travel_expense_report.pdf", 'w');
+  $fp = fopen("reports/attendance_report.pdf", 'w');
   fclose($fp);
-  chmod("reports/travel_expense_report.pdf", 0777); 
-  file_put_contents("reports/travel_expense_report.pdf", $pdf);  
+  chmod("reports/attendance_report.pdf", 0777); 
+  file_put_contents("reports/attendance_report.pdf", $pdf);  
   
-  header('location:download.php?file_url=reports/travel_expense_report.pdf');
-  echo('<script>window.open("'.site_root.'reports/travel_expense_report.pdf", "_blank","",true);</script>');
+  header('location:download.php?file_url=reports/attendance_report.pdf');
+  echo('<script>window.open("'.site_root.'reports/attendance_report.pdf", "_blank","",true);</script>');
 
 }
 
@@ -238,16 +246,28 @@ if(isset($_GET['DEM_EMP_ID']) && isset($_GET['expxl_weeklyattd']))
 
 
   $objPHPExcel->setActiveSheetIndex(0);
+  
+
+  $rowtitleCount = 1;
+
   $adjustedColumn = PHPExcel_Cell::stringFromColumnIndex(5);
+  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, $rowtitleCount, $title->ins_name); 
+  $objPHPExcel->getActiveSheet()->mergeCells("A".$rowtitleCount.":".$adjustedColumn.$rowtitleCount);
+  $rowtitleCount++;
 
-  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, 1, $title->ins_name); 
-  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, 2, "Employee Attendance Report of "."Week ".$weekly_attd_week." - ".$weekly_attd_year );
-  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, 3, strtoupper($r->DEM_EMP_FIRST_NAME." ".$r->DEM_EMP_MIDDLE_NAME." ".$r->DEM_EMP_LAST_NAME)." (".$r->DEM_EMP_ID.")" ); 
-  $objPHPExcel->getActiveSheet()->mergeCells("A1:".$adjustedColumn."1");
-  $objPHPExcel->getActiveSheet()->mergeCells("A2:".$adjustedColumn."2");
-  $objPHPExcel->getActiveSheet()->mergeCells("A3:".$adjustedColumn."3");
+  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, $rowtitleCount, $title->ins_address); 
+  $objPHPExcel->getActiveSheet()->mergeCells("A".$rowtitleCount.":".$adjustedColumn.$rowtitleCount);  
+  $rowtitleCount++;
 
-  $rowtitleCount = 4;
+  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, $rowtitleCount, "Employee Attendance Report of "."Week ".$weekly_attd_week." - ".$weekly_attd_year );
+  $objPHPExcel->getActiveSheet()->mergeCells("A".$rowtitleCount.":".$adjustedColumn.$rowtitleCount);
+  $rowtitleCount++;
+
+  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, $rowtitleCount, strtoupper($r->DEM_EMP_FIRST_NAME." ".$r->DEM_EMP_MIDDLE_NAME." ".$r->DEM_EMP_LAST_NAME)." (".$r->DEM_EMP_ID.")" ); 
+  $objPHPExcel->getActiveSheet()->mergeCells("A".$rowtitleCount.":".$adjustedColumn.$rowtitleCount);
+  $rowtitleCount++;
+
+  
   $coltitleCount = 0;
   $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($coltitleCount, $rowtitleCount, "Attendance Date"); 
   $coltitleCount++;
@@ -266,12 +286,13 @@ if(isset($_GET['DEM_EMP_ID']) && isset($_GET['expxl_weeklyattd']))
 
   $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($coltitleCount, $rowtitleCount, "Remark"); 
   $coltitleCount++;
+  $rowtitleCount++;
 
   // $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($coltitleCount, $rowtitleCount, "Sign"); 
   // $coltitleCount++;
 
   $i=1;
-  $rc=5;  
+  $rc=$rowtitleCount;  
 
   foreach($daterange as $date1)
   {
@@ -321,6 +342,13 @@ if(isset($_GET['DEM_EMP_ID']) && isset($_GET['expxl_weeklyattd']))
     
     $rc++;
   }
+
+  $objPHPExcel->getActiveSheet()->getStyle('A1:A'.$rc)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+  $objPHPExcel->getActiveSheet()->getStyle('B1:B'.$rc)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+  $objPHPExcel->getActiveSheet()->getStyle('C1:C'.$rc)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+  $objPHPExcel->getActiveSheet()->getStyle('D1:D'.$rc)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+  $objPHPExcel->getActiveSheet()->getStyle('E1:E'.$rc)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+  $objPHPExcel->getActiveSheet()->getStyle('F1:F'.$rc)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
   $rc++;
   $objPHPExcel->getActiveSheet()->setCellValue("B".$rc,"Signature");
   $adjustedColumn = PHPExcel_Cell::stringFromColumnIndex(2);
@@ -435,8 +463,8 @@ if(isset($_GET['DEM_EMP_ID']) && isset($_GET['exppdfselect_attd_month']))
   <table style="width: 100%;border-bottom:1px solid;">
   <tr>
     <td><img src="images/logo/'.$title->inst_id.'.jpg"></td>
-    <td><center><h1 style="color:#9c4d55; font-size:22px; font-weight:900;">'.$title->ins_name.'</h1><center></td>
-    <td>'.date('d/m/Y').'</td>
+    <td><center><h5 style="color:#9c4d55; font-size:22px; font-weight:900;">'.$title->ins_name.'</h5><span>'.$title->ins_address.'</span><center></td>
+    <td>'.date('d-M-Y').'</td>
   </tr>
   ';
   $html.='</table>';
@@ -528,13 +556,13 @@ if(isset($_GET['DEM_EMP_ID']) && isset($_GET['exppdfselect_attd_month']))
   $dompdf->render();
   $pdf = $dompdf->output();
 
-  $fp = fopen("reports/travel_expense_report.pdf", 'w');
+  $fp = fopen("reports/attendance_report.pdf", 'w');
   fclose($fp);
-  chmod("reports/travel_expense_report.pdf", 0777); 
-  file_put_contents("reports/travel_expense_report.pdf", $pdf);  
+  chmod("reports/attendance_report.pdf", 0777); 
+  file_put_contents("reports/attendance_report.pdf", $pdf);  
   
-  header('location:download.php?file_url=reports/travel_expense_report.pdf');
-  echo('<script>window.open("'.site_root.'reports/travel_expense_report.pdf", "_blank","",true);</script>');
+  header('location:download.php?file_url=reports/attendance_report.pdf');
+  echo('<script>window.open("'.site_root.'reports/attendance_report.pdf", "_blank","",true);</script>');
 
 
 }
@@ -559,15 +587,26 @@ if(isset($_GET['DEM_EMP_ID']) && isset($_GET['expxlselect_attd_month']))
 
   $objPHPExcel->setActiveSheetIndex(0);
   $adjustedColumn = PHPExcel_Cell::stringFromColumnIndex(5);
+  $rowtitleCount = 1;
 
-  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, 1, $title->ins_name); 
-  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, 2, "Employee Attendance Report of ".strtoupper($r->DEM_EMP_FIRST_NAME." ".$r->DEM_EMP_MIDDLE_NAME." ".$r->DEM_EMP_LAST_NAME)." (".$r->DEM_EMP_ID.")" ); 
-  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, 3, $fulldate ); 
-  $objPHPExcel->getActiveSheet()->mergeCells("A1:".$adjustedColumn."1");
-  $objPHPExcel->getActiveSheet()->mergeCells("A2:".$adjustedColumn."2");
-  $objPHPExcel->getActiveSheet()->mergeCells("A3:".$adjustedColumn."3");
+  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, $rowtitleCount, $title->ins_name); 
+  $objPHPExcel->getActiveSheet()->mergeCells("A".$rowtitleCount.":".$adjustedColumn.$rowtitleCount);
+  $rowtitleCount++;
 
-  $rowtitleCount = 4;
+  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, $rowtitleCount, $title->ins_address);
+  $objPHPExcel->getActiveSheet()->mergeCells("A".$rowtitleCount.":".$adjustedColumn.$rowtitleCount); 
+  $rowtitleCount++;
+
+  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, $rowtitleCount, "Employee Attendance Report of ".strtoupper($r->DEM_EMP_FIRST_NAME." ".$r->DEM_EMP_MIDDLE_NAME." ".$r->DEM_EMP_LAST_NAME)." (".$r->DEM_EMP_ID.")" ); 
+  $objPHPExcel->getActiveSheet()->mergeCells("A".$rowtitleCount.":".$adjustedColumn.$rowtitleCount);
+   $rowtitleCount++;
+
+
+  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, $rowtitleCount, $fulldate ); 
+  $objPHPExcel->getActiveSheet()->mergeCells("A".$rowtitleCount.":".$adjustedColumn.$rowtitleCount);
+   $rowtitleCount++;
+
+  
   $coltitleCount = 0;
   $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($coltitleCount, $rowtitleCount, "Attendance Date"); 
   $coltitleCount++;
@@ -586,12 +625,12 @@ if(isset($_GET['DEM_EMP_ID']) && isset($_GET['expxlselect_attd_month']))
 
   $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($coltitleCount, $rowtitleCount, "Remark"); 
   $coltitleCount++;
-
+  $rowtitleCount++;
   // $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($coltitleCount, $rowtitleCount, "Sign"); 
   // $coltitleCount++;
 
   $i=1;
-  $rc=5;  
+  $rc=$rowtitleCount;  
 
   for($cntd=1;$cntd<=$countdays;$cntd++)
   {
@@ -649,6 +688,14 @@ if(isset($_GET['DEM_EMP_ID']) && isset($_GET['expxlselect_attd_month']))
     
     $rc++;
   }
+
+  $objPHPExcel->getActiveSheet()->getStyle('A1:A'.$rc)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+  $objPHPExcel->getActiveSheet()->getStyle('B1:B'.$rc)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+  $objPHPExcel->getActiveSheet()->getStyle('C1:C'.$rc)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+  $objPHPExcel->getActiveSheet()->getStyle('D1:D'.$rc)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+  $objPHPExcel->getActiveSheet()->getStyle('E1:E'.$rc)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+  $objPHPExcel->getActiveSheet()->getStyle('F1:F'.$rc)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
   $rc++;
   $objPHPExcel->getActiveSheet()->setCellValue("B".$rc,"Signature");
   $adjustedColumn = PHPExcel_Cell::stringFromColumnIndex(2);
@@ -766,8 +813,8 @@ if(isset($_GET['exppdfselect_pay_month']))
   <table style="width: 100%;border-bottom:1px solid;">
   <tr>
     <td><img src="images/logo/'.$title->inst_id.'.jpg"></td>
-    <td><center><h1 style="color:#9c4d55; font-size:22px; font-weight:900;">'.$title->ins_name.'</h1><center></td>
-    <td>'.date('d/m/Y').'</td>
+    <td><center><h5 style="color:#9c4d55; font-size:22px; font-weight:900;">'.$title->ins_name.'</h5><span>'.$title->ins_address.'</span><center></td>
+    <td>'.date('d-M-Y').'</td>
   </tr>
   ';
   $html.='</table>';
@@ -781,6 +828,7 @@ if(isset($_GET['exppdfselect_pay_month']))
   <thead>
     <tr>
       <th style="text-align:center;">Sr. No.</th>
+      <th style="text-align:center;"> Employee ID</th>
       <th style="text-align:center;"> Employee Name</th>
       <th style="text-align:center;"> AGE</th>
       <th style="text-align:center;"> TOTAL DAYS WORKED</th>
@@ -791,10 +839,10 @@ if(isset($_GET['exppdfselect_pay_month']))
       <th style="text-align:center;"> OTHER ALLOWANCES</th>      
       <th style="text-align:center;"> GROSS WAGES PAYABLE</th>      
       <th style="text-align:center;"> PROFF. TAX</th>      
-      <th style="text-align:center;"> P.F. 12%</th>      
-      <th style="text-align:center;"> PF 12%</th>      
-      <th style="text-align:center;"> ESIC .75%</th>      
-      <th style="text-align:center;"> ESIC 3.25%</th>      
+      <th style="text-align:center;"> EMPLOYEE P.F. 12%</th>      
+      <th style="text-align:center;"> EMPLOYER PF 12%</th>      
+      <th style="text-align:center;"> EMPLOYEE ESIC 0.75%</th>      
+      <th style="text-align:center;"> EMPLOYER ESIC 3.25%</th>      
       <th style="text-align:center;"> TOTAL DEDUCTION</th>      
       <th style="text-align:center;"> NET WAGES PAID</th>      
       <th style="text-align:center;"> PAYMENT REFERANCE</th>      
@@ -810,6 +858,7 @@ if(isset($_GET['exppdfselect_pay_month']))
 
     $html.='<tr>';
     $html.='<td style="text-align:center;">'.$emp.'</td>'; 
+    $html.='<td style="text-align:center;">'.$rw->DEM_EMP_ID.'</td>';    
     $html.='<td style="text-align:center;">'.strtoupper($rw->DEM_EMP_NAME_PREFIX." ".$rw->DEM_EMP_FIRST_NAME." ".$rw->DEM_EMP_MIDDLE_NAME." ".$rw->DEM_EMP_LAST_NAME).'</td>';
     $html.='<td style="text-align:center;">'.$rw->DEM_EMP_AGE.'</td>';
     $html.='<td style="text-align:center;">'.$pay_track->DPT_TOTAL_DAYS_WORKED.'</td>';
@@ -856,7 +905,7 @@ if(isset($_GET['exppdfselect_pay_month']))
   $html.='</tbody>';
   $html.='<tfoot>';
   $html.='<tr>'; 
-  $html.='<th colspan="6" style="text-align:right;">Total</th>';
+  $html.='<th colspan="7" style="text-align:right;">Total</th>';
   $html.='<th style="text-align:center;">'.$basictotal.'</th>';
   $html.='<th style="text-align:center;">'.$hratotal.'</th>';
   $html.='<th style="text-align:center;">'.$otherallowancestotal.'</th>';
@@ -909,13 +958,13 @@ if(isset($_GET['exppdfselect_pay_month']))
   $dompdf->render();
   $pdf = $dompdf->output();
 
-  $fp = fopen("reports/travel_expense_report.pdf", 'w');
+  $fp = fopen("reports/payment_report.pdf", 'w');
   fclose($fp);
-  chmod("reports/travel_expense_report.pdf", 0777); 
-  file_put_contents("reports/travel_expense_report.pdf", $pdf);  
+  chmod("reports/payment_report.pdf", 0777); 
+  file_put_contents("reports/payment_report.pdf", $pdf);  
   
-  header('location:download.php?file_url=reports/travel_expense_report.pdf');
-  echo('<script>window.open("'.site_root.'reports/travel_expense_report.pdf", "_blank","",true);</script>');
+  header('location:download.php?file_url=reports/payment_report.pdf');
+  echo('<script>window.open("'.site_root.'reports/payment_report.pdf", "_blank","",true);</script>');
 
 }
 // Generate PDF for Payment Report
@@ -939,15 +988,24 @@ if(isset($_GET['expxlselect_pay_month']))
 
   $objPHPExcel->setActiveSheetIndex(0);
   $adjustedColumn = PHPExcel_Cell::stringFromColumnIndex(17);
+  $rowtitleCount=1;
+  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, $rowtitleCount, $title->ins_name." PAYMENT REPORT"); 
+  $objPHPExcel->getActiveSheet()->mergeCells("A".$rowtitleCount.":".$adjustedColumn.$rowtitleCount); 
+  $rowtitleCount++;
 
-  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, 1, $title->ins_name." PAYMENT REPORT"); 
-  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, 2, "FORM II M.W. RULES 1963 Rule 27"); 
-  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, 3, $fulldate ); 
-  $objPHPExcel->getActiveSheet()->mergeCells("A1:".$adjustedColumn."1");
-  $objPHPExcel->getActiveSheet()->mergeCells("A2:".$adjustedColumn."2");
-  $objPHPExcel->getActiveSheet()->mergeCells("A3:".$adjustedColumn."3");
+  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, $rowtitleCount, $title->ins_address);
+  $objPHPExcel->getActiveSheet()->mergeCells("A".$rowtitleCount.":".$adjustedColumn.$rowtitleCount); 
+  $rowtitleCount++;
 
-  $rowtitleCount = 4;
+  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, $rowtitleCount, "FORM II M.W. RULES 1963 Rule 27"); 
+  $objPHPExcel->getActiveSheet()->mergeCells("A".$rowtitleCount.":".$adjustedColumn.$rowtitleCount); 
+  $rowtitleCount++;
+
+  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, $rowtitleCount, $fulldate ); 
+  $objPHPExcel->getActiveSheet()->mergeCells("A".$rowtitleCount.":".$adjustedColumn.$rowtitleCount); 
+  $rowtitleCount++;
+
+  
   $coltitleCount = 0;
   $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($coltitleCount, $rowtitleCount, "SR. NO."); 
   $coltitleCount++;
@@ -982,16 +1040,16 @@ if(isset($_GET['expxlselect_pay_month']))
   $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($coltitleCount, $rowtitleCount, "PROFF. TAX"); 
   $coltitleCount++;
 
-  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($coltitleCount, $rowtitleCount, "P.F. 12%"); 
+  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($coltitleCount, $rowtitleCount, "EMPLOYEE P.F. 12%"); 
   $coltitleCount++;
 
-  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($coltitleCount, $rowtitleCount, "PF 12%"); 
+  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($coltitleCount, $rowtitleCount, "EMPLOYER PF 12%"); 
   $coltitleCount++;
 
-  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($coltitleCount, $rowtitleCount, "ESIC .75%"); 
+  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($coltitleCount, $rowtitleCount, "EMPLOYEE ESIC .75%"); 
   $coltitleCount++;
 
-  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($coltitleCount, $rowtitleCount, "ESIC 3.25%"); 
+  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($coltitleCount, $rowtitleCount, "EMPLOYER ESIC 3.25%"); 
   $coltitleCount++;
 
   $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($coltitleCount, $rowtitleCount, "TOTAL DEDUCTION"); 
@@ -1002,13 +1060,13 @@ if(isset($_GET['expxlselect_pay_month']))
 
   $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($coltitleCount, $rowtitleCount, "PAYMENT REFERANCE"); 
   $coltitleCount++;
-
+  $rowtitleCount++;
   // $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($coltitleCount, $rowtitleCount, "SIGN"); 
   // $coltitleCount++;
 
 
   $i=1;
-  $rc=5;  
+  $rc=$rowtitleCount;  
 
   $basictotal = $hratotal = $otherallowancestotal = $grosswagespayabletotal = $proftaxtotal = $ep_pftotal = $er_pftotal = $ep_esictotal = $er_esictotal = $totaldeductionsum = $netwagespaidsum = $i = 0;
 
@@ -1072,6 +1130,25 @@ if(isset($_GET['expxlselect_pay_month']))
     $rc++;
   } 
 
+  $objPHPExcel->getActiveSheet()->getStyle('A1:A'.$rc)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+  $objPHPExcel->getActiveSheet()->getStyle('B1:B'.$rc)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+  $objPHPExcel->getActiveSheet()->getStyle('C1:C'.$rc)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+  $objPHPExcel->getActiveSheet()->getStyle('D1:D'.$rc)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+  $objPHPExcel->getActiveSheet()->getStyle('E1:E'.$rc)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+  $objPHPExcel->getActiveSheet()->getStyle('F1:F'.$rc)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+  $objPHPExcel->getActiveSheet()->getStyle('G1:G'.$rc)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+  $objPHPExcel->getActiveSheet()->getStyle('H1:H'.$rc)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+  $objPHPExcel->getActiveSheet()->getStyle('I1:I'.$rc)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+  $objPHPExcel->getActiveSheet()->getStyle('J1:J'.$rc)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+  $objPHPExcel->getActiveSheet()->getStyle('K1:K'.$rc)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+  $objPHPExcel->getActiveSheet()->getStyle('L1:L'.$rc)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+  $objPHPExcel->getActiveSheet()->getStyle('M1:M'.$rc)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+  $objPHPExcel->getActiveSheet()->getStyle('N1:N'.$rc)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+  $objPHPExcel->getActiveSheet()->getStyle('O1:O'.$rc)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+  $objPHPExcel->getActiveSheet()->getStyle('P1:P'.$rc)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+  $objPHPExcel->getActiveSheet()->getStyle('Q1:Q'.$rc)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+  $objPHPExcel->getActiveSheet()->getStyle('R1:R'.$rc)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
   $objPHPExcel->getActiveSheet()->setCellValue('B'.$rc, "Total" );
   $objPHPExcel->getActiveSheet()->setCellValue('G'.$rc, $basictotal );
   $objPHPExcel->getActiveSheet()->setCellValue('H'.$rc, $hratotal );
@@ -1090,6 +1167,7 @@ if(isset($_GET['expxlselect_pay_month']))
   $objPHPExcel->getActiveSheet()->setCellValue('C'.$rc, "-");
   $objPHPExcel->getActiveSheet()->setCellValue('D'.$rc, $ep_pftotal + $er_pftotal);
   
+  $objPHPExcel->getActiveSheet()->getStyle('D'.$rc)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
   $objPHPExcel->getActiveSheet()->setCellValue("I".$rc,"Signature");
   $adjustedColumn = PHPExcel_Cell::stringFromColumnIndex(8);
@@ -1117,11 +1195,15 @@ if(isset($_GET['expxlselect_pay_month']))
   $objPHPExcel->getActiveSheet()->setCellValue('B'.$rc, "ESIC CHALAN AMT");
   $objPHPExcel->getActiveSheet()->setCellValue('C'.$rc, "-");
   $objPHPExcel->getActiveSheet()->setCellValue('D'.$rc, $ep_esictotal + $er_esictotal);
+  $objPHPExcel->getActiveSheet()->getStyle('D'.$rc)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
   $rc ++;
 
   $objPHPExcel->getActiveSheet()->setCellValue('B'.$rc, "TOTAL AMT");
   $objPHPExcel->getActiveSheet()->setCellValue('C'.$rc, "-");
   $objPHPExcel->getActiveSheet()->setCellValue('D'.$rc, $ep_pftotal + $er_pftotal + $ep_esictotal + $er_esictotal);
+  $objPHPExcel->getActiveSheet()->getStyle('D'.$rc)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+  
   $rc ++;
 
   $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
@@ -1161,20 +1243,30 @@ if(isset($_GET['gen_attd_xl']))
   // $objPHPExcel = new PHPExcel();
   $objPHPExcel->setActiveSheetIndex(0);
   $adjustedColumn = PHPExcel_Cell::stringFromColumnIndex($nod+2);
+  $rowtitleCount = 1;
 
-  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, 1, $title->ins_name); 
-  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, 2, "Employee Attendance Report"); 
-  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, 3, $fulldate ); 
-  $objPHPExcel->getActiveSheet()->mergeCells("A1:".$adjustedColumn."1");
-  $objPHPExcel->getActiveSheet()->mergeCells("A2:".$adjustedColumn."2");
-  $objPHPExcel->getActiveSheet()->mergeCells("A3:".$adjustedColumn."3");
+  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, $rowtitleCount, $title->ins_name); 
+  $objPHPExcel->getActiveSheet()->mergeCells("A".$rowtitleCount.":".$adjustedColumn.$rowtitleCount); 
+  $rowtitleCount++;
 
-  $rowtitleCount = 4;
+  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, $rowtitleCount, $title->ins_address);
+  $objPHPExcel->getActiveSheet()->mergeCells("A".$rowtitleCount.":".$adjustedColumn.$rowtitleCount); 
+  $rowtitleCount++;
+
+  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, $rowtitleCount, "Employee Attendance Report"); 
+  $objPHPExcel->getActiveSheet()->mergeCells("A".$rowtitleCount.":".$adjustedColumn.$rowtitleCount); 
+  $rowtitleCount++;
+
+  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow(0, $rowtitleCount, $fulldate );
+  $objPHPExcel->getActiveSheet()->mergeCells("A".$rowtitleCount.":".$adjustedColumn.$rowtitleCount); 
+  $rowtitleCount++;
+
+  
   $coltitleCount = 0;
-  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($coltitleCount, $rowtitleCount, "S.N."); 
+  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($coltitleCount, $rowtitleCount, "S.N.")->getColumnDimension('A')->setAutoSize(true); 
   $coltitleCount++;
 
-  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($coltitleCount, $rowtitleCount, "Employee Name"); 
+  $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($coltitleCount, $rowtitleCount, "Employee Name")->getColumnDimension('B')->setAutoSize(true);; 
   $coltitleCount++;
 
   for($dc=1;$dc<=$nod;$dc++){
@@ -1185,10 +1277,11 @@ if(isset($_GET['gen_attd_xl']))
   }
   $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($coltitleCount, $rowtitleCount, "Total"); 
     $coltitleCount++;
+    $rowtitleCount++;
   // $weekname; 
 
   $i=1;
-  $rc=5;
+  $rc=$rowtitleCount;
   foreach($r as $rw)
   {
     $cc=0;

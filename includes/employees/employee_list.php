@@ -30,7 +30,7 @@
         </div>
         <!-- /.box-header -->
         <div class="box-body table-responsive">
-          <table id="example1" class="table table-bordered table-striped" style="border: 1px solid black !important;">
+          <table id="example1" class="table table-bordered table-responsive  table-striped" style="border: 1px solid black !important;">
             <thead>
               <tr>
                 <th style="border: 1px solid black !important;" class="text-center">Sr.No</th>
@@ -53,18 +53,18 @@
             ?>
               <tr>
                 <?php $get_role = $db->get_row("SELECT * FROM user_type WHERE usr_id='$row->user_type_id'"); ?>
-                <td style="border: 1px solid black !important;"><?php echo $emp; ?></td>
+                <td class="text-center" style="border: 1px solid black !important;"><?php echo $emp; ?></td>
                 <td style="border: 1px solid black !important;" class="text-center"><img class="img-rounded" src="./images/user_profile/<?php echo $row->DEM_EMP_ID.'.jpg'; ?>" onerror="this.src='images/user.jpg'" style="height: 80px;width: 70px;"></td>
                 
-                <td style="border: 1px solid black !important;"><?php echo $row->DEM_EMP_ID; ?></td>
-                <td style="border: 1px solid black !important;">
+                <td class="text-center" style="border: 1px solid black !important;"><?php echo $row->DEM_EMP_ID; ?></td>
+                <td class="text-center" style="border: 1px solid black !important;">
                   <?php echo $row->DEM_EMP_NAME_PREFIX." ".$row->DEM_EMP_FIRST_NAME." ".$row->DEM_EMP_MIDDLE_NAME." ".$row->DEM_EMP_LAST_NAME; ?>                      
                 </td>
-                <td style="border: 1px solid black !important;">
+                <td class="text-center" style="border: 1px solid black !important;">
                   <?php echo $row->DEM_MOBILE_NUMBER; ?>               
                 </td>                    
-                <td style="border: 1px solid black !important;"><?php echo $row->DEM_PERSONAL_EMAIL_ID; ?></td>                    
-                <td style="border: 1px solid black !important;">
+                <td class="text-center" style="border: 1px solid black !important;"><?php echo $row->DEM_PERSONAL_EMAIL_ID; ?></td>                    
+                <td class="text-center" style="border: 1px solid black !important;">
                   <?php if ($row->DEM_ACTIVE_FLAG=="ACTIVE") { ?>
                   <span style="color:green;">ACTIVE</span>
                   <?php } else
@@ -72,7 +72,7 @@
                   <span style="color:red;">INACTIVE</span>
                   <?php } ?>                      
                 </td>
-                <td style="border: 1px solid black !important;"  align="center">
+                <td class="text-center" style="border: 1px solid black !important;"  >
                   <button title="View More Details"  data-target="#view-modal"  data-toggle="modal"  id="getUserdemo" data-id="<?php echo $row->DEM_EMP_ID; ?>" class="btn btn-info getUserdemo"><i class="fa fa-search"></i> </button>
 
                   <a title="Edit Employee" href="?folder=employees&file=add_employee&edit_user=<?php echo $row->DEM_EMP_ID; ?>" class="btn btn-primary" style="margin: 2px;"><i class="fa fa-pencil"></i> </a>
@@ -154,7 +154,7 @@ $(document).ready(function(){
       dataType: 'html'
     })
     .done(function(data){
-      console.log(data);  
+      // console.log(data);  
       $('#dynamic-content').html('');    
       $('#dynamic-content').html(data); // load response 
       $('#modal-loader').hide();      // hide ajax loader 

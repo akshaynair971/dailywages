@@ -36,6 +36,13 @@
                 <h3>Basic Details</h3>
                 <hr style="border: 1px solid;">
               </div>
+              
+              <div class="form-group col-md-3">
+                <label for="DEM_EMP_ID">Employee ID. <span style="color: #e22b0e;">*</span></label>
+                <input type="text" class="form-control" id='DEM_EMP_ID'  name='DEM_EMP_ID' placeholder="Enter Employee ID" value="<?php if(isset($user_edit)){ echo $user_edit->DEM_EMP_ID; } ?>" required <?php if(isset($_GET['edit_user'])){ echo "disabled"; } ?> >  
+              </div>
+              
+
               <div class="form-group col-md-3">
                 <label for="DEM_EMP_NAME_PREFIX">Prefix <span style="color: #e22b0e;">*</span></label>
                 <select class="form-control" id='DEM_EMP_NAME_PREFIX'  name='DEM_EMP_NAME_PREFIX' required>
@@ -44,7 +51,8 @@
                   <option value="MRS." <?php if($user_edit->DEM_EMP_NAME_PREFIX=="MRS."){ echo "selected"; } ?> >MRS.</option>
                   <option value="MS." <?php if($user_edit->DEM_EMP_NAME_PREFIX=="MS."){ echo "selected"; } ?> >MS.</option>
                 </select>  
-              </div>
+              </div>              
+
               <div class="form-group col-md-3">
                 <label for="DEM_EMP_FIRST_NAME">First Name <span style="color: #e22b0e;">*</span></label>
                 <input type="text" class="form-control" id='DEM_EMP_FIRST_NAME'  name='DEM_EMP_FIRST_NAME' placeholder="Enter First Name" value="<?php if(isset($user_edit)){ echo $user_edit->DEM_EMP_FIRST_NAME; } ?>" required >  
@@ -213,8 +221,8 @@
               </div>
 
               <div class="form-group col-md-3">
-                <label for="DPM_HRA">HRA  </label>
-                <input type="text" class="form-control" id='DPM_HRA' name='DPM_HRA' placeholder="Enter HRA" value="<?php if(isset($user_edit)){ echo $user_edit->DPM_HRA; } ?>" onkeypress="return isNumberKey(event)" oninput="cal_payment();"> 
+                <label for="DPM_HRA">HRA (25%) </label>
+                <input type="text" class="form-control" id='DPM_HRA' name='DPM_HRA' placeholder="Enter HRA" value="<?php if(isset($user_edit)){ echo $user_edit->DPM_HRA; } ?>" onkeypress="return isNumberKey(event)" oninput="cal_payment();" readonly> 
               </div>
 
               <div class="form-group col-md-3">
@@ -238,26 +246,26 @@
               </div>
 
               <div class="form-group col-md-3">
-                <label for="DPM_PF_EMPLOYEE">Employee PF </label>
+                <label for="DPM_PF_EMPLOYEE">Employee PF (12%)</label>
                 <input type="text" class="form-control" id='DPM_PF_EMPLOYEE' name='DPM_PF_EMPLOYEE' placeholder="Enter Employee PF" value="<?php if(isset($user_edit)){ echo $user_edit->DPM_PF_EMPLOYEE; } ?>" onkeypress="return isNumberKey(event)" oninput="cal_payment();" readonly> 
               </div>
 
               <div class="form-group col-md-3">
-                <label for="DPM_PF_EMPLOYER">Employer PF </label>
+                <label for="DPM_PF_EMPLOYER">Employer PF (12%)</label>
                 <input type="text" class="form-control" id='DPM_PF_EMPLOYER' name='DPM_PF_EMPLOYER' placeholder="Enter Employer PF" value="<?php if(isset($user_edit)){ echo $user_edit->DPM_PF_EMPLOYER; } ?>" onkeypress="return isNumberKey(event)" oninput="cal_payment();" readonly> 
               </div>
 
               <div class="form-group col-md-3">
-                <label for="DPM_ESIC_EMPLOYEE">Employee ESIC </label>
+                <label for="DPM_ESIC_EMPLOYEE">Employee ESIC (0.75%)</label>
                 <input type="text" class="form-control" id='DPM_ESIC_EMPLOYEE' name='DPM_ESIC_EMPLOYEE' placeholder="Enter Employee ESIC" value="<?php if(isset($user_edit)){ echo $user_edit->DPM_ESIC_EMPLOYEE; } ?>"  onkeypress="return isNumberKey(event)" oninput="cal_payment();" readonly> 
               </div>
 
               <div class="form-group col-md-3">
-                <label for="DPM_ESIC_EMPLOYER">Employer ESIC </label>
+                <label for="DPM_ESIC_EMPLOYER">Employer ESIC (3.25%)</label>
                 <input type="text" class="form-control" id='DPM_ESIC_EMPLOYER' name='DPM_ESIC_EMPLOYER' placeholder="Enter Employer ESIC" value="<?php if(isset($user_edit)){ echo $user_edit->DPM_ESIC_EMPLOYER; } ?>"  onkeypress="return isNumberKey(event)" oninput="cal_payment();" readonly> 
               </div>
               <div class="form-group col-md-3">
-                <label for="DPM_CALCULATED_AMOUNT">Calculated Amount Payable</label>
+                <label for="DPM_CALCULATED_AMOUNT">Net Wages Paid</label>
                 <input type="text" class="form-control" id='DPM_CALCULATED_AMOUNT' name='DPM_CALCULATED_AMOUNT' placeholder="Calculated Amount" value="<?php if(isset($user_edit)){ echo $user_edit->DPM_CALCULATED_AMOUNT; } ?>"  onkeypress="return isNumberKey(event)" readonly> 
               </div>
 
@@ -289,26 +297,28 @@
   // alert();
   // if(DPM_BASIC_SALARY!=0){
     var calpfs = Math.round((DPM_BASIC_SALARY * 12) / 100);
-    var esicemployee = Math.round((DPM_BASIC_SALARY * 0.75) / 100);
-    var esicemployer = Math.round((DPM_BASIC_SALARY * 3.25) / 100);
+    
+    var DPM_HRA= Math.round((DPM_BASIC_SALARY * 25) / 100);
+    $('#DPM_HRA').val(DPM_HRA);
     $('#DPM_PF_EMPLOYEE').val(calpfs);
     $('#DPM_PF_EMPLOYER').val(calpfs);
-    $('#DPM_ESIC_EMPLOYEE').val(esicemployee);
-    $('#DPM_ESIC_EMPLOYER').val(esicemployer);
+
   // }
-  var DPM_HRA= parseFloat($('#DPM_HRA').val()) || 0;
   var DPM_OTHER_ALLOWANCE= parseFloat($('#DPM_OTHER_ALLOWANCE').val()) || 0;
   var DPM_SPECIAL_ALLOWANCE= parseFloat($('#DPM_SPECIAL_ALLOWANCE').val()) || 0;
-  var DPM_PROFESSIONAL_TAX= parseFloat($('#DPM_PROFESSIONAL_TAX').val()) || 0;
-  var DPM_PF_EMPLOYEE= parseFloat($('#DPM_PF_EMPLOYEE').val()) || 0;
-  var DPM_PF_EMPLOYER= parseFloat($('#DPM_PF_EMPLOYER').val()) || 0;
-  var DPM_ESIC_EMPLOYEE= parseFloat($('#DPM_ESIC_EMPLOYEE').val()) || 0;
-  var DPM_ESIC_EMPLOYER= parseFloat($('#DPM_ESIC_EMPLOYER').val()) || 0;
+  var DPM_PROFESSIONAL_TAX= parseFloat($('#DPM_PROFESSIONAL_TAX').val()) || 0;  
   
-  var groos_pay=  DPM_RATE+DPM_BASIC_SALARY+DPM_HRA+DPM_OTHER_ALLOWANCE+DPM_SPECIAL_ALLOWANCE
+  var groos_pay=  DPM_RATE+DPM_BASIC_SALARY+DPM_HRA+DPM_OTHER_ALLOWANCE+DPM_SPECIAL_ALLOWANCE;
+
+  var esicemployee = Math.round((groos_pay * 0.75) / 100);
+  var esicemployer = Math.round((groos_pay * 3.25) / 100);
+
+  $('#DPM_ESIC_EMPLOYEE').val(esicemployee);
+  $('#DPM_ESIC_EMPLOYER').val(esicemployer);
+
   $('#DPM_GROSS_WAGES_PAYABLE').val(groos_pay);
   // alert(groos_pay);
-   $('#DPM_CALCULATED_AMOUNT').val(groos_pay-(DPM_PROFESSIONAL_TAX+DPM_PF_EMPLOYEE+DPM_PF_EMPLOYER+DPM_ESIC_EMPLOYEE+DPM_ESIC_EMPLOYER));
+   $('#DPM_CALCULATED_AMOUNT').val(groos_pay-(DPM_PROFESSIONAL_TAX+calpfs+esicemployee));
 
   }
 </script>

@@ -36,7 +36,7 @@
           </div>
           <div class="box-tools">
             <input type="submit" name="save_attd" id="save_attd" class="btn btn-warning" value="Save Attendance">
-            <input type="submit" name="save_lock_attd" id="save_lock_attd" class="btn btn-primary" value="Save & Lock Attendance" onclick="save_lock_attd();">
+            <input type="submit" name="save_lock_attd" id="save_lock_attd" class="btn btn-primary" value="Submit Attendance" onclick="save_lock_attd();">
           </div>  	
         </div>
 
