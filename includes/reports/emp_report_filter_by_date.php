@@ -132,6 +132,11 @@ if($_SESSION['user_type']==1)
   </div>
 </div>
 
+
+<?php 
+if($_SESSION['user_type']==1)
+{
+ ?>
 <!-- Generate Salary Slip Overview -->
 
 <div class="col-lg-6 col-md-6 col-sm-12">
@@ -152,8 +157,8 @@ if($_SESSION['user_type']==1)
         <div class="row">
           <div class="form-group col-md-12">
             <label style=" margin-left: 10px;">Select Employee <span style="color: red;">*</span></label>
-            <select class="form-control select2" name="DEM_EMP_ID">
-              <option>Select / Search Employee</option>
+            <select class="form-control select2" name="DEM_EMP_ID" required>
+              <option value="">Select / Search Employee</option>
               <?php 
               $get_emp = $db->get_results("SELECT DEM_EMP_ID,DEM_EMP_NAME_PREFIX,DEM_EMP_FIRST_NAME,DEM_EMP_MIDDLE_NAME,DEM_EMP_LAST_NAME FROM dw_employee_master ORDER BY DEM_EMP_ID ASC");
               if($get_emp)
@@ -167,14 +172,56 @@ if($_SESSION['user_type']==1)
             </select>
           </div>
 
-          <div class="form-group col-md-6">
-            <label style=" margin-left: 10px;">From Month : <span style="color: red;">*</span></label>
-            <input type="text" name="SAL_SUM_REP_FROM_DATE" id="SAL_SUM_REP_FROM_DATE" class="form-control" placeholder="Select From Month" autocomplete="off" required>
+          <div class="form-group col-md-12">
+            <label style=" margin-left: 10px;">Generate Slip for <span style="color: red;">*</span></label>
+            <select class="form-control" name="generate_for" id="generate_for" required>
+              <option value="">Select Option</option>
+              <option value="previous_month">Previous Month (<?php echo date('M-Y', strtotime("-1 month")); ?>) </option>
+              <option value="single_month">Salary Slip for Specific Month </option>
+              <option value="multiple_month">Salary Summary</option>              
+            </select>
+          </div>
+          <script>
+            $('#generate_for').on('change',function(){
+              if($(this).val()=="single_month")
+              {
+                $('#SAL_SUM_REP_DATE').parent().show();
+                $('#SAL_SUM_REP_FROM_DATE').parent().hide();
+                $('#SAL_SUM_REP_TO_DATE').parent().hide();
+
+                $('#SAL_SUM_REP_DATE').attr('required',true);
+                $('#SAL_SUM_REP_FROM_DATE').removeAttr('required');
+                $('#SAL_SUM_REP_TO_DATE').removeAttr('required');
+              }
+              else if($(this).val()=="multiple_month"){
+                $('#SAL_SUM_REP_DATE').parent().hide();
+                $('#SAL_SUM_REP_FROM_DATE').parent().show();
+                $('#SAL_SUM_REP_TO_DATE').parent().show();
+
+                $('#SAL_SUM_REP_DATE').removeAttr('required');
+                $('#SAL_SUM_REP_FROM_DATE').attr('required',true);
+                $('#SAL_SUM_REP_TO_DATE').attr('required',true);
+              }else{
+                $('#SAL_SUM_REP_DATE').parent().hide();
+                $('#SAL_SUM_REP_FROM_DATE').parent().hide();
+                $('#SAL_SUM_REP_TO_DATE').parent().hide();
+              }
+            })
+          </script>
+
+          <div class="form-group col-md-12" style="display:none;">
+            <label style=" margin-left: 10px;">Select Month : <span style="color: red;">*</span></label>
+            <input type="text" name="SAL_SUM_REP_DATE" id="SAL_SUM_REP_DATE" class="form-control" placeholder="Salaray Slip for Month" autocomplete="off" >
           </div>
 
-          <div class="form-group col-md-6" >
+          <div class="form-group col-md-6" style="display:none;">
+            <label style=" margin-left: 10px;">From Month : <span style="color: red;">*</span></label>
+            <input type="text" name="SAL_SUM_REP_FROM_DATE" id="SAL_SUM_REP_FROM_DATE" class="form-control" placeholder="Select From Month" autocomplete="off" >
+          </div>
+
+          <div class="form-group col-md-6" style="display:none;" >
             <label style="margin-left: 10px;">To Month : <span style="color: red;">*</span></label>
-            <input type="text" name="SAL_SUM_REP_TO_DATE" id="SAL_SUM_REP_TO_DATE" class="form-control" placeholder="Select To Month" autocomplete="off" required>
+            <input type="text" name="SAL_SUM_REP_TO_DATE" id="SAL_SUM_REP_TO_DATE" class="form-control" placeholder="Select To Month" autocomplete="off" >
           </div>
 
           <div class="col-md-12">            
@@ -186,7 +233,9 @@ if($_SESSION['user_type']==1)
     </div>   
   </div>
 </div>
+<?php 
 
+} ?>
 
 <!-- <div class="col-lg-6 col-md-6 col-sm-12">
   <div class="box box-primary">
@@ -216,7 +265,7 @@ if($_SESSION['user_type']==1)
 
 <script>
   $(function() {
-    $( "#start_date,#SAL_SUM_REP_FROM_DATE,#SAL_SUM_REP_TO_DATE" ).datepicker({      
+    $( "#start_date,#SAL_SUM_REP_DATE,#SAL_SUM_REP_FROM_DATE,#SAL_SUM_REP_TO_DATE" ).datepicker({      
       dateFormat: "yy-mm",
       changeMonth: true,
       changeYear: true,

@@ -1,9 +1,9 @@
 <?php  
-  if(isset($_GET['DTE_ID']))
+  if(isset($_GET['DGE_ID']))
   {
     extract($_GET);
-    $r=$db->get_row("SELECT a.*,b.DEM_EMP_ID,b.DEM_EMP_NAME_PREFIX,b.DEM_EMP_FIRST_NAME,b.DEM_EMP_MIDDLE_NAME,b.DEM_EMP_LAST_NAME FROM dw_travel_expense as a LEFT JOIN dw_employee_master as b ON a.DEM_EMP_ID=b.DEM_EMP_ID WHERE a.DTE_ID='$DTE_ID' ORDER BY a.DTE_ID DESC");
-    
+    $r=$db->get_row("SELECT a.*,b.DEM_ID,b.DEM_EMP_ID,b.DEM_EMP_NAME_PREFIX,b.DEM_EMP_FIRST_NAME,b.DEM_EMP_MIDDLE_NAME,b.DEM_EMP_LAST_NAME FROM dw_general_expenses as a LEFT JOIN dw_employee_master as b ON a.DEM_ID=b.DEM_ID WHERE a.DGE_ID='$DGE_ID' ORDER BY a.DGE_ID DESC");
+    // $db->debug();
   }
 ?>
 <!-- Main content -->
@@ -22,11 +22,11 @@
           }
         ?>
         <div class="box-header">
-          <h3>Travelling Expense Statement</h3>
+          <h3>General Expense Statement</h3>
           <div class="box-tools">
-            <a href="?folder=travel_expense&file=view_travel_expense&exppdfdte_id=<?php echo $DTE_ID; ?>" class="btn btn-info btn-round"><i class="fa fa-file"></i> PDF</a>
-            <a href="?folder=travel_expense&file=view_travel_expense&expxldte_id=<?php echo $DTE_ID; ?>" class="btn btn-warning btn-round"><i class="fa fa-file"></i> Excel</a>
-            <a href="?folder=travel_expense&file=travel_expense_list" class="btn btn-default btn-round"><i class="fa fa-share"></i> Back</a>
+            <a href="?folder=general_expense&file=view_general_expense&exppdfdge_id=<?php echo $DGE_ID; ?>" class="btn btn-info btn-round"><i class="fa fa-file"></i> PDF</a>
+            <a href="?folder=general_expense&file=view_general_expense&expxldge_id=<?php echo $DGE_ID; ?>" class="btn btn-warning btn-round"><i class="fa fa-file"></i> Excel</a>
+            <a href="?folder=general_expense&file=general_expense_list" class="btn btn-default btn-round"><i class="fa fa-share"></i> Back</a>
           </div>
         </div>
         <!-- /.box-header -->
@@ -36,62 +36,54 @@
           { ?>
             <table  class="table table-bordered table-striped table-responsive" style="border: 1px solid black !important;">
               <tr>                
-                <th style="border: 1px solid black !important;" >Voucher Ref.</th> 
-                <td style="border: 1px solid black !important;" ><?php echo $r->DTE_VOUCHER_REF; ?></td>
+                <th style="border: 1px solid black !important;" >Cash Voucher Ref.</th> 
+                <td style="border: 1px solid black !important;" ><?php echo $r->DGE_VOUCHER_REF; ?></td>
 
                 <th style="border: 1px solid black !important;" >Voucher Date</th> 
-                <td style="border: 1px solid black !important;" ><?php echo date("d-M-Y",strtotime($r->DTE_VOUCHER_DATE)); ?></td>                              
+                <td style="border: 1px solid black !important;" ><?php echo date("d-M-Y",strtotime($r->DGE_VOUCHER_DATE)); ?></td>                              
               </tr>
-              <tr>                
-                <th style="border: 1px solid black !important;" >Departed Date</th> 
-                <td style="border: 1px solid black !important;" ><?php echo date("d-M-Y",strtotime($r->DTE_DEPARTED_DATE)); ?></td>
-
-                <th style="border: 1px solid black !important;" >Returned Date</th> 
-                <td style="border: 1px solid black !important;" ><?php echo date("d-M-Y",strtotime($r->DTE_RETURNED_DATE)); ?></td>                              
-              </tr>
+              
               <tr>                
                 <th style="border: 1px solid black !important;" >Engineer Name</th> 
                 <td style="border: 1px solid black !important;" ><?php echo $r->DEM_EMP_NAME_PREFIX." ".$r->DEM_EMP_FIRST_NAME." ".$r->DEM_EMP_MIDDLE_NAME." ".$r->DEM_EMP_LAST_NAME." (".$r->DEM_EMP_ID.")"; ?></td>
 
                 <th style="border: 1px solid black !important;" >Location</th> 
-                <td style="border: 1px solid black !important;" ><?php echo $r->DTE_LOCATION; ?></td>                              
+                <td style="border: 1px solid black !important;" ><?php echo $r->DGE_LOCATION; ?></td>                              
               </tr>  
+
+              <tr>                
+                <th style="border: 1px solid black !important;" >Invoice No.</th> 
+                <td style="border: 1px solid black !important;" ><?php echo $r->DGE_INVOICE_NO; ?></td>
+
+                <th style="border: 1px solid black !important;" >Invoice Date</th> 
+                <td style="border: 1px solid black !important;" ><?php echo date("d-M-Y",strtotime($r->DGE_INVOICE_DATE)); ?></td>                              
+              </tr>
             </table>
             <br>
             <br>
-            <h4>Travelling Details</h4>
+            <h4>Expense Details</h4>
             <table class="table table-bordered table-striped table-responsive"> 
               <thead>
                 <tr>
                   <th class="text-center" style="border: 1px solid black !important;font-size: 13px;">Sr. No.</th>
 
-                  <th class="text-center" style="border: 1px solid black !important;font-size: 13px;">Date</th>
+                  <th class="text-center" style="border: 1px solid black !important;font-size: 13px;">Item</th>
 
-                  <th class="text-center" style="border: 1px solid black !important;font-size: 13px;">Place</th>
-
-                  <th class="text-center" style="border: 1px solid black !important;font-size: 13px;">Travel</th>
-
-                  <th class="text-center" style="border: 1px solid black !important;font-size: 13px;">Conveyance</th>
-
-                  <th class="text-center" style="border: 1px solid black !important;font-size: 13px;">L/B</th>
-
-                  <th class="text-center" style="border: 1px solid black !important;font-size: 13px;">Extra</th>
-
-                  <th class="text-center" style="border: 1px solid black !important;font-size: 13px;">Total</th>
+                  <th class="text-center" style="border: 1px solid black !important;font-size: 13px;">Amount</th>
 
                   <th class="text-center" style="border: 1px solid black !important;font-size: 13px;">Remarks</th>
                 </tr>
               </thead> 
               <tbody>
                 <?php 
-                $json = json_decode($r->DTE_TRAVEL_SUMMARY);
+                $json = json_decode($r->DGE_EXPENSE_SUMMARY);
                 if($json)
                 {
                   $cnt=0;
-                  $travel_total = $conveyance_total = $lb_total = $extra_total = $subtotal = 0;
-                  for ($i=0; $i < count($json->JOURNEY_DATE); $i++)
-                  {
-                    $main_total = 0;
+
+                  $subtotal = 0;
+                  for ($i=0; $i < count($json->DGE_ITEM); $i++)
+                  {                    
                     $cnt++;
                   ?>
                                        
@@ -101,35 +93,15 @@
                       </td>
 
                       <td class="text-center" style="border: 1px solid black !important;font-size: 13px;">
-                        <?php if($json->JOURNEY_DATE[$i]!=''){ echo date("d-M-Y",strtotime($json->JOURNEY_DATE[$i])); } ?>
+                        <?php if($json->DGE_ITEM[$i]!=''){ echo $json->DGE_ITEM[$i]; } ?>
                       </td>                      
 
                       <td class="text-center" style="border: 1px solid black !important;font-size: 13px;">
-                        <?php if($json->JOURNEY_PLACE[$i]!=''){ echo $json->JOURNEY_PLACE[$i]; } ?>
-                      </td>  
+                        <?php if($json->DGE_AMOUNT[$i]!=''){ echo $json->DGE_AMOUNT[$i]; $subtotal +=$json->DGE_AMOUNT[$i]; }  ?>
+                      </td>                        
 
                       <td class="text-center" style="border: 1px solid black !important;font-size: 13px;">
-                        <?php if($json->TRAVEL_CHRG[$i]!=''){ echo $json->TRAVEL_CHRG[$i]; $travel_total += $json->TRAVEL_CHRG[$i];  } ?>
-                      </td> 
-
-                      <td class="text-center" style="border: 1px solid black !important;font-size: 13px;">
-                        <?php if($json->CONVEY_CHRG[$i]!=''){ echo $json->CONVEY_CHRG[$i]; $conveyance_total += $json->CONVEY_CHRG[$i]; } ?>
-                      </td> 
-
-                      <td class="text-center" style="border: 1px solid black !important;font-size: 13px;">
-                        <?php if($json->L_B_CHRG[$i]!=''){ echo $json->L_B_CHRG[$i]; $lb_total += $json->L_B_CHRG[$i]; } ?>
-                      </td> 
-
-                      <td class="text-center" style="border: 1px solid black !important;font-size: 13px;">
-                        <?php if($json->EXTRA_CHRG[$i]!=''){ echo $json->EXTRA_CHRG[$i]; $extra_total += $json->EXTRA_CHRG[$i]; } ?>
-                      </td>    
-
-                      <td class="text-center" style="border: 1px solid black !important;font-size: 13px;">
-                        <?php if($json->TOTAL_CHRG[$i]!=''){ echo $json->TOTAL_CHRG[$i]; $subtotal += $json->TOTAL_CHRG[$i]; } ?>
-                      </td>      
-
-                      <td class="text-center" style="border: 1px solid black !important;font-size: 13px;">
-                        <?php if($json->REMARKS[$i]!=''){ echo $json->REMARKS[$i]; } ?>
+                        <?php if($json->REMARKS[$i]!=''){ echo $json->DGE_REMARKS[$i]; } ?>
                       </td> 
                     </tr>                   
                   <?php 
@@ -137,11 +109,8 @@
                 }?>
               </tbody>
               <tfoot>                
-                <th colspan="3" class="text-center" style="border: 1px solid black !important;font-size: 13px;">Total</th>
-                <th class="text-center" style="border: 1px solid black !important;font-size: 13px;"><?php echo $travel_total; ?></th>
-                <th class="text-center" style="border: 1px solid black !important;font-size: 13px;"><?php echo $conveyance_total; ?></th>
-                <th class="text-center" style="border: 1px solid black !important;font-size: 13px;"><?php echo $lb_total; ?></th>
-                <th class="text-center" style="border: 1px solid black !important;font-size: 13px;"><?php echo $extra_total; ?></th>
+                <th colspan="2" class="text-center" style="border: 1px solid black !important;font-size: 13px;">Total</th>
+                
                 <th class="text-center" style="border: 1px solid black !important;font-size: 13px;"><?php echo $subtotal; ?></th>
                 <th class="text-center" style="border: 1px solid black !important;font-size: 13px;"></th>
 

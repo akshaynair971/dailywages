@@ -1,32 +1,39 @@
 <?php  
-  if($_POST['rep_texp_sin_mon'] || $_POST['rep_texp_sin_cur_mon'])
+  if($_POST['rep_texp_sin_mon'])
   {
     extract($_POST);
-    
-    if($_SESSION['user_type']=='2')
+    // prnt($_POST);
+     
+    $filter='';
+
+    if(empty($_POST['texp_single_month']) && empty($_POST['texp_start_date']) && empty($_POST['texp_end_date']) && empty($_POST['DEM_EMP_ID']) && $_POST['expense_for']=="all")
     {
-      if($_POST['rep_texp_sin_mon'])
-      {
-        $filter = "a.DTE_VOUCHER_DATE>'$texp_start_date' AND a.DTE_VOUCHER_DATE<'$texp_end_date' AND a.DEM_EMP_ID = '".$_SESSION['DEM_EMP_ID']."' ORDER BY a.DTE_ID DESC";
-      } 
-      if($_POST['rep_texp_sin_cur_mon'])
-      {
-        $datearray = explode("-",$curr_month_texp_date);
-        $filter = "YEAR(a.DTE_VOUCHER_DATE)=$datearray[0] AND MONTH(a.DTE_VOUCHER_DATE)=$datearray[1] AND a.DEM_EMP_ID = '".$_SESSION['DEM_EMP_ID']."' ORDER BY a.DTE_ID DESC";
-      } 
-    }else
-    {
-      if($_POST['rep_texp_sin_mon'])
-      {
-        $filter = "a.DTE_VOUCHER_DATE>'$texp_start_date' AND a.DTE_VOUCHER_DATE<'$texp_end_date' ORDER BY a.DTE_ID DESC";
-      }
-      if($_POST['rep_texp_sin_cur_mon'])
-      {
-        $datearray = explode("-",$curr_month_texp_date);
-        $filter = "YEAR(a.DTE_VOUCHER_DATE)=$datearray[0] AND MONTH(a.DTE_VOUCHER_DATE)=$datearray[1] ORDER BY a.DTE_ID DESC";
-      } 
+      $filter .= "";
     }
-    $r=$db->get_results("SELECT a.*,b.DEM_EMP_ID,b.DEM_EMP_NAME_PREFIX,b.DEM_EMP_FIRST_NAME,b.DEM_EMP_MIDDLE_NAME,b.DEM_EMP_LAST_NAME FROM dw_travel_expense as a LEFT JOIN dw_employee_master as b ON a.DEM_EMP_ID=b.DEM_EMP_ID WHERE $filter");
+    else
+    {
+      $filter .= " WHERE";
+    }
+    if($_POST['texp_single_month'])
+    {
+      $datearray = explode("-",$texp_single_month);
+      $filter .= " YEAR(a.DTE_VOUCHER_DATE)=$datearray[0] AND MONTH(a.DTE_VOUCHER_DATE)=$datearray[1] AND";
+    }
+    if($_POST['texp_start_date'] && $_POST['texp_end_date'])
+    {
+      $filter .= " DATE(a.DTE_VOUCHER_DATE)>='$texp_start_date' AND DATE(a.DTE_VOUCHER_DATE)<='$texp_end_date' AND";
+    }
+    if($_POST['DEM_EMP_ID'])
+    {
+      $filter .= " a.DEM_EMP_ID = '".$DEM_EMP_ID."' AND";
+    }
+    $filter = rtrim($filter," AND");
+      // prnt($filter);
+    
+    $filter .= " ORDER BY a.DTE_ID DESC";
+
+    $r=$db->get_results("SELECT a.*,b.DEM_EMP_ID,b.DEM_EMP_NAME_PREFIX,b.DEM_EMP_FIRST_NAME,b.DEM_EMP_MIDDLE_NAME,b.DEM_EMP_LAST_NAME FROM dw_travel_expense as a LEFT JOIN dw_employee_master as b ON a.DEM_EMP_ID=b.DEM_EMP_ID $filter");
+    // $db->debug();
     
 
   }else
@@ -52,29 +59,70 @@
         <div class="box-header">
           <h3 class="box-title"><label><i class="fa fa-book"></i> Select Month to Generate Travel Expense Report </label></h3>
           <div class="box-tools">
-            <form method="POST" >
+            <!-- <form method="POST" >
               <input type="hidden" name="curr_month_texp_date" value="<?php echo date('Y-m'); ?>">
               <input type="submit" name="rep_texp_sin_cur_mon" value="Current Month (<?php echo date('F Y'); ?>)" class="btn btn-success btn-round">
-            </form>
+            </form> -->
             
           </div>
         </div>
         <div class="box-body">
           <form method="POST"><br>
             <div class="row">
-              <div class="form-group col-md-4"> 
-                <label>Select Date From</label>
-                <input type="text" name="texp_start_date" id="texp_start_date" class="form-control" placeholder="Select Date From " autocomplete="off" required>
+              <div class="form-group col-md-4">
+                <label style="">Select Employee <span style="color: red;"><?php if($_SESSION['user_type']==2){ echo "*";} ?></span></label>
+                <select class="form-control select2" name="DEM_EMP_ID" <?php if($_SESSION['user_type']==2){ echo "required";} ?> >
+                  <option value="">Select / Search Employee</option>
+                  <?php 
+                  if($_SESSION['user_type']=='2')
+                  {
+                    $empcond =  "WHERE DEM_EMP_ID=".$_SESSION['DEM_EMP_ID']." ORDER BY DEM_EMP_ID ASC";
+                  }
+                  else
+                  {
+                    $empcond =  "ORDER BY DEM_EMP_ID ASC";                    
+                  }
+                  $get_emp = $db->get_results("SELECT DEM_ID,DEM_EMP_ID,DEM_EMP_NAME_PREFIX,DEM_EMP_FIRST_NAME,DEM_EMP_MIDDLE_NAME,DEM_EMP_LAST_NAME FROM dw_employee_master $empcond");
+                  if($get_emp)
+                  {
+                    foreach ($get_emp as $get_empkey) {               
+                    ?>
+                    <option value="<?php echo $get_empkey->DEM_EMP_ID; ?>" <?php if($_SESSION['user_type']=="2" && $get_empkey->DEM_EMP_ID == $_SESSION['DEM_EMP_ID']){ echo "selected";} ?>>(<?php echo $get_empkey->DEM_EMP_ID; ?>) <?php echo strtoupper($get_empkey->DEM_EMP_NAME_PREFIX." ".$get_empkey->DEM_EMP_FIRST_NAME." ".$get_empkey->DEM_EMP_MIDDLE_NAME." ".$get_empkey->DEM_EMP_LAST_NAME); ?> </option>
+                    <?php 
+                    }
+                  } ?>
+                </select>
               </div>
 
               <div class="form-group col-md-4"> 
-                <label>Select Date To</label>
-                <input type="text" name="texp_end_date" id="texp_end_date" class="form-control" placeholder="Select Date To" autocomplete="off" required>
+                <label>Expense For <span style="color: red;">*</span></label>
+                <select class="form-control" name="expense_for" id="expense_for" required>
+                  <option value="">Select Expense For</option>
+                  <option value="all">ALL</option>
+                  <option value="single_month">SINGLE MONTH</option>
+                  <option value="multiple_date">MULTIPLE DATE</option>
+                </select>
+              </div>
+
+              <div class="form-group col-md-4 month_only texp_single_month_div"> 
+                <label>Select Month <span style="color: red;">*</span></label>
+                <input type="text" name="texp_single_month" id="texp_single_month" class="form-control" placeholder="Select Month " autocomplete="off">
+              </div>
+
+              <div class="form-group col-md-4 texp_start_date_div"> 
+                <label>Select Date From <span style="color: red;">*</span></label>
+                <input type="text" name="texp_start_date" id="texp_start_date" class="form-control" placeholder="Select Date From " autocomplete="off">
+              </div>
+
+              <div class="form-group col-md-4 texp_end_date_div"> 
+                <label>Select Date To <span style="color: red;">*</span></label>
+                <input type="text" name="texp_end_date" id="texp_end_date" class="form-control" placeholder="Select Date To" autocomplete="off" >
               </div>
 
               <div class="col-md-4">
                 
                 <input type="submit" name="rep_texp_sin_mon" value="Get Expense Report" class="btn btn-primary btn-round" style="margin-top: 25px !important;">
+                <a href="?folder=general_expense&file=general_expense_list" class="btn btn-default btn-round" style="margin-top: 25px !important;">Reset </a>
                 
               </div>
             </div>
@@ -97,36 +145,31 @@
         <div class="box-header">
           <?php
           $explink = "";
-          if($_POST['rep_texp_sin_mon'] || $_POST['rep_texp_sin_cur_mon'])
+          if($r)
           {
-            if($_SESSION['user_type']=='2')
-            {
-              if($_POST['rep_texp_sin_mon'])
-              {
-                $explink = "&overall_trexp_xl=1&texp_start_date=".$texp_start_date."&texp_end_date=".$texp_end_date."&DEM_EMP_ID".$_SESSION['DEM_EMP_ID'];                
-                $pdflink = "&overall_trexp_pdf=1&texp_start_date=".$texp_start_date."&texp_end_date=".$texp_end_date."&DEM_EMP_ID".$_SESSION['DEM_EMP_ID'];                
-              } 
-              if($_POST['rep_texp_sin_cur_mon'])
-              {
-                $explink = "&overall_trexp_xl=1&curr_month_texp_date=".$curr_month_texp_date."&DEM_EMP_ID".$_SESSION['DEM_EMP_ID'];
-                $pdflink = "&overall_trexp_pdf=1&curr_month_texp_date=".$curr_month_texp_date."&DEM_EMP_ID".$_SESSION['DEM_EMP_ID'];
-              } 
-            }else{
-              if($_POST['rep_texp_sin_mon'])
-              {
-                $explink = "&overall_trexp_xl=1&texp_start_date=".$texp_start_date."&texp_end_date=".$texp_end_date;                
-                $pdflink = "&overall_trexp_pdf=1&texp_start_date=".$texp_start_date."&texp_end_date=".$texp_end_date;                
-              } 
-              if($_POST['rep_texp_sin_cur_mon'])
-              {
-                $explink = "&overall_trexp_xl=1&curr_month_texp_date=".$curr_month_texp_date;
-                $pdflink = "&overall_trexp_pdf=1&curr_month_texp_date=".$curr_month_texp_date;
-              }
-            }
-          ?>
-          <a href="?folder=travel_expense&file=travel_expense_list<?php echo $explink; ?>" class="btn btn-warning btn-round"><i class="fa fa-file"></i> Excel</a>
 
-          <a href="?folder=travel_expense&file=travel_expense_list<?php echo $pdflink; ?>" class="btn btn-info btn-round"><i class="fa fa-file"></i> PDF</a>
+            if($_POST['DEM_EMP_ID'])
+            {
+              $explink .= "&DEM_EMP_ID=".$DEM_EMP_ID;
+            }
+            if($_POST['expense_for']=="all")
+            {
+              $explink .= "&expense_for=all";
+            }
+            if($_POST['texp_single_month'])
+            {
+              $explink .= "&texp_single_month=".$texp_single_month;
+            }
+            if($_POST['texp_start_date'] && $_POST['texp_end_date'])
+            {
+              $explink .= "&texp_start_date=".$texp_start_date."&texp_end_date=".$texp_end_date;
+            }
+          
+          ?>
+          
+          <a href="?folder=travel_expense&file=travel_expense_list&overall_trexp_xl=1<?php echo $explink; ?>" class="btn btn-warning btn-round"><i class="fa fa-file"></i> Excel</a>
+
+          <a href="?folder=travel_expense&file=travel_expense_list&overall_trexp_pdf=1<?php echo $explink; ?>" class="btn btn-info btn-round"><i class="fa fa-file"></i> PDF</a>
           
           <?php            
           }
@@ -251,7 +294,7 @@
             }
             else { ?>
               <tr>                      
-                <td style="border: 1px solid black !important;text-align: center;" colspan='11' class="pull-center" >
+                <td style="border: 1px solid black !important;text-align: center;" colspan='16' class="pull-center" >
                   <b>No Record Available</b>
                 </td>
               </tr>
@@ -335,15 +378,63 @@
 <!-- End  Modal code for Employee Details -->
 
 <script>
-  $(function() {
-    $( "#texp_start_date,#texp_end_date,#DTE_PAID_DATE" ).datepicker({      
-      dateFormat: "yy-mm-dd",
+  $(document).ready(function() {
+    $('#texp_single_month').datepicker( {
       changeMonth: true,
       changeYear: true,
       showButtonPanel: true,
-      yearRange: "1950:2050"
+      dateFormat: 'yy-mm',
+      yearRange: "1950:2050",
+      beforeShow: function(input, inst) {
+        $(inst.dpDiv).addClass('calendar-off');     
+      },
+      onClose: function(dateText, inst) { 
+        var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+        var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+        $(this).datepicker('setDate', new Date(year, month, 1));
+      }
+  });
+  $( "#texp_start_date,#texp_end_date" ).datepicker({
+      changeMonth: true,
+      changeYear: true,
+      dateFormat: 'yy-mm-dd',
+      yearRange: "1950:2050",
+      beforeShow: function(input, inst) {
+        $(inst.dpDiv).removeClass('calendar-off');     
+      }
     });
   });
+</script>
+
+<script>
+  $('#expense_for').on('change',function(){
+    var expense_for = $(this).val();
+    // alert(expense_for);
+    if(expense_for=='all' || expense_for=='')
+    {
+
+      $('.texp_single_month_div,.texp_start_date_div,.texp_end_date_div').hide();
+      $('#texp_single_month,#texp_start_date,#texp_end_date').removeAttr('required');
+
+    }
+    if(expense_for=='single_month')
+    {
+      // alert(expense_for);
+      $('.texp_single_month_div').show();
+      $('.texp_start_date_div,.texp_end_date_div').hide();
+      $('#texp_single_month').attr('required','required');
+      $('#texp_start_date,#texp_end_date').removeAttr('required');
+
+    }
+    if(expense_for=='multiple_date')
+    {
+      $('.texp_single_month_div').hide();      
+      $('.texp_start_date_div,.texp_end_date_div').show();
+      $('#texp_single_month').removeAttr('required');
+      $('#texp_start_date,#texp_end_date').attr('required','required');
+    }
+  });
+  
 </script>
 
 

@@ -25,7 +25,7 @@
             {
               echo"<div style='font-size:18px; color:green; margin-left:15px; font-weight:700;'>".$succ."</div>";
             }
-            // prnt($payroll_details);
+            // prnt($get_expense);
           ?>
           <h3>Add General Expense</h3>
           <div class="box-tools">
@@ -56,7 +56,7 @@
                   {
                     foreach ($get_emp as $get_empkey) {               
                     ?>
-                    <option value="<?php echo $get_empkey->DEM_ID; ?>" <?php if($_SESSION['user_type']=="2" && $get_empkey->DEM_ID == $_SESSION['ad_id']){ echo "selected";} ?>>(<?php echo $get_empkey->DEM_EMP_ID; ?>) <?php echo strtoupper($get_empkey->DEM_EMP_NAME_PREFIX." ".$get_empkey->DEM_EMP_FIRST_NAME." ".$get_empkey->DEM_EMP_MIDDLE_NAME." ".$get_empkey->DEM_EMP_LAST_NAME); ?> </option>
+                    <option value="<?php echo $get_empkey->DEM_ID; ?>" <?php if(isset($get_expense->DEM_ID) && ($get_expense->DEM_ID == $get_empkey->DEM_ID)){ echo "selected"; }elseif($_SESSION['user_type']=="2" && $get_empkey->DEM_ID == $_SESSION['ad_id']){ echo "selected";} ?>>(<?php echo $get_empkey->DEM_EMP_ID; ?>) <?php echo strtoupper($get_empkey->DEM_EMP_NAME_PREFIX." ".$get_empkey->DEM_EMP_FIRST_NAME." ".$get_empkey->DEM_EMP_MIDDLE_NAME." ".$get_empkey->DEM_EMP_LAST_NAME); ?> </option>
                     <?php 
                     }
                   } ?>
@@ -174,7 +174,7 @@
                 <center>  
                   <!-- <input type="hidden" name="DEM_EMP_ID"  id="DEM_EMP_ID" value="<?php echo $_GET['DEM_EMP_ID']; ?>">            -->
                   <input type="submit" class="btn btn-warning btn-round" id='SAVE_GENERAL_EXP'  name='SAVE_GENERAL_EXP' value="Save General Expense" >  
-                  <input type="submit" class="btn btn-primary btn-round" id='SAVE_LOCK_GENERAL_EXP'  name='SAVE_LOCK_GENERAL_EXP' value="<?php if($_SESSION['user_type']==1){ echo "Approve"; } if($_SESSION['user_type']==2){ echo "Submit"; } ?> General Expense" >  
+                  <!-- <input type="submit" class="btn btn-primary btn-round" id='SAVE_LOCK_GENERAL_EXP'  name='SAVE_LOCK_GENERAL_EXP' value="<?php if($_SESSION['user_type']==1){ echo "Approve"; } if($_SESSION['user_type']==2){ echo "Submit"; } ?> General Expense" >   -->
                 </center>
               </div>
 
@@ -282,6 +282,7 @@ function cal_payment() {
       ?> 
      $(document).on('click', '.remove', function(){
       $(this).closest('tr').remove();
+      cal_payment();
         
      });
      

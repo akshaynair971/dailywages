@@ -70,12 +70,17 @@
               </div>
 
               <div class="form-group col-md-3">
-                <label for="CASH_REIMBURSEMENT_MOBILE">Cash Reimbursement Mobile <span style="color: #e22b0e;">*</span></label>
+                <label for="EPS">EPS<span style="color: #e22b0e;">*</span></label>
+                <input type="text" class="form-control" id='EPS'  name='EPS' placeholder="Enter EPS" value="<?php if($payroll_details->DPM_ESIC_EMPLOYER!=''){ $EPS = round((8.33 *  $payroll_details->DPM_ESIC_EMPLOYER ) / 100); echo $EPS; } ?>" required readonly>  
+              </div>
+
+              <div class="form-group col-md-3">
+                <label for="CASH_REIMBURSEMENT_MOBILE">Cash Reimb. Mobile <span style="color: #e22b0e;">*</span></label>
                 <input type="text" class="form-control" id='CASH_REIMBURSEMENT_MOBILE'  name='CASH_REIMBURSEMENT_MOBILE' placeholder="Enter Cash Reimbursement Mobile" value="<?php if($user_edit->CASH_REIMBURSEMENT_MOBILE!=''){ echo $user_edit->CASH_REIMBURSEMENT_MOBILE; } ?>" oninput="calculateCashReimbursement();" onkeypress="return isNumberKey(event)" required>  
               </div>
 
               <div class="form-group col-md-3">
-                <label for="CASH_REIMBURSEMENT_PETROL">Cash Reimbursement Petrol <span style="color: #e22b0e;">*</span></label>
+                <label for="CASH_REIMBURSEMENT_PETROL">Cash Reimb. Petrol <span style="color: #e22b0e;">*</span></label>
                 <input type="text" class="form-control" id='CASH_REIMBURSEMENT_PETROL'  name='CASH_REIMBURSEMENT_PETROL' placeholder="Enter Cash Reimbursement Petrol" value="<?php if($user_edit->CASH_REIMBURSEMENT_PETROL!=''){ echo $user_edit->CASH_REIMBURSEMENT_PETROL; } ?>" oninput="calculateCashReimbursement();" onkeypress="return isNumberKey(event)" required>  
               </div>
 

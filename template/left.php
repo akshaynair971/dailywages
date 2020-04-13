@@ -117,7 +117,9 @@
       <li><a href="<?php echo site_root; ?>index.php?folder=general_expense&file=general_expense_list"><i class="fa fa-money"></i> General Expense</a></li>
 
 
-      <li><a href="<?php echo site_root; ?>index.php?folder=travel_expense&file=travel_expense_list"><i class="fa fa-file"></i> Travel & Expense</a></li>
+      <li><a href="<?php echo site_root; ?>index.php?folder=travel_expense&file=travel_expense_list"><i class="fa fa-car"></i> Travel & Expense</a></li>
+
+      <li><a href="<?php echo site_root; ?>index.php?folder=leave_report&file=leave_report_list"><i class="fa fa-file"></i> Leave Report</a></li>
 
 
       <li><a href="<?php echo site_root; ?>index.php?folder=reports&file=emp_report_filter_by_date"><i class="fa fa-file"></i> Reports</a></li>
@@ -199,7 +201,7 @@
       <li><a href="<?php echo site_root; ?>index.php?folder=general_expense&file=general_expense_list"><i class="fa fa-money"></i> General Expense</a></li>
 
 
-      <li><a href="<?php echo site_root; ?>index.php?folder=travel_expense&file=travel_expense_list"><i class="fa fa-file"></i> Travel & Expense</a></li>
+      <li><a href="<?php echo site_root; ?>index.php?folder=travel_expense&file=travel_expense_list"><i class="fa fa-car"></i> Travel & Expense</a></li>
 
       <li><a href="<?php echo site_root; ?>index.php?folder=reports&file=emp_report_filter_by_date"><i class="fa fa-file"></i> Reports</a></li>
 

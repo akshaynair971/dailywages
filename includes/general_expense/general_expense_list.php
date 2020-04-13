@@ -2,11 +2,19 @@
   if($_POST['rep_gexp_sin_mon'] )
   {
     extract($_POST);
-    prnt($_POST);
-    prnt($_SESSION);
+    // prnt($_POST);
+    // prnt($_SESSION);
     // die();
     $filter='';
-    
+
+    if(empty($_POST['gexp_single_month']) && empty($_POST['gexp_start_date']) && empty($_POST['gexp_end_date']) && empty($_POST['DEM_ID']) && $_POST['expense_for']=="all")
+    {
+      $filter .= "";
+    }
+    else
+    {
+      $filter .= " WHERE";
+    }
     if($_POST['gexp_single_month'])
     {
       $datearray = explode("-",$gexp_single_month);
@@ -14,18 +22,21 @@
     }
     if($_POST['gexp_start_date'] && $_POST['gexp_end_date'])
     {
-      $filter = " a.DGE_VOUCHER_DATE>'$gexp_start_date' AND a.DGE_VOUCHER_DATE<'$gexp_end_date' AND";
+      $filter .= " DATE(a.DGE_VOUCHER_DATE)>='$gexp_start_date' AND DATE(a.DGE_VOUCHER_DATE)<='$gexp_end_date' AND";
     }
     if($_POST['DEM_ID'])
     {
       $filter .= " a.DEM_ID = '".$DEM_ID."' AND";
     }
     $filter = rtrim($filter," AND");
+      // prnt($filter);
+    
     $filter .= " ORDER BY a.DGE_ID DESC";
-    prnt($filter);
+    
+    // prnt($filter);
     
     
-    $r=$db->get_results("SELECT a.*,b.DEM_ID,b.DEM_EMP_ID,b.DEM_EMP_NAME_PREFIX,b.DEM_EMP_FIRST_NAME,b.DEM_EMP_MIDDLE_NAME,b.DEM_EMP_LAST_NAME FROM dw_general_expenses as a LEFT JOIN dw_employee_master as b ON a.DEM_ID=b.DEM_ID WHERE $filter");
+    $r=$db->get_results("SELECT a.*,b.DEM_ID,b.DEM_EMP_ID,b.DEM_EMP_NAME_PREFIX,b.DEM_EMP_FIRST_NAME,b.DEM_EMP_MIDDLE_NAME,b.DEM_EMP_LAST_NAME FROM dw_general_expenses as a LEFT JOIN dw_employee_master as b ON a.DEM_ID=b.DEM_ID $filter");
     
 
   }else
@@ -41,6 +52,8 @@
       
     }
   }
+  
+  // $db->debug();
 ?>
 <style type="text/css">
   .gexp_single_month_div, .gexp_start_date_div, .gexp_end_date_div
@@ -67,9 +80,9 @@
           <form method="POST"><br>
             <div class="row">
               <div class="form-group col-md-4">
-                <label style="">Select Employee <span style="color: red;">*</span></label>
-                <select class="form-control select2" name="DEM_ID" readonly>
-                  <option>Select / Search Employee</option>
+                <label style="">Select Employee <span style="color: red;"><?php if($_SESSION['user_type']==2){ echo "*";} ?></span></label>
+                <select class="form-control select2" name="DEM_ID" <?php if($_SESSION['user_type']==2){ echo "required";} ?> >
+                  <option value="">Select / Search Employee</option>
                   <?php 
                   if($_SESSION['user_type']=='2')
                   {
@@ -93,7 +106,7 @@
 
               <div class="form-group col-md-4"> 
                 <label>Expense For <span style="color: red;">*</span></label>
-                <select class="form-control" name="expense_for" id="expense_for">
+                <select class="form-control" name="expense_for" id="expense_for" required>
                   <option value="">Select Expense For</option>
                   <option value="all">ALL</option>
                   <option value="single_month">SINGLE MONTH</option>
@@ -119,6 +132,7 @@
               <div class="col-md-4">
                 
                 <input type="submit" name="rep_gexp_sin_mon" value="Get Expense Report" class="btn btn-primary btn-round" style="margin-top: 25px !important;">
+                <a href="?folder=general_expense&file=general_expense_list" class="btn btn-default btn-round" style="margin-top: 25px !important;">Reset </a>
                 
               </div>
             </div>
@@ -141,36 +155,30 @@
         <div class="box-header">
           <?php
           $explink = "";
-          if($_POST['rep_texp_sin_mon'] || $_POST['rep_texp_sin_cur_mon'])
+          if($r)
           {
-            if($_SESSION['user_type']=='2')
-            {
-              if($_POST['rep_texp_sin_mon'])
-              {
-                $explink = "&overall_trexp_xl=1&texp_start_date=".$texp_start_date."&texp_end_date=".$texp_end_date."&DEM_EMP_ID".$_SESSION['DEM_EMP_ID'];                
-                $pdflink = "&overall_trexp_pdf=1&texp_start_date=".$texp_start_date."&texp_end_date=".$texp_end_date."&DEM_EMP_ID".$_SESSION['DEM_EMP_ID'];                
-              } 
-              if($_POST['rep_texp_sin_cur_mon'])
-              {
-                $explink = "&overall_trexp_xl=1&curr_month_texp_date=".$curr_month_texp_date."&DEM_EMP_ID".$_SESSION['DEM_EMP_ID'];
-                $pdflink = "&overall_trexp_pdf=1&curr_month_texp_date=".$curr_month_texp_date."&DEM_EMP_ID".$_SESSION['DEM_EMP_ID'];
-              } 
-            }else{
-              if($_POST['rep_texp_sin_mon'])
-              {
-                $explink = "&overall_trexp_xl=1&texp_start_date=".$texp_start_date."&texp_end_date=".$texp_end_date;                
-                $pdflink = "&overall_trexp_pdf=1&texp_start_date=".$texp_start_date."&texp_end_date=".$texp_end_date;                
-              } 
-              if($_POST['rep_texp_sin_cur_mon'])
-              {
-                $explink = "&overall_trexp_xl=1&curr_month_texp_date=".$curr_month_texp_date;
-                $pdflink = "&overall_trexp_pdf=1&curr_month_texp_date=".$curr_month_texp_date;
-              }
-            }
-          ?>
-          <a href="?folder=general_expense&file=general_expense_list<?php echo $explink; ?>" class="btn btn-warning btn-round"><i class="fa fa-file"></i> Excel</a>
 
-          <a href="?folder=general_expense&file=general_expense_list<?php echo $pdflink; ?>" class="btn btn-info btn-round"><i class="fa fa-file"></i> PDF</a>
+            if($_POST['DEM_ID'])
+            {
+              $explink .= "&DEM_ID=".$DEM_ID;
+            }
+            if($_POST['expense_for']=="all")
+            {
+              $explink .= "&expense_for=all";
+            }
+            if($_POST['gexp_single_month'])
+            {
+              $explink .= "&gexp_single_month=".$gexp_single_month;
+            }
+            if($_POST['gexp_start_date'] && $_POST['gexp_end_date'])
+            {
+              $explink .= "&gexp_start_date=".$gexp_start_date."&gexp_end_date=".$gexp_end_date;
+            }
+          
+          ?>
+          <a href="?folder=general_expense&file=general_expense_list&overall_gen_exp_xl=1<?php echo $explink; ?>" class="btn btn-warning btn-round"><i class="fa fa-file"></i> Excel</a>
+
+          <a href="?folder=general_expense&file=general_expense_list&overall_gen_exp_pdf=1<?php echo $explink; ?>" class="btn btn-info btn-round"><i class="fa fa-file"></i> PDF</a>
           
           <?php            
           }
@@ -281,7 +289,7 @@
                     <?php
                    
                    ?>
-                  <a onclick="return confirm('Are you Sure ?');" title="Delete General Expense" href="?folder=general_expense&file=general_expense_list&del_DGE_ID=<?php echo $row->DGE_ID; ?>" class="btn btn-danger" style="margin: 2px;"><i class="fa fa-trash"></i> </a>
+                  <a onclick="return confirm('Are you Sure ?');" title="Delete General Expense" href="?folder=general_expense&file=general_expense_list&DEL_DGE_ID=<?php echo $row->DGE_ID; ?>" class="btn btn-danger" style="margin: 2px;"><i class="fa fa-trash"></i> </a>
                   <?php 
                   } ?>
                  

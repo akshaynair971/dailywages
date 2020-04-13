@@ -27,7 +27,23 @@ if(isset($_POST['get_salary_summary_report']))
 {
   extract($_POST);
   // prnt($_POST);
-  echo "<script>window.location='?folder=reports&file=salary_summary_report_list&DEM_EMP_ID=".$DEM_EMP_ID."&SAL_SUM_REP_FROM_DATE=".$SAL_SUM_REP_FROM_DATE."&SAL_SUM_REP_TO_DATE=".$SAL_SUM_REP_TO_DATE."';</script>";
+  // die();
+  $url_params ='';
+  if($generate_for=="single_month")
+  {
+    $url_params .='&SAL_SUM_REP_DATE='.$SAL_SUM_REP_DATE;
+    echo "<script>window.location='?folder=reports&file=salary_slip_report_list&DEM_EMP_ID=".$DEM_EMP_ID."&generate_for=".$generate_for.$url_params."';</script>";
+  }elseif($generate_for=="previous_month")
+  {
+    $SAL_SUM_REP_DATE= date('Y-m', strtotime("-1 month"));
+    // die();
+    $url_params .='&SAL_SUM_REP_DATE='.$SAL_SUM_REP_DATE;
+    echo "<script>window.location='?folder=reports&file=salary_slip_report_list&DEM_EMP_ID=".$DEM_EMP_ID."&generate_for=".$generate_for.$url_params."';</script>";
+  }else{
+    $url_params .='&SAL_SUM_REP_FROM_DATE='.$SAL_SUM_REP_FROM_DATE."&SAL_SUM_REP_TO_DATE=".$SAL_SUM_REP_TO_DATE;
+    echo "<script>window.location='?folder=reports&file=salary_summary_report_list&DEM_EMP_ID=".$DEM_EMP_ID."&generate_for=".$generate_for.$url_params."';</script>";
+
+  }
 }
 
 
@@ -208,7 +224,7 @@ if(isset($_GET['DEM_EMP_ID']) && isset($_GET['exppdf_weeklyattd']))
 
 
   $dompdf = new DOMPDF();  
-  $dompdf->set_paper('a4', 'landscape');  
+  $dompdf->set_paper('a4', 'portrait');  
   $dompdf->load_html($html);
   $dompdf->render();
   $pdf = $dompdf->output();
@@ -551,7 +567,7 @@ if(isset($_GET['DEM_EMP_ID']) && isset($_GET['exppdfselect_attd_month']))
 
 
   $dompdf = new DOMPDF();  
-  $dompdf->set_paper('a4', 'landscape');  
+  $dompdf->set_paper('a4', 'portrait');  
   $dompdf->load_html($html);
   $dompdf->render();
   $pdf = $dompdf->output();
@@ -1335,7 +1351,869 @@ if(isset($_GET['gen_attd_xl']))
 }
 
 
+
+// Generate PDF for Salary Summary
+
+if(isset($_GET['exppdfsal_summary']))
+{
+  extract($_GET);
+  // prnt($_GET);
+  // die();
+  include_once('./dompdf/dompdf_config.inc.php');
+
+  $yearly_array =[];
+  $r=$db->get_row("SELECT * FROM dw_employee_master as a LEFT JOIN dw_payroll_master as b ON a.DEM_EMP_ID= b.DEM_EMP_ID WHERE a.DEM_EMP_ID='$DEM_EMP_ID'");
+  // prnt($db->debug());
+  $mon_iterator= $SAL_SUM_REP_FROM_DATE;
+  while($mon_iterator<=$SAL_SUM_REP_TO_DATE)
+  {      
+    
+    $month_selector = date('m',strtotime($mon_iterator));
+    $year_selector = date('Y',strtotime($mon_iterator));
+    $get_payments = $db->get_row("SELECT * FROM dw_payment_tracker as b  WHERE b.DPT_PAYMENT_MONTH ='$month_selector' AND b.DPT_PAYMENT_YEAR='$year_selector'");
+
+    $yearly_array[$mon_iterator]['DPM_BASIC_SALARY'] = $r->DPM_BASIC_SALARY;
+    $yearly_array[$mon_iterator]['DPM_HRA'] = $r->DPM_HRA;
+    $yearly_array[$mon_iterator]['DPM_SPECIAL_ALLOWANCE'] = $r->DPM_SPECIAL_ALLOWANCE;
+    $yearly_array[$mon_iterator]['DPM_OTHER_ALLOWANCE'] = $r->DPM_OTHER_ALLOWANCE;
+    $yearly_array[$mon_iterator]['DPM_GROSS_WAGES_PAYABLE'] = $r->DPM_GROSS_WAGES_PAYABLE;
+    $yearly_array[$mon_iterator]['DPM_PF_EMPLOYEE'] = $r->DPM_PF_EMPLOYEE;
+    $yearly_array[$mon_iterator]['DPM_ESIC_EMPLOYEE'] = $r->DPM_ESIC_EMPLOYEE;
+    $yearly_array[$mon_iterator]['DPM_PROFESSIONAL_TAX'] = $r->DPM_PROFESSIONAL_TAX;
+
+    $DPM_TOTAL_DEDUCTION = $r->DPM_PF_EMPLOYEE + $r->DPM_ESIC_EMPLOYEE + $r->DPM_PROFESSIONAL_TAX;
+
+    $yearly_array[$mon_iterator]['DPM_TOTAL_DEDUCTION'] = isset($DPM_TOTAL_DEDUCTION)?$DPM_TOTAL_DEDUCTION:'0';
+
+    $yearly_array[$mon_iterator]['DPM_CALCULATED_AMOUNT'] = $r->DPM_CALCULATED_AMOUNT;
+
+    $yearly_array[$mon_iterator]['DPT_TOTAL_DAYS_WORKED'] = $get_payments->DPT_TOTAL_DAYS_WORKED!=''?$get_payments->DPT_TOTAL_DAYS_WORKED:'0';
+
+    $yearly_array[$mon_iterator]['NET_INHAND'] = $get_payments->NET_INHAND!=''?$get_payments->NET_INHAND:'0';
+
+    $yearly_array[$mon_iterator]['DPM_EPS'] = $r->DPM_ESIC_EMPLOYER!=''? round((8.33 *  $r->DPM_ESIC_EMPLOYER ) / 100) :'0';
+
+    $yearly_array[$mon_iterator]['DPM_PF_EMPLOYER'] = $r->DPM_PF_EMPLOYER -  $yearly_array[$mon_iterator]['DPM_EPS'];
+
+    $yearly_array[$mon_iterator]['DPM_ESIC_EMPLOYER'] = $r->DPM_ESIC_EMPLOYER!=''?$r->DPM_ESIC_EMPLOYER:'0';
+
+    $yearly_array[$mon_iterator]['TOTAL_INDIRECT'] =  $yearly_array[$mon_iterator]['DPM_EPS']  + $yearly_array[$mon_iterator]['DPM_PF_EMPLOYER'] + $yearly_array[$mon_iterator]['DPM_ESIC_EMPLOYER'];
+    
+    $yearly_array[$mon_iterator]['CASH_REIMBURSEMENT_MOBILE'] = $get_payments->CASH_REIMBURSEMENT_MOBILE!=''?$get_payments->CASH_REIMBURSEMENT_MOBILE:'0';
+
+    $yearly_array[$mon_iterator]['CASH_REIMBURSEMENT_PETROL'] = $get_payments->CASH_REIMBURSEMENT_PETROL!=''?$get_payments->CASH_REIMBURSEMENT_PETROL:'0';
+
+    $yearly_array[$mon_iterator]['TOTAL_CASH_REIMBURSEMENT'] = $get_payments->TOTAL_CASH_REIMBURSEMENT!=''?$get_payments->TOTAL_CASH_REIMBURSEMENT:'0';
+    $yearly_array[$mon_iterator]['CTC'] =  $yearly_array[$mon_iterator]['DPM_GROSS_WAGES_PAYABLE'] + $yearly_array[$mon_iterator]['TOTAL_INDIRECT'] + $yearly_array[$mon_iterator]['TOTAL_CASH_REIMBURSEMENT'];
+
+    $mon_iterator = date('Y-m', strtotime("+1 month", strtotime($mon_iterator)));
+
+  }
+
+  $html='';
+
+
+  $html .='<style>
+  p,h5
+  {
+    margin:0px;
+    padding:0px;
+  }
+
+  .table strong {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    border-collapse: collapse;
+    width: 100%;  
+  }
+
+  img
+  {
+    height:70px;
+  }
+
+  .table
+  {
+    cell-padding:0px;
+    cell-spacing:0px;
+    border-collapse:collapse;
+    width:100%;
+    border:1px solid #000000;
+    font-size: 12px;
+  }
+
+  .table td,.table th
+  {
+    padding:5px;
+    border:1px solid #000000;
+  }
+
+  p
+  {
+    font-size: 12px;
+  }
+
+  body
+  {
+    font-family:verdana;
+  }
+
+  @page {
+    margin: 0.5cm;
+  }
+
+  .footer{
+    position: absolute;
+  }
+
+  .footer{
+    bottom:0;
+    text-align:center;   
+  }
+  </style>';
+
+  $html.='<meta http-equiv="content-type" content="text/html; charset=UTF-8">';
+  $html.='<div style="border: 1px solid;padding:2%;">
+  <table style="width: 100%;border-bottom:1px solid;">
+  <tr>
+    <td><img src="images/logo/'.$title->inst_id.'.jpg"></td>
+    <td><center><h5 style="color:#9c4d55; font-size:22px; font-weight:900;">'.$title->ins_name.'</h5><span>'.$title->ins_address.'</span><center></td>
+    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+  </tr>
+  ';
+  $html.='</table>';
+
+  $html.='<p style="text-align: center; font-size: 12px;margin-top:4px;"> Salary Slip  </p>';
+  
+  $html.='<hr>';
+  $html.='<br>';
+
+  $html .='<table  class="table table-bordered table-striped table-responsive" style="border: 1px solid black !important;">
+    <tr>                
+      <th style="border: 1px solid black !important;text-align:left;" >Engineer Name</th> 
+      <td style="border: 1px solid black !important;" >'.$r->DEM_EMP_NAME_PREFIX." ".$r->DEM_EMP_FIRST_NAME." ".$r->DEM_EMP_MIDDLE_NAME." ".$r->DEM_EMP_LAST_NAME." (".$r->DEM_EMP_ID.")".'</td>
+
+      <th style="border: 1px solid black !important;text-align:left;" >PAN</th> 
+      <td style="border: 1px solid black !important;" >'.$r->DEM_PAN_ID.'</td>                              
+    </tr>  
+
+    <tr>                
+      <th style="border: 1px solid black !important;text-align:left;" >DOJ</th> 
+      <td style="border: 1px solid black !important;" >'.date("d-M-Y",strtotime($r->DEM_START_DATE)).'</td>
+
+      <th style="border: 1px solid black !important;text-align:left;" >Location</th> 
+      <td style="border: 1px solid black !important;" ></td>                              
+    </tr>
+    <tr>                
+      <th style="border: 1px solid black !important;text-align:left;" >Salary Summary From</th> 
+      <td style="border: 1px solid black !important;" >'.date("M-Y",strtotime($SAL_SUM_REP_FROM_DATE)).'</td>
+
+      <th style="border: 1px solid black !important;text-align:left;" >To Month</th> 
+      <td style="border: 1px solid black !important;" >'.date("M-Y",strtotime($SAL_SUM_REP_TO_DATE)).'</td>                              
+    </tr>
+    
+  </table> 
+  ';
+  $html.='<p style="text-align: center; font-size: 12px;margin-top:4px;"> This is salary slip only. This should not be treated as salary certificate</p>';
+  $html.='<table id="example1" class="table table-bordered table-striped" role="grid">
+  <thead>
+    <tr>
+    <th class="text-left" style="border: 1px solid black !important;font-size: 13px;">Heading</th>';
+    
+    $mon_iterator= $SAL_SUM_REP_FROM_DATE;
+    while($mon_iterator<=$SAL_SUM_REP_TO_DATE)
+    {
+    
+      $html.='<th  style="border: 1px solid black !important;font-size: 13px;text-align:left;">'.date('M-Y',strtotime($mon_iterator)).'</th>';
+    
+      $mon_iterator = date('Y-m', strtotime("+1 month", strtotime($mon_iterator)));
+    }
+    
+    
+    $html .='</tr> 
+    </thead>
+    <tbody>';  
+    $html .='<tr>
+        <td  style="border: 1px solid black !important;text-align:left;">Basic Salary</td>';
+       
+        $mon_iterator= $SAL_SUM_REP_FROM_DATE;
+        while($mon_iterator<=$SAL_SUM_REP_TO_DATE)
+        {
+
+        
+          $html .='<td style="border: 1px solid black !important;text-align:center;">'.$yearly_array[$mon_iterator]['DPM_BASIC_SALARY'].'</td>';
+       
+          $mon_iterator = date('Y-m', strtotime("+1 month", strtotime($mon_iterator)));
+
+        }
+        
+      $html .='</tr>
+
+      <tr>
+        <td style="border: 1px solid black !important;text-align:left;">HRA @ 25% of Basic Salary</td>';
+       
+        $mon_iterator= $SAL_SUM_REP_FROM_DATE;
+        while($mon_iterator<=$SAL_SUM_REP_TO_DATE)
+        {
+
+        
+          $html .='<td style="border: 1px solid black !important;text-align:center;">'.$yearly_array[$mon_iterator]['DPM_HRA'].'</td>';
+        
+        $mon_iterator = date('Y-m', strtotime("+1 month", strtotime($mon_iterator)));
+
+        }
+        
+      $html .='</tr>
+
+      <tr>
+        <td style="border: 1px solid black !important;text-align:left;">Spl. Allowance</td>';
+       
+        $mon_iterator= $SAL_SUM_REP_FROM_DATE;
+        while($mon_iterator<=$SAL_SUM_REP_TO_DATE)
+        {
+
+        
+          $html .='<td style="border: 1px solid black !important;text-align:center;">'.$yearly_array[$mon_iterator]['DPM_SPECIAL_ALLOWANCE'].'</td>';
+        
+          $mon_iterator = date('Y-m', strtotime("+1 month", strtotime($mon_iterator)));
+        }
+        
+      $html .='</tr>
+
+      <tr>
+        <td style="border: 1px solid black !important;text-align:left;">Incentive</td>';
+       
+        $mon_iterator= $SAL_SUM_REP_FROM_DATE;
+        while($mon_iterator<=$SAL_SUM_REP_TO_DATE)
+        {
+          $html .='<td style="border: 1px solid black !important;text-align:center;">'.$yearly_array[$mon_iterator]['DPM_OTHER_ALLOWANCE'].'</td>';
+        
+          $mon_iterator = date('Y-m', strtotime("+1 month", strtotime($mon_iterator)));
+
+        }
+        
+      $html .='</tr>
+
+      <tr>
+        <td style="border: 1px solid black !important;text-align:left;"><b>Gross Earning(Rs) (A)</b></td>';
+       
+        $mon_iterator= $SAL_SUM_REP_FROM_DATE;
+        while($mon_iterator<=$SAL_SUM_REP_TO_DATE)
+        {
+          $html .='<td style="border: 1px solid black !important;text-align:center;">
+            <b>'.$yearly_array[$mon_iterator]['DPM_GROSS_WAGES_PAYABLE'].'</b>
+          </td>';
+        
+          $mon_iterator = date('Y-m', strtotime("+1 month", strtotime($mon_iterator)));
+        }
+        
+      $html .='</tr>
+
+      <tr>
+        <td style="border: 1px solid black !important;text-align:left;">PF</td>';
+       
+        $mon_iterator= $SAL_SUM_REP_FROM_DATE;
+        while($mon_iterator<=$SAL_SUM_REP_TO_DATE)
+        {
+          $html .='<td style="border: 1px solid black !important;text-align:center;">'.$yearly_array[$mon_iterator]['DPM_PF_EMPLOYEE'].'</td>';
+        
+          $mon_iterator = date('Y-m', strtotime("+1 month", strtotime($mon_iterator)));
+        }
+        
+      $html .='</tr>
+
+      <tr>
+        <td style="border: 1px solid black !important;text-align:left;">ESIC</td>';
+       
+        $mon_iterator= $SAL_SUM_REP_FROM_DATE;
+        while($mon_iterator<=$SAL_SUM_REP_TO_DATE)
+        {
+          $html .='<td style="border: 1px solid black !important;text-align:center;">'.$yearly_array[$mon_iterator]['DPM_ESIC_EMPLOYEE'].'</td>';
+        
+          $mon_iterator = date('Y-m', strtotime("+1 month", strtotime($mon_iterator)));
+
+        }
+        
+      $html .='</tr>
+
+      <tr>
+        <td style="border: 1px solid black !important;text-align:left;">PT</td>';
+       
+        $mon_iterator= $SAL_SUM_REP_FROM_DATE;
+        while($mon_iterator<=$SAL_SUM_REP_TO_DATE)
+        {
+          $html .='<td style="border: 1px solid black !important;text-align:center;">'.$yearly_array[$mon_iterator]['DPM_PROFESSIONAL_TAX'].'</td>';
+        
+          $mon_iterator = date('Y-m', strtotime("+1 month", strtotime($mon_iterator)));
+        }
+        
+     $html .='</tr>
+
+      <tr>
+        <td style="border: 1px solid black !important;text-align:left;">Total deduction (B)</td>';
+       
+        $mon_iterator= $SAL_SUM_REP_FROM_DATE;
+        while($mon_iterator<=$SAL_SUM_REP_TO_DATE)
+        {
+          $html .='<td style="border: 1px solid black !important;text-align:center;">'.$yearly_array[$mon_iterator]['DPM_TOTAL_DEDUCTION'].'</td>';
+        
+          $mon_iterator = date('Y-m', strtotime("+1 month", strtotime($mon_iterator)));
+        }
+        
+      $html .='</tr>
+
+      <tr>
+        <td style="border: 1px solid black !important;text-align:left;"><b>Net salary(Rs)=A-B</b></td>';
+       
+        $mon_iterator= $SAL_SUM_REP_FROM_DATE;
+        while($mon_iterator<=$SAL_SUM_REP_TO_DATE)
+        {
+          $html .='<td style="border: 1px solid black !important;text-align:center;">
+            <b>'.$yearly_array[$mon_iterator]['DPM_CALCULATED_AMOUNT'].'</b>
+          </td>';
+        
+          $mon_iterator = date('Y-m', strtotime("+1 month", strtotime($mon_iterator)));
+        }
+        
+      $html .='</tr>
+
+      <tr>
+        <td style="border: 1px solid black !important;text-align:left;">Days Worked</td>';
+       
+        $mon_iterator= $SAL_SUM_REP_FROM_DATE;
+        while($mon_iterator<=$SAL_SUM_REP_TO_DATE)
+        {
+          $html .='<td style="border: 1px solid black !important;text-align:center;">'.$yearly_array[$mon_iterator]['DPT_TOTAL_DAYS_WORKED'].'</td>';
+        
+          $mon_iterator = date('Y-m', strtotime("+1 month", strtotime($mon_iterator)));
+        }
+        
+      $html .='</tr>
+
+      <tr>
+        <td style="border: 1px solid black !important;text-align:left;">Net In-Hand</td>';
+       
+        $mon_iterator= $SAL_SUM_REP_FROM_DATE;
+        while($mon_iterator<=$SAL_SUM_REP_TO_DATE)
+        {
+          $html .='<td style="border: 1px solid black !important;text-align:center;">'.$yearly_array[$mon_iterator]['NET_INHAND'].'</td>';
+        
+          $mon_iterator = date('Y-m', strtotime("+1 month", strtotime($mon_iterator)));
+        }
+        
+      $html .='</tr>
+
+      <tr>
+        <td style="border: 1px solid black !important;text-align:left;">PF contribution - Employer</td>';
+       
+        $mon_iterator= $SAL_SUM_REP_FROM_DATE;
+        while($mon_iterator<=$SAL_SUM_REP_TO_DATE)
+        {
+          $html .='<td style="border: 1px solid black !important;text-align:center;">'.$yearly_array[$mon_iterator]['DPM_PF_EMPLOYER'].'</td>';
+        
+          $mon_iterator = date('Y-m', strtotime("+1 month", strtotime($mon_iterator)));
+        }
+        
+      $html .='</tr>
+
+      <tr>
+        <td style="border: 1px solid black !important;text-align:left;">EPS</td>';
+       
+        $mon_iterator= $SAL_SUM_REP_FROM_DATE;
+        while($mon_iterator<=$SAL_SUM_REP_TO_DATE)
+        {
+          $html .='<td style="border: 1px solid black !important;text-align:center;">'.$yearly_array[$mon_iterator]['DPM_EPS'].'</td>';
+        
+          $mon_iterator = date('Y-m', strtotime("+1 month", strtotime($mon_iterator)));
+        }
+        
+      $html .='</tr>
+
+      <tr>
+        <td style="border: 1px solid black !important;text-align:left;">ESI Fees - Employer</td>';
+       
+        $mon_iterator= $SAL_SUM_REP_FROM_DATE;
+        while($mon_iterator<=$SAL_SUM_REP_TO_DATE)
+        {
+          $html .='<td style="border: 1px solid black !important;text-align:center;">'.$yearly_array[$mon_iterator]['DPM_ESIC_EMPLOYER'].'</td>';
+        
+          $mon_iterator = date('Y-m', strtotime("+1 month", strtotime($mon_iterator)));
+        }
+        
+      $html .='</tr>
+
+      <tr>
+        <td style="border: 1px solid black !important;text-align:left;"><b>Total Indirects (C)</b></td>';
+       
+        $mon_iterator= $SAL_SUM_REP_FROM_DATE;
+        while($mon_iterator<=$SAL_SUM_REP_TO_DATE)
+        {
+          $html .='<td style="border: 1px solid black !important;text-align:center;">
+            <b></b>'.$yearly_array[$mon_iterator]['TOTAL_INDIRECT'].'</b>
+          </td>';
+        
+          $mon_iterator = date('Y-m', strtotime("+1 month", strtotime($mon_iterator)));
+        }
+        
+      $html .='</tr>
+
+      <tr>
+        <td style="border: 1px solid black !important;text-align:left;">Cash Reimbursement Mobile</td>';
+       
+        $mon_iterator= $SAL_SUM_REP_FROM_DATE;
+        while($mon_iterator<=$SAL_SUM_REP_TO_DATE)
+        {
+          $html .='<td style="border: 1px solid black !important;text-align:center;">'.$yearly_array[$mon_iterator]['CASH_REIMBURSEMENT_MOBILE'].'</td>';
+        
+          $mon_iterator = date('Y-m', strtotime("+1 month", strtotime($mon_iterator)));
+        }
+        
+      $html .='</tr>
+
+      <tr>
+        <td style="border: 1px solid black !important;text-align:left;">Cash Reimbursement Petrol</td>';
+       
+        $mon_iterator= $SAL_SUM_REP_FROM_DATE;
+        while($mon_iterator<=$SAL_SUM_REP_TO_DATE)
+        {
+          $html .='<td style="border: 1px solid black !important;text-align:center;">'.$yearly_array[$mon_iterator]['CASH_REIMBURSEMENT_PETROL'].'</td>';
+          
+          $mon_iterator = date('Y-m', strtotime("+1 month", strtotime($mon_iterator)));
+        }
+        
+      $html .='</tr>
+
+      <tr>
+        <td style="border: 1px solid black !important;text-align:left;">Total cash Reimbursements (D)</td>';
+       
+        $mon_iterator= $SAL_SUM_REP_FROM_DATE;
+        while($mon_iterator<=$SAL_SUM_REP_TO_DATE)
+        {
+          $html .='<td style="border: 1px solid black !important;text-align:center;">'.$yearly_array[$mon_iterator]['TOTAL_CASH_REIMBURSEMENT'].'</td>';
+        
+          $mon_iterator = date('Y-m', strtotime("+1 month", strtotime($mon_iterator)));
+
+        }
+        
+      $html .='</tr>
+
+      <tr>
+        <td style="border: 1px solid black !important;text-align:left;"><b>CTC for the Month = A+C+D</b></td>';
+       
+        $mon_iterator= $SAL_SUM_REP_FROM_DATE;
+        while($mon_iterator<=$SAL_SUM_REP_TO_DATE)
+        {
+          $html .='<td style="border: 1px solid black !important;text-align:center;">
+            <b>'.$yearly_array[$mon_iterator]['CTC'].'</b>
+          </td>';        
+          $mon_iterator = date('Y-m', strtotime("+1 month", strtotime($mon_iterator)));
+        }
+        
+      $html .='</tr>';
+
+  $html.='</tbody>';
+  
+  $html.='</table>';
+  $html.='<br>';
+
+  
+
+  $dompdf = new DOMPDF();  
+  $dompdf->set_paper('a4', 'portrait');  
+  $dompdf->load_html($html);
+  $dompdf->render();
+  $pdf = $dompdf->output();
+
+  $fp = fopen("reports/salary_summary.pdf", 'w');
+  fclose($fp);
+  chmod("reports/salary_summary.pdf", 0777); 
+  file_put_contents("reports/salary_summary.pdf", $pdf);  
+  
+  header('location:download.php?file_url=reports/salary_summary.pdf');
+  echo('<script>window.open("'.site_root.'reports/salary_summary.pdf", "_blank","",true);</script>');
+
+}
+// Generate PDF for Salary Summary
+
+
+// Generate PDF for Salary Slip
+
+if(isset($_GET['exppdfsal_slip']))
+{
+  extract($_GET);
+  // prnt($_GET);
+  // die();
+  include_once('./dompdf/dompdf_config.inc.php');
+
+  $yearly_array =[];
+  $r=$db->get_row("SELECT * FROM dw_employee_master as a LEFT JOIN dw_payroll_master as b ON a.DEM_EMP_ID= b.DEM_EMP_ID WHERE a.DEM_EMP_ID='$DEM_EMP_ID'");
+  // prnt($db->debug());
+  $mon_iterator= $SAL_SUM_REP_DATE;
+ 
+    $month_selector = date('m',strtotime($mon_iterator));
+    $year_selector = date('Y',strtotime($mon_iterator));
+    $get_payments = $db->get_row("SELECT * FROM dw_payment_tracker as b  WHERE b.DPT_PAYMENT_MONTH ='$month_selector' AND b.DPT_PAYMENT_YEAR='$year_selector'");
+
+    $yearly_array[$mon_iterator]['DPM_BASIC_SALARY'] = $r->DPM_BASIC_SALARY;
+    $yearly_array[$mon_iterator]['DPM_HRA'] = $r->DPM_HRA;
+    $yearly_array[$mon_iterator]['DPM_SPECIAL_ALLOWANCE'] = $r->DPM_SPECIAL_ALLOWANCE;
+    $yearly_array[$mon_iterator]['DPM_OTHER_ALLOWANCE'] = $r->DPM_OTHER_ALLOWANCE;
+    $yearly_array[$mon_iterator]['DPM_GROSS_WAGES_PAYABLE'] = $r->DPM_GROSS_WAGES_PAYABLE;
+    $yearly_array[$mon_iterator]['DPM_PF_EMPLOYEE'] = $r->DPM_PF_EMPLOYEE;
+    $yearly_array[$mon_iterator]['DPM_ESIC_EMPLOYEE'] = $r->DPM_ESIC_EMPLOYEE;
+    $yearly_array[$mon_iterator]['DPM_PROFESSIONAL_TAX'] = $r->DPM_PROFESSIONAL_TAX;
+
+    $DPM_TOTAL_DEDUCTION = $r->DPM_PF_EMPLOYEE + $r->DPM_ESIC_EMPLOYEE + $r->DPM_PROFESSIONAL_TAX;
+
+    $yearly_array[$mon_iterator]['DPM_TOTAL_DEDUCTION'] = isset($DPM_TOTAL_DEDUCTION)?$DPM_TOTAL_DEDUCTION:'0';
+
+    $yearly_array[$mon_iterator]['DPM_CALCULATED_AMOUNT'] = $r->DPM_CALCULATED_AMOUNT;
+
+    $yearly_array[$mon_iterator]['DPT_TOTAL_DAYS_WORKED'] = $get_payments->DPT_TOTAL_DAYS_WORKED!=''?$get_payments->DPT_TOTAL_DAYS_WORKED:'0';
+
+    $yearly_array[$mon_iterator]['NET_INHAND'] = $get_payments->NET_INHAND!=''?$get_payments->NET_INHAND:'0';
+
+    $yearly_array[$mon_iterator]['DPM_EPS'] = $r->DPM_ESIC_EMPLOYER!=''? round((8.33 *  $r->DPM_ESIC_EMPLOYER ) / 100) :'0';
+
+    $yearly_array[$mon_iterator]['DPM_PF_EMPLOYER'] = $r->DPM_PF_EMPLOYER -  $yearly_array[$mon_iterator]['DPM_EPS'];
+
+    $yearly_array[$mon_iterator]['DPM_ESIC_EMPLOYER'] = $r->DPM_ESIC_EMPLOYER!=''?$r->DPM_ESIC_EMPLOYER:'0';
+
+    $yearly_array[$mon_iterator]['TOTAL_INDIRECT'] =  $yearly_array[$mon_iterator]['DPM_EPS']  + $yearly_array[$mon_iterator]['DPM_PF_EMPLOYER'] + $yearly_array[$mon_iterator]['DPM_ESIC_EMPLOYER'];
+    
+    $yearly_array[$mon_iterator]['CASH_REIMBURSEMENT_MOBILE'] = $get_payments->CASH_REIMBURSEMENT_MOBILE!=''?$get_payments->CASH_REIMBURSEMENT_MOBILE:'0';
+
+    $yearly_array[$mon_iterator]['CASH_REIMBURSEMENT_PETROL'] = $get_payments->CASH_REIMBURSEMENT_PETROL!=''?$get_payments->CASH_REIMBURSEMENT_PETROL:'0';
+
+    $yearly_array[$mon_iterator]['TOTAL_CASH_REIMBURSEMENT'] = $get_payments->TOTAL_CASH_REIMBURSEMENT!=''?$get_payments->TOTAL_CASH_REIMBURSEMENT:'0';
+    $yearly_array[$mon_iterator]['CTC'] =  $yearly_array[$mon_iterator]['DPM_GROSS_WAGES_PAYABLE'] + $yearly_array[$mon_iterator]['TOTAL_INDIRECT'] + $yearly_array[$mon_iterator]['TOTAL_CASH_REIMBURSEMENT'];
+
+   
+ 
+
+  $html='';
+
+
+  $html .='<style>
+  p,h5
+  {
+    margin:0px;
+    padding:0px;
+  }
+
+  .table strong {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    border-collapse: collapse;
+    width: 100%;  
+  }
+
+  img
+  {
+    height:70px;
+  }
+
+  .table
+  {
+    cell-padding:0px;
+    cell-spacing:0px;
+    border-collapse:collapse;
+    width:100%;
+    border:1px solid #000000;
+    font-size: 12px;
+  }
+
+  .table td,.table th
+  {
+    padding:5px;
+    border:1px solid #000000;
+  }
+
+  p
+  {
+    font-size: 12px;
+  }
+
+  body
+  {
+    font-family:verdana;
+  }
+
+  @page {
+    margin: 0.5cm;
+  }
+
+  .footer{
+    position: absolute;
+  }
+
+  .footer{
+    bottom:0;
+    text-align:center;   
+  }
+  </style>';
+
+  $html.='<meta http-equiv="content-type" content="text/html; charset=UTF-8">';
+  $html.='<div style="border: 1px solid;padding:2%;">
+  <table style="width: 100%;border-bottom:1px solid;">
+  <tr>
+    <td><img src="images/logo/'.$title->inst_id.'.jpg"></td>
+    <td><center><h5 style="color:#9c4d55; font-size:22px; font-weight:900;">'.$title->ins_name.'</h5><span>'.$title->ins_address.'</span><center></td>
+    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+  </tr>
+  ';
+  $html.='</table>';
+
+  $html.='<p style="text-align: center; font-size: 12px;margin-top:4px;"> Salary Slip  </p>';
+  
+  $html.='<hr>';
+  $html.='<br>';
+
+  $html .='<table  class="table table-bordered table-striped table-responsive" style="border: 1px solid black !important;">
+    <tr>                
+      <th style="border: 1px solid black !important;text-align:left;" >Engineer Name</th> 
+      <td style="border: 1px solid black !important;" >'.$r->DEM_EMP_NAME_PREFIX." ".$r->DEM_EMP_FIRST_NAME." ".$r->DEM_EMP_MIDDLE_NAME." ".$r->DEM_EMP_LAST_NAME." (".$r->DEM_EMP_ID.")".'</td>
+
+      <th style="border: 1px solid black !important;text-align:left;" >PAN</th> 
+      <td style="border: 1px solid black !important;" >'.$r->DEM_PAN_ID.'</td>                              
+    </tr>  
+
+    <tr>                
+      <th style="border: 1px solid black !important;text-align:left;" >DOJ</th> 
+      <td style="border: 1px solid black !important;" >'.date("d-M-Y",strtotime($r->DEM_START_DATE)).'</td>
+
+      <th style="border: 1px solid black !important;text-align:left;" >Location</th> 
+      <td style="border: 1px solid black !important;" ></td>                              
+    </tr>
+    <tr>                
+      <th style="border: 1px solid black !important;text-align:left;" >Salary Summary From</th> 
+      <td colspan="3" style="border: 1px solid black !important;" >'.date("M-Y",strtotime($SAL_SUM_REP_DATE)).'</td>                      
+    </tr>
+    
+  </table> 
+  ';
+  $html.='<p style="text-align: center; font-size: 12px;margin-top:4px;"> This is salary slip only. This should not be treated as salary certificate</p>';
+  $html.='<table id="example1" class="table table-bordered table-striped" role="grid">
+  <thead>
+    <tr>
+    <th style="border: 1px solid black !important;font-size: 13px;text-align:left;">Heading</th>';
+      $html.='<th class="text-center" style="border: 1px solid black !important;font-size: 13px;">'.date('M-Y',strtotime($mon_iterator)).'</th>';
+    
+    $html .='</tr> 
+    </thead>
+    <tbody>';  
+    $html .='<tr>
+        <td  style="border: 1px solid black !important;text-align:left;">Basic Salary</td>';
+       
+          $html .='<td style="border: 1px solid black !important;text-align:center;">'.$yearly_array[$mon_iterator]['DPM_BASIC_SALARY'].'</td>';
+       
+      $html .='</tr>
+
+      <tr>
+        <td style="border: 1px solid black !important;text-align:left;">HRA @ 25% of Basic Salary</td>';
+       
+       
+          $html .='<td style="border: 1px solid black !important;text-align:center;">'.$yearly_array[$mon_iterator]['DPM_HRA'].'</td>';
+        
+        
+      $html .='</tr>
+
+      <tr>
+        <td style="border: 1px solid black !important;text-align:left;">Spl. Allowance</td>';
+       
+          $html .='<td style="border: 1px solid black !important;text-align:center;">'.$yearly_array[$mon_iterator]['DPM_SPECIAL_ALLOWANCE'].'</td>';
+        
+        
+      $html .='</tr>
+
+      <tr>
+        <td style="border: 1px solid black !important;text-align:left;">Incentive</td>';
+       
+          $html .='<td style="border: 1px solid black !important;text-align:center;">'.$yearly_array[$mon_iterator]['DPM_OTHER_ALLOWANCE'].'</td>';
+        
+      $html .='</tr>
+
+      <tr>
+        <td style="border: 1px solid black !important;text-align:left;"><b>Gross Earning(Rs) (A)</b></td>';
+       
+          $html .='<td style="border: 1px solid black !important;text-align:center;">
+            <b>'.$yearly_array[$mon_iterator]['DPM_GROSS_WAGES_PAYABLE'].'</b>
+          </td>';
+        
+                
+      $html .='</tr>
+
+      <tr>
+        <td style="border: 1px solid black !important;text-align:left;">PF</td>';
+       
+          $html .='<td style="border: 1px solid black !important;text-align:center;">'.$yearly_array[$mon_iterator]['DPM_PF_EMPLOYEE'].'</td>';
+        
+                 
+      $html .='</tr>
+
+      <tr>
+        <td style="border: 1px solid black !important;text-align:left;">ESIC</td>';
+       
+          $html .='<td style="border: 1px solid black !important;text-align:center;">'.$yearly_array[$mon_iterator]['DPM_ESIC_EMPLOYEE'].'</td>';
+        
+                 
+      $html .='</tr>
+
+      <tr>
+        <td style="border: 1px solid black !important;text-align:left;">PT</td>';
+       
+        
+          $html .='<td style="border: 1px solid black !important;text-align:center;">'.$yearly_array[$mon_iterator]['DPM_PROFESSIONAL_TAX'].'</td>';
+        
+                 
+     $html .='</tr>
+
+      <tr>
+        <td style="border: 1px solid black !important;text-align:left;">Total deduction (B)</td>';
+       
+          $html .='<td style="border: 1px solid black !important;text-align:center;">'.$yearly_array[$mon_iterator]['DPM_TOTAL_DEDUCTION'].'</td>';
+        
+        
+      $html .='</tr>
+
+      <tr>
+        <td style="border: 1px solid black !important;text-align:left;"><b>Net salary(Rs)=A-B</b></td>';
+       
+        
+          $html .='<td style="border: 1px solid black !important;text-align:center;">
+            <b>'.$yearly_array[$mon_iterator]['DPM_CALCULATED_AMOUNT'].'</b>
+          </td>';
+        
+        
+      $html .='</tr>
+
+      <tr>
+        <td style="border: 1px solid black !important;text-align:left;">Days Worked</td>';
+       
+       
+          $html .='<td style="border: 1px solid black !important;text-align:center;">'.$yearly_array[$mon_iterator]['DPT_TOTAL_DAYS_WORKED'].'</td>';
+        
+      $html .='</tr>
+
+      <tr>
+        <td style="border: 1px solid black !important;text-align:left;">Net In-Hand</td>';
+       
+        
+          $html .='<td style="border: 1px solid black !important;text-align:center;">'.$yearly_array[$mon_iterator]['NET_INHAND'].'</td>';
+        
+          
+        
+      $html .='</tr>
+
+      <tr>
+        <td style="border: 1px solid black !important;text-align:left;">PF contribution - Employer</td>';
+       
+        
+          $html .='<td style="border: 1px solid black !important;text-align:center;">'.$yearly_array[$mon_iterator]['DPM_PF_EMPLOYER'].'</td>';
+        
+          
+        
+      $html .='</tr>
+
+      <tr>
+        <td style="border: 1px solid black !important;text-align:left;">EPS</td>';
+       
+        
+          $html .='<td style="border: 1px solid black !important;text-align:center;">'.$yearly_array[$mon_iterator]['DPM_EPS'].'</td>';
+        
+          
+        
+      $html .='</tr>
+
+      <tr>
+        <td style="border: 1px solid black !important;text-align:left;">ESI Fees - Employer</td>';
+       
+        
+          $html .='<td style="border: 1px solid black !important;text-align:center;">'.$yearly_array[$mon_iterator]['DPM_ESIC_EMPLOYER'].'</td>';
+        
+          
+        
+      $html .='</tr>
+
+      <tr>
+        <td style="border: 1px solid black !important;text-align:left;"><b>Total Indirects (C)</b></td>';
+       
+        
+          $html .='<td style="border: 1px solid black !important;text-align:center;">
+            <b></b>'.$yearly_array[$mon_iterator]['TOTAL_INDIRECT'].'</b>
+          </td>';
+        
+          
+        
+      $html .='</tr>';
+
+      // $html .=' <tr>
+      //   <td style="border: 1px solid black !important;text-align:left;">Cash Reimbursement Mobile</td>';
+       
+        
+      //     $html .='<td style="border: 1px solid black !important;text-align:center;">'.$yearly_array[$mon_iterator]['CASH_REIMBURSEMENT_MOBILE'].'</td>';
+        
+          
+        
+      // $html .='</tr>
+
+      // <tr>
+      //   <td style="border: 1px solid black !important;text-align:left;">Cash Reimbursement Petrol</td>';
+       
+        
+      //     $html .='<td style="border: 1px solid black !important;text-align:center;">'.$yearly_array[$mon_iterator]['CASH_REIMBURSEMENT_PETROL'].'</td>';
+          
+          
+        
+      // $html .='</tr>
+
+      // <tr>
+      //   <td style="border: 1px solid black !important;text-align:left;">Total cash Reimbursements (D)</td>';
+       
+        
+      //     $html .='<td style="border: 1px solid black !important;text-align:center;">'.$yearly_array[$mon_iterator]['TOTAL_CASH_REIMBURSEMENT'].'</td>';
+        
+         
+        
+      // $html .='</tr>
+
+      // <tr>
+      //   <td style="border: 1px solid black !important;text-align:left;"><b>CTC for the Month = A+C+D</b></td>';
+       
+        
+      //     $html .='<td style="border: 1px solid black !important;text-align:center;">
+      //       <b>'.$yearly_array[$mon_iterator]['CTC'].'</b>
+      //     </td>';        
+          
+        
+      // $html .='</tr>';
+
+  $html.='</tbody>';
+  
+  $html.='</table>';
+  $html.='<br>';
+
+  
+
+  $dompdf = new DOMPDF();  
+  $dompdf->set_paper('a4', 'portrait');  
+  $dompdf->load_html($html);
+  $dompdf->render();
+  $pdf = $dompdf->output();
+
+  $fp = fopen("reports/salary_slip.pdf", 'w');
+  fclose($fp);
+  chmod("reports/salary_slip.pdf", 0777); 
+  file_put_contents("reports/salary_slip.pdf", $pdf);  
+  
+  header('location:download.php?file_url=reports/salary_slip.pdf');
+  echo('<script>window.open("'.site_root.'reports/salary_slip.pdf", "_blank","",true);</script>');
+
+}
+// Generate PDF for Salary Slip
+
 ?>
+
 
 
 

@@ -69,35 +69,35 @@ if(isset($_GET['overall_trexp_xl']))
   include_once('PHPExcel.php');
   $objPHPExcel = new PHPExcel();
 
-  if($_SESSION['user_type']=='2')
-  {
-    if($_GET['texp_start_date'] && $_GET['texp_end_date'])
-    {
-      $filter = "a.DTE_VOUCHER_DATE>'$texp_start_date' AND a.DTE_VOUCHER_DATE<'$texp_end_date' AND a.DEM_EMP_ID = '".$_SESSION['DEM_EMP_ID']."' ORDER BY a.DTE_ID DESC";
+  $filter='';
 
-      $headertitle = " (From ".$texp_start_date." To ".$texp_end_date.")";
-    } 
-    if($_GET['curr_month_texp_date'])
+    if(empty($_GET['texp_single_month']) && empty($_GET['texp_start_date']) && empty($_GET['texp_end_date']) && empty($_GET['DEM_EMP_ID']) && $_GET['expense_for']=="all")
     {
-      $datearray = explode("-",$curr_month_texp_date);
-      $filter = "YEAR(a.DTE_VOUCHER_DATE)=$datearray[0] AND MONTH(a.DTE_VOUCHER_DATE)=$datearray[1] AND a.DEM_EMP_ID = '".$_SESSION['DEM_EMP_ID']."' ORDER BY a.DTE_ID DESC";
-      $headertitle = " of ".date('M Y',strtotime($curr_month_texp_date));
-    } 
-  }else
-  {
+      $filter .= "";
+    }
+    else
+    {
+      $filter .= " WHERE";
+    }
+    if($_GET['texp_single_month'])
+    {
+      $datearray = explode("-",$texp_single_month);
+      $filter .= " YEAR(a.DTE_VOUCHER_DATE)=$datearray[0] AND MONTH(a.DTE_VOUCHER_DATE)=$datearray[1] AND";
+    }
     if($_GET['texp_start_date'] && $_GET['texp_end_date'])
     {
-      $filter = "a.DTE_VOUCHER_DATE>'$texp_start_date' AND a.DTE_VOUCHER_DATE<'$texp_end_date' ORDER BY a.DTE_ID DESC";
-      $headertitle = " (From ".$texp_start_date." To".$texp_end_date.")";
+      $filter .= " DATE(a.DTE_VOUCHER_DATE)>='$texp_start_date' AND DATE(a.DTE_VOUCHER_DATE)<='$texp_end_date' AND";
     }
-    if($_GET['curr_month_texp_date'])
+    if($_GET['DEM_EMP_ID'])
     {
-      $datearray = explode("-",$curr_month_texp_date);
-      $filter = "YEAR(a.DTE_VOUCHER_DATE)=$datearray[0] AND MONTH(a.DTE_VOUCHER_DATE)=$datearray[1] ORDER BY a.DTE_ID DESC";
-      $headertitle = " of ".date('M Y',strtotime($curr_month_texp_date));
-    } 
-  }
-  $r=$db->get_results("SELECT a.*,b.DEM_EMP_ID,b.DEM_EMP_NAME_PREFIX,b.DEM_EMP_FIRST_NAME,b.DEM_EMP_MIDDLE_NAME,b.DEM_EMP_LAST_NAME FROM dw_travel_expense as a LEFT JOIN dw_employee_master as b ON a.DEM_EMP_ID=b.DEM_EMP_ID WHERE $filter");
+      $filter .= " a.DEM_EMP_ID = '".$DEM_EMP_ID."' AND";
+    }
+    $filter = rtrim($filter," AND");
+      // prnt($filter);
+    
+    $filter .= " ORDER BY a.DTE_ID DESC";
+
+    $r=$db->get_results("SELECT a.*,b.DEM_EMP_ID,b.DEM_EMP_NAME_PREFIX,b.DEM_EMP_FIRST_NAME,b.DEM_EMP_MIDDLE_NAME,b.DEM_EMP_LAST_NAME FROM dw_travel_expense as a LEFT JOIN dw_employee_master as b ON a.DEM_EMP_ID=b.DEM_EMP_ID $filter");
   
 
   $objPHPExcel->setActiveSheetIndex(0);  
@@ -288,36 +288,35 @@ if(isset($_GET['overall_trexp_pdf']))
   
   include_once('./dompdf/dompdf_config.inc.php');
 
-  if($_SESSION['user_type']=='2')
-  {
-    if($_GET['texp_start_date'] && $_GET['texp_end_date'])
-    {
-      $filter = "a.DTE_VOUCHER_DATE>'$texp_start_date' AND a.DTE_VOUCHER_DATE<'$texp_end_date' AND a.DEM_EMP_ID = '".$_SESSION['DEM_EMP_ID']."' ORDER BY a.DTE_ID DESC";
+  $filter='';
 
-      $headertitle = " (From ".$texp_start_date." To ".$texp_end_date.")";
-    } 
-    if($_GET['curr_month_texp_date'])
+    if(empty($_GET['texp_single_month']) && empty($_GET['texp_start_date']) && empty($_GET['texp_end_date']) && empty($_GET['DEM_EMP_ID']) && $_GET['expense_for']=="all")
     {
-      $datearray = explode("-",$curr_month_texp_date);
-      $filter = "YEAR(a.DTE_VOUCHER_DATE)=$datearray[0] AND MONTH(a.DTE_VOUCHER_DATE)=$datearray[1] AND a.DEM_EMP_ID = '".$_SESSION['DEM_EMP_ID']."' ORDER BY a.DTE_ID DESC";
-      $headertitle = " of ".date('M Y',strtotime($curr_month_texp_date));
-    } 
-  }else
-  {
-    if($_GET['texp_start_date'] && $_GET['texp_end_date'])
-    {
-      $filter = "a.DTE_VOUCHER_DATE>'$texp_start_date' AND a.DTE_VOUCHER_DATE<'$texp_end_date' ORDER BY a.DTE_ID DESC";
-      $headertitle = " (From ".$texp_start_date." To".$texp_end_date.")";
+      $filter .= "";
     }
-    if($_GET['curr_month_texp_date'])
+    else
     {
-      $datearray = explode("-",$curr_month_texp_date);
-      $filter = "YEAR(a.DTE_VOUCHER_DATE)=$datearray[0] AND MONTH(a.DTE_VOUCHER_DATE)=$datearray[1] ORDER BY a.DTE_ID DESC";
-      $headertitle = " of ".date('M Y',strtotime($curr_month_texp_date));
-    } 
-  }
+      $filter .= " WHERE";
+    }
+    if($_GET['texp_single_month'])
+    {
+      $datearray = explode("-",$texp_single_month);
+      $filter .= " YEAR(a.DTE_VOUCHER_DATE)=$datearray[0] AND MONTH(a.DTE_VOUCHER_DATE)=$datearray[1] AND";
+    }
+    if($_GET['texp_start_date'] && $_GET['texp_end_date'])
+    {
+      $filter .= " DATE(a.DTE_VOUCHER_DATE)>='$texp_start_date' AND DATE(a.DTE_VOUCHER_DATE)<='$texp_end_date' AND";
+    }
+    if($_GET['DEM_EMP_ID'])
+    {
+      $filter .= " a.DEM_EMP_ID = '".$DEM_EMP_ID."' AND";
+    }
+    $filter = rtrim($filter," AND");
+      // prnt($filter);
+    
+    $filter .= " ORDER BY a.DTE_ID DESC";
 
-  $r=$db->get_results("SELECT a.*,b.DEM_EMP_ID,b.DEM_EMP_NAME_PREFIX,b.DEM_EMP_FIRST_NAME,b.DEM_EMP_MIDDLE_NAME,b.DEM_EMP_LAST_NAME FROM dw_travel_expense as a LEFT JOIN dw_employee_master as b ON a.DEM_EMP_ID=b.DEM_EMP_ID WHERE $filter");
+    $r=$db->get_results("SELECT a.*,b.DEM_EMP_ID,b.DEM_EMP_NAME_PREFIX,b.DEM_EMP_FIRST_NAME,b.DEM_EMP_MIDDLE_NAME,b.DEM_EMP_LAST_NAME FROM dw_travel_expense as a LEFT JOIN dw_employee_master as b ON a.DEM_EMP_ID=b.DEM_EMP_ID $filter");
 
   $html='';
 
@@ -514,7 +513,7 @@ if(isset($_GET['overall_trexp_pdf']))
     }
 
     $dompdf = new DOMPDF();  
-    $dompdf->set_paper('a3', 'landscape');  
+    $dompdf->set_paper('a3', 'portrait');  
     $dompdf->load_html($html);
     $dompdf->render();
     $pdf = $dompdf->output();
@@ -746,7 +745,7 @@ if(isset($_GET['exppdfdte_id']))
 
   }
   $dompdf = new DOMPDF();  
-  $dompdf->set_paper('a4', 'landscape');  
+  $dompdf->set_paper('a4', 'portrait');  
   $dompdf->load_html($html);
   $dompdf->render();
   $pdf = $dompdf->output();
